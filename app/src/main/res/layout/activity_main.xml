@@ -32,4 +32,20 @@
         android:layout_height="wrap_content"
         android:text="Play Back" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="time"
+        android:ems="10"
+        android:id="@+id/timer"
+        android:layout_gravity="center_horizontal"
+        android:autoText="false" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:id="@+id/nextButton"
+        android:layout_gravity="center_horizontal" />
+
 </LinearLayout>
