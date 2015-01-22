@@ -1,14 +1,11 @@
 package com.example.user.cucomposer_android;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Build;
+import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.example.user.cucomposer_android.entity.Note;
@@ -54,8 +51,6 @@ public class DrawNoteLine extends View {
         calculateOffset();
     }
 
-    @SuppressLint("NewApi")
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onDraw(Canvas canvas) {
         calculateLinesY(false,canvas.getHeight());
@@ -75,11 +70,9 @@ public class DrawNoteLine extends View {
             Note aNote = notes.get(i);
             if(aNote.getPitch()>=0) {
                 float posY = noteLinesY[noteLinesY.length-1-aNote.getPitch()];
-                if(offset==null){
-                    Log.d("debugger","null offset");
-                }
+                RectF rect= new RectF(smallestNoteSize*offset[i]*4,posY-radiusRect,smallestNoteSize*(offset[i]+aNote.getDuration())*4,posY+radiusRect);
                 //Log.d("debugger",""+(smallestNoteSize*offset[i]*4+radiusRect)+","+posY+","+(smallestNoteSize*(offset[i]+aNote.getDuration())*4-radiusRect)+","+radiusRect);
-                canvas.drawRoundRect(smallestNoteSize*offset[i]*4,posY-radiusRect,smallestNoteSize*(offset[i]+aNote.getDuration())*4,posY+radiusRect,radiusRect,radiusRect,paint);
+                canvas.drawRoundRect(rect,radiusRect,radiusRect,paint);
             }
         }
     }
