@@ -15,16 +15,35 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World"
-            android:id="@+id/textView" />
+            android:text="Note Editor"
+            android:id="@+id/textView"
+            android:layout_weight="0.1"/>
 
-        :
+        <com.example.user.cucomposer_android.DrawNoteLine
+            android:id="@+id/drawNoteLine"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.7"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.2">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Previous"
+                android:id="@+id/prevButton" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next"
+                android:id="@+id/nextButton" />
+        </LinearLayout>
 
     </LinearLayout>
-
-    <com.example.user.cucomposer_android.DrawNoteLine
-        android:id="@+id/drawNoteLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
 </RelativeLayout>
