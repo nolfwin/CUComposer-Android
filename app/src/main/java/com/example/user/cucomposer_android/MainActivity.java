@@ -232,17 +232,40 @@ public class MainActivity extends Activity {
             }
 
             dataInputStream.close();
-
+            int count = 2048 * 1024;
+            byte[] byteData = null;
+            byteData = new byte[(int)count];
+            FileInputStream in = new FileInputStream( file );
+            int bytesread = 0, ret = 0;
+            int size = (int) file.length();
+            int intSize = AudioTrack.getMinBufferSize(audioRecord.getSampleRate(),AudioFormat.CHANNEL_OUT_MONO,
+                    audioRecord.getAudioFormat());
             AudioTrack audioTrack = new AudioTrack(
                     AudioManager.STREAM_MUSIC,
                     audioRecord.getSampleRate(),
                     AudioFormat.CHANNEL_OUT_MONO,
                     audioRecord.getAudioFormat(),
-                    bufferSizeInBytes,
+                    intSize,
                     AudioTrack.MODE_STREAM);
 
             audioTrack.play();
-            audioTrack.write(audioData, 0, bufferSizeInBytes);
+
+            while (bytesread < size) {
+                ret = in.read( byteData,0, count);
+                if (ret != -1) {
+                            // Write the byte array to the track
+                    audioTrack.write(byteData,0, ret);
+                    bytesread += ret;
+
+                }
+                else break;
+            }
+
+            in.close();
+            audioTrack.stop();
+            audioTrack.release();
+
+            //audioTrack.write(audioData, 0, bufferSizeInBytes);
 
 
         } catch (FileNotFoundException e) {

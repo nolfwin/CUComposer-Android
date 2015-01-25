@@ -23,7 +23,16 @@ import java.util.List;
  */
 public class DrawNoteLine extends View {
 
+    public List<Note> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<Note> notes) {
+        this.notes = notes;
+    }
+
     private List<Note> notes;
+
 
 
     private int roomLength = 3;

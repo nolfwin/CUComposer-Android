@@ -4,3 +4,7 @@
 /.idea/libraries
 .DS_Store
 /build
+.idea/gradle.xml
+.gitignore
+.idea/inspectionProfiles/Project_Default.xml
+.idea/inspectionProfiles/profiles_settings.xml
