@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -23,6 +24,10 @@ import java.util.List;
  */
 public class DrawNoteLine extends View {
 
+    private static final int STATE_NORMAL = 0;
+    private static final int STATE_FINGER_DRAG = 1;
+    private static final int STATE_PLAYING = 2;
+
     public List<Note> getNotes() {
         return notes;
     }
@@ -38,8 +43,8 @@ public class DrawNoteLine extends View {
     private int roomLength = 3;
     private int lineLength = 11;
 
-    private float heightStart = 0.1f;
-    private float heightEnd = 0.9f;
+    private float heightStart = 0.2f;
+    private float heightEnd = 0.95f;
 
     private float triangleDist = 10;
     private float triangleWidth = 40;
@@ -53,7 +58,30 @@ public class DrawNoteLine extends View {
 
     private int transitionBackTime = 5;
 
+    private int roomRectColor = Color.parseColor("#424242");
+    private int needleBarColor = Color.parseColor("#bdbdbd");
+    private int needleColor = Color.parseColor("#424242");
+    private int roomTextColor = Color.WHITE;
+    private float splitNeedle = 0.8f;
+    private float needleWidth = 20;
+
+    public float getPlayOffset() {
+        return offset[selectedNotePlay]/offset[offset.length-1];
+    }
+
+    public void setPlaying(boolean isPlaying){
+        if(isPlaying){
+            state = STATE_PLAYING;
+        }
+        else{
+            state = STATE_NORMAL;
+        }
+        postInvalidate();
+    }
+
     // temp
+    private float playOffset = 0;
+    private int selectedNotePlay = 0;
     private float[] offset;
     private float[] noteLinesY;
     private float[] noteRegion;
@@ -64,7 +92,7 @@ public class DrawNoteLine extends View {
     private int startDrawNote = 0;
     private int startTouchNote = 0;
     private float roomSize = 0;
-    private boolean isTransiting = false;
+    private int state = STATE_NORMAL;
     private float radiusRect = 0;
     private long startTouchTime = 0;
     private float startTouchX = 0;
@@ -72,6 +100,9 @@ public class DrawNoteLine extends View {
     private final String LOG_TAG = "drawNote debug";
     private int transitionCount = 0;
     private float transitionBackOffset = 0;
+    float upperBar;
+    float roomBarY ;
+
 
     private Handler transitionBackHandler = new Handler();
 
@@ -97,7 +128,6 @@ public class DrawNoteLine extends View {
 
     private void init(){
 
-        this.setBackgroundColor(Color.parseColor("#f5f5f5"));
         paint.setColor(Color.BLACK);
         notes = new ArrayList<Note>();
         notes.add(new Note(3,2.5f));
@@ -118,7 +148,15 @@ public class DrawNoteLine extends View {
     @Override
     public void onDraw(Canvas canvas) {
         calculateLinesY(false,canvas.getHeight());
+        float lineSize = noteLinesY[1]-noteLinesY[0];
         paint.setStrokeWidth(5);
+        paint.setColor(roomRectColor);
+        upperBar = noteLinesY[0]-lineSize*2;
+        roomBarY = upperBar*splitNeedle;
+        canvas.drawRect(0, 0, canvas.getWidth(), roomBarY, paint);
+        paint.setColor(needleBarColor);
+        canvas.drawRect(0,roomBarY,canvas.getWidth(),upperBar,paint);
+
         paint.setColor(Color.BLACK);
         for(int i=0;i<noteLinesY.length;i+=2) {
             canvas.drawLine(0, noteLinesY[i], canvas.getWidth(), noteLinesY[i], paint);
@@ -126,14 +164,21 @@ public class DrawNoteLine extends View {
         roomSize = canvas.getWidth()/(roomLength);
         int startDrawRoom = (roomOffset-2>=0)?-2:-roomOffset;
         int endDrawRoom = (roomLength+2+roomOffset<=maxRoomOffset)?roomLength+2:maxRoomOffset-roomOffset;
+        paint.setTextSize(30);
+        Rect textBound = new Rect();
         for(int i=startDrawRoom;i<endDrawRoom;i++){
-            canvas.drawLine(roomSize*(i+1)-drawOffset,noteLinesY[0],roomSize*(i+1)-drawOffset,noteLinesY[noteLinesY.length-1],paint);
+            paint.setColor(Color.BLACK);
+            canvas.drawLine(roomSize * (i + 1) - drawOffset, 0, roomSize * (i + 1) - drawOffset, noteLinesY[noteLinesY.length - 1], paint);
+            paint.setColor(roomTextColor);
+            String roomText = ""+(i+roomOffset+1);
+            paint.getTextBounds(roomText,0,roomText.length(),textBound);
+            canvas.drawText(roomText,roomSize*(i+1.5f)-textBound.centerX()-drawOffset,roomBarY/2-textBound.centerY(),paint);
         }
-        float lineSize = noteLinesY[1]-noteLinesY[0];
+
         float smallestNoteSize = roomSize/16.0f;
         radiusRect = Math.min(lineSize/2,smallestNoteSize/2);
         //paint.setStrokeWidth(0.5f);
-        if(!isTransiting){
+        if(state != STATE_FINGER_DRAG){
             int consideredOffset = (roomOffset - 3)*4;
             int i;
             for(i=0;i<notes.size()-1;i++){
@@ -165,7 +210,7 @@ public class DrawNoteLine extends View {
                 paint.setColor(noteColors[aNote.getPitch()%7]);
                 paint.setAlpha(255);
                 float posY = noteLinesY[noteLinesY.length-1-aNote.getPitch()];
-                if(!isTransiting&&startTouchNote<0){
+                if(state!=STATE_FINGER_DRAG&&startTouchNote<0){
                     if(endOffsetX>0){
                         startTouchNote = i;
                     }
@@ -175,10 +220,28 @@ public class DrawNoteLine extends View {
                 //Log.d("debugger",""+(smallestNoteSize*offset[i]*4+radiusRect)+","+posY+","+(smallestNoteSize*(offset[i]+aNote.getDuration())*4-radiusRect)+","+radiusRect);
                 canvas.drawRoundRect(rect,radiusRect,radiusRect,paint);
 
-                if(i == selectedNote){
+                if(i==selectedNotePlay){
+                    paint.setColor(needleColor);
+                    Path path = new Path();
+                    path.setFillType(Path.FillType.EVEN_ODD);
+                    path.moveTo(startOffsetX-needleWidth,roomBarY);
+                    path.lineTo(startOffsetX-needleWidth,upperBar);
+                    path.lineTo(startOffsetX,upperBar+triangleHeight);
+                    path.lineTo(startOffsetX+needleWidth,upperBar);
+                    path.lineTo(startOffsetX+needleWidth,roomBarY);
+                    path.lineTo(startOffsetX-needleWidth,roomBarY);
+                    path.close();
+                    canvas.drawPath(path,paint);
+                    canvas.drawLine(startOffsetX,upperBar,startOffsetX,noteLinesY[noteLinesY.length-1],paint);
+                }
+                if(i == selectedNote&&state!=STATE_PLAYING){
 
                     paint.setColor(Color.DKGRAY);
                     for(int j=-1;j<2;j+=2) {
+                        if(aNote.getPitch()==lineLength*2-2&&j==-1)
+                            continue;
+                        if(aNote.getPitch()==0&&j==1)
+                            continue;
                         Path path = new Path();
                         path.setFillType(Path.FillType.EVEN_ODD);
                         float center = (endOffsetX + startOffsetX) / 2;
@@ -221,6 +284,8 @@ public class DrawNoteLine extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(state==STATE_PLAYING)
+            return true;
         //selectNoteClick(event.getX(),event.getY());
         Log.d(LOG_TAG,"event action: "+event.getAction()+" pos: "+event.getX()+","+event.getY()+" time: "+(SystemClock.currentThreadTimeMillis()-startTouchTime));
         switch (event.getAction()){
@@ -231,12 +296,12 @@ public class DrawNoteLine extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(SystemClock.currentThreadTimeMillis()-startTouchTime>longPressTime){
-                    if(!isTransiting) {
-                        isTransiting = true;
+                    if(state!=STATE_FINGER_DRAG) {
+                        state = STATE_FINGER_DRAG;
                         startTouchX = event.getX();
                     }
                     else {
-                        drawOffset = event.getX() - startTouchX;
+                        drawOffset = - 1.4f*(event.getX() - startTouchX);
                         postInvalidate();
                     }
                 }
@@ -246,19 +311,19 @@ public class DrawNoteLine extends View {
                     selectNoteClick(event.getX(),event.getY());
                 }
                 else {
-                    float newOffset = changeRoomDrag(event.getX() - startTouchX);
+                    float newOffset = changeRoomDrag( - 1.4f*(event.getX() - startTouchX));
 
                     drawOffset = drawOffset - newOffset;
                     transitionBackOffset = (drawOffset)/transitionBackTime;
                     transitionBackHandler.postDelayed(updateScreenBack,50);
                 }
                 //drawOffset = 0;
-                isTransiting = false;
+                state = STATE_NORMAL;
                 //postInvalidate();
                 break;
             case MotionEvent.ACTION_CANCEL:
                 drawOffset = 0;
-                isTransiting = false;
+                state = STATE_NORMAL;
                 postInvalidate();
         }
         return true;
@@ -287,6 +352,7 @@ public class DrawNoteLine extends View {
                     }
                     return;
                 }
+
             }
         }
         selectedNote = -1;
@@ -298,7 +364,11 @@ public class DrawNoteLine extends View {
                     if (evY <= posY + radiusRect + touchNoteError && evY >= posY - touchNoteError - radiusRect) {
                         selectedNote = i;
                     } else {
-                        selectedNote = -1;
+                        if(evY<=upperBar+triangleHeight){
+                            selectedNotePlay = i;
+                        }
+                        else
+                            selectedNote = -1;
                     }
                 }
                 else{
@@ -360,5 +430,25 @@ public class DrawNoteLine extends View {
 
         }
     };
+
+    public void updatePlayingNote(float playingPercent){
+        if(1.0*offset[selectedNote+1]/offset[offset.length-1]<playingPercent){
+            selectedNote+=1;
+            if(!((roomOffset+roomLength-1)>=(int)(offset[selectedNote]/4)&&(roomOffset)<=(int)(offset[selectedNote]/4))){
+                roomOffset = (int)(offset[selectedNote]/4);
+            }
+            postInvalidate();
+        }
+    }
+
+    public void setSelectedNoteFromSelectedNotePlay(){
+        selectedNote = selectedNotePlay;
+        if((roomOffset+roomLength-1)>=(int)(offset[selectedNote]/4)&&(roomOffset)<=(int)(offset[selectedNote]/4)){
+            postInvalidate();
+            return;
+        }
+        roomOffset = (int)(offset[selectedNote]/4);
+        postInvalidate();
+    }
 
 }

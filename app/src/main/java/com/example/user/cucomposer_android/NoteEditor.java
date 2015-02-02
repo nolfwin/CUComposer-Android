@@ -16,14 +16,15 @@ public class NoteEditor extends Activity {
 
     private String LOG_TAG = "NoteEditor";
     private Handler playTimeHandler = new Handler();
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer = new MediaPlayer();;
     private TextView playTimer;
+    private DrawNoteLine drawNoteLine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_editor);
-        final DrawNoteLine drawNoteLine= (DrawNoteLine)findViewById(R.id.drawNoteLine);
+        drawNoteLine= (DrawNoteLine)findViewById(R.id.drawNoteLine);
         Button prevButton = (Button)findViewById(R.id.prevButton);
         Button nextButton = (Button)findViewById(R.id.nextButton);
         playTimer = (TextView)findViewById(R.id.playTimer);
@@ -43,13 +44,21 @@ public class NoteEditor extends Activity {
         midiButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.stop();
+                    return;
+                }
                 MidiPlay midiPlay = new MidiPlay(drawNoteLine.getNotes());
                 String filePath = midiPlay.generateMidi();
-                mediaPlayer = new MediaPlayer();
+                mediaPlayer.reset();
                 try {
+
                     mediaPlayer.setDataSource(filePath);
                     mediaPlayer.prepare();
+                    mediaPlayer.seekTo((int)(mediaPlayer.getDuration()*drawNoteLine.getPlayOffset()));
                     mediaPlayer.start();
+                    drawNoteLine.setPlaying(true);
+                    drawNoteLine.setSelectedNoteFromSelectedNotePlay();
                     playTimeHandler.post(updatePlayTime);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -85,15 +94,14 @@ public class NoteEditor extends Activity {
             int nowPlayTime = mediaPlayer.getCurrentPosition();
             int duration = mediaPlayer.getDuration();
             playTimer.setText(" " + nowPlayTime + " / " + duration);
-            if(nowPlayTime==duration){
-
-            }
             if(mediaPlayer.isPlaying()){
                 playTimeHandler.postDelayed(updatePlayTime,100);
+                drawNoteLine.updatePlayingNote(1.0f*mediaPlayer.getCurrentPosition()/mediaPlayer.getDuration());
             }
             else{
                 playTimeHandler.removeCallbacks(updatePlayTime);
                 playTimer.setText("End");
+                drawNoteLine.setPlaying(false);
             }
 
         }
