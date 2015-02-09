@@ -7,6 +7,7 @@ import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
+import android.media.audiofx.NoiseSuppressor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -47,6 +49,7 @@ public class MainActivity extends Activity {
     private TextView[] partName = new TextView[partSize];
     private Button[] recordButton = new Button[partSize];
     private Button[] playButton = new Button[partSize];
+    private Button[] pitchButton = new Button[partSize];
     private int runningId = -1;
 
 
@@ -89,6 +92,11 @@ public class MainActivity extends Activity {
             playButton[i].setOnClickListener(playBackOnClickListener);
             partLayout[i].addView(playButton[i],layoutParams);
 
+            pitchButton[i] = new Button(this);
+            pitchButton[i].setText("pitch");
+            pitchButton[i].setId(i);
+            pitchButton[i].setOnClickListener(pitchOnClickListener);
+            partLayout[i].addView(pitchButton[i],layoutParams);
 
         }
         timer = (TextView) findViewById(R.id.timer);
@@ -117,6 +125,7 @@ public class MainActivity extends Activity {
             }
             else {
                 runningId = v.getId();
+
                 Thread recordThread = new Thread(recordRunnable);
                 recordThread.start();
                 Button b = (Button) v;
@@ -172,7 +181,6 @@ public class MainActivity extends Activity {
 
     OnClickListener playBackOnClickListener
             = new OnClickListener() {
-
         @Override
         public void onClick(View v) {
             if(runningId<0) {
@@ -198,6 +206,13 @@ public class MainActivity extends Activity {
         @Override
         public void onClick(View v) {
             callNextActivity();
+        }
+    };
+    OnClickListener pitchOnClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast toast = Toast.makeText(getApplicationContext(), "in Progress...", Toast.LENGTH_SHORT);
+            toast.show();
         }
     };
 
@@ -250,7 +265,13 @@ public class MainActivity extends Activity {
             DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
             if (audioRecord == null) {
                 audioRecord = findAudioRecord();
-
+                if(NoiseSuppressor.isAvailable()) {
+                    Log.d(LOG_TAG,"Noise suppressor is available");
+                    NoiseSuppressor.create(audioRecord.getAudioSessionId());
+                }
+                else{
+                    Log.d(LOG_TAG,"Noise suppressor is not available");
+                }
             }
             int minBufferSize = AudioRecord.getMinBufferSize(audioRecord.getSampleRate(), audioRecord.getChannelConfiguration(), audioRecord.getAudioFormat());
             short[] audioData = new short[minBufferSize];

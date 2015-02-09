@@ -6,11 +6,11 @@ android {
 
     defaultConfig {
         applicationId "com.example.user.cucomposer_android"
-        minSdkVersion 15
-        targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
-    }
+        minSdkVersion 16
+    targetSdkVersion 21
+    versionCode 1
+    versionName "1.0"
+}
     buildTypes {
         release {
             minifyEnabled false
@@ -20,7 +20,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile files('libs/TarsosDSP-Android-2.0.jar')
+    compile files('libs/jahmm-0.6.2.jar')
 }
