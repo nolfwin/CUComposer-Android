@@ -299,10 +299,11 @@ public class DrawNoteLine extends View {
                     if(state!=STATE_FINGER_DRAG) {
                         state = STATE_FINGER_DRAG;
                         startTouchX = event.getX();
+                        transitionBackHandler.post(updateFingerDragTransition);
                     }
                     else {
                         drawOffset = - 1.4f*(event.getX() - startTouchX);
-                        postInvalidate();
+                        //postInvalidate();
                     }
                 }
                 break;
@@ -450,5 +451,18 @@ public class DrawNoteLine extends View {
         roomOffset = (int)(offset[selectedNote]/4);
         postInvalidate();
     }
+
+    private Runnable updateFingerDragTransition = new Runnable() {
+        @Override
+        public void run() {
+            if(state == STATE_FINGER_DRAG) {
+                postInvalidate();
+                transitionBackHandler.postDelayed(this,50);
+            }
+            else{
+                transitionBackHandler.removeCallbacks(this);
+            }
+        }
+    };
 
 }
