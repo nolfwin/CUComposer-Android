@@ -8,6 +8,10 @@ public class Note {
     private int pitch;
     private float duration;
 
+
+
+    private float offset;
+
     public Note(int pitch,float duration){
         this.pitch = pitch;
         this.duration = duration;
@@ -27,6 +31,14 @@ public class Note {
 
     public void setDuration(float duration) {
         this.duration = duration;
+    }
+
+    public float getOffset() {
+        return offset;
+    }
+
+    public void setOffset(float offset) {
+        this.offset = offset;
     }
 
 
