@@ -31,6 +31,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+
+import be.tarsos.dsp.pitch.FastYin;
 
 public class MainActivity extends Activity {
 
@@ -151,6 +155,8 @@ public class MainActivity extends Activity {
                 recordButton[i].setEnabled(false);
             if(isRecord||id!=i)
                 playButton[i].setEnabled(false);
+            if(isRecord||id!=i)
+                pitchButton[i].setEnabled(false);
         }
     }
 
@@ -158,6 +164,7 @@ public class MainActivity extends Activity {
         for(int i=0;i<partSize;i++){
             recordButton[i].setEnabled(true);
             playButton[i].setEnabled(true);
+            pitchButton[i].setEnabled(true);
         }
     }
 
@@ -211,11 +218,64 @@ public class MainActivity extends Activity {
     OnClickListener pitchOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast toast = Toast.makeText(getApplicationContext(), "in Progress...", Toast.LENGTH_SHORT);
-            toast.show();
+//pitchfucca
+            runningId = v.getId();
+            File file = new File(Config.appFolder + "/test"+runningId+".pcm");
+            int shortSizeInBytes = Short.SIZE/Byte.SIZE;
+
+            int bufferSizeInBytes = (int)(file.length()/shortSizeInBytes);
+            short[] audioData = new short[bufferSizeInBytes];
+
+            boolean done = true;
+            if(audioRecord==null){
+                audioRecord = findAudioRecord();
+            }
+            int i = 0;
+            try {
+                bufferSize = AudioTrack.getMinBufferSize(audioRecord.getSampleRate(),AudioFormat.CHANNEL_OUT_MONO,audioRecord.getAudioFormat());
+                InputStream inputStream = new FileInputStream(file);
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+                dataInputStream = new DataInputStream(bufferedInputStream);
+
+
+                while(dataInputStream.available() > 0){
+                    if(i==audioData.length){
+                        done = false;
+                        break;
+                    }
+                    audioData[i] = dataInputStream.readShort();
+                    i++;
+                }
+                dataInputStream.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.d(LOG_TAG,"audioData size: "+bufferSizeInBytes+" "+audioData.length+" "+i);
+            try {
+               Pitch.pitchEst(floatMe(audioData));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            runningId= -1;
         }
     };
-
+    public static short[] shortMe(byte[] bytes) {
+        short[] out = new short[bytes.length / 2]; // will drop last byte if odd number
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        for (int i = 0; i < out.length; i++) {
+            out[i] = bb.getShort();
+        }
+        return out;
+    }
+    public static float[] floatMe(short[] pcms) {
+        float[] floaters = new float[pcms.length];
+        for (int i = 0; i < pcms.length; i++) {
+            floaters[i] = pcms[i];
+        }
+        return floaters;
+    }
     private void callNextActivity() {
         Intent nextIntent = new Intent(this, NoteEditor.class);
         startActivity(nextIntent);
@@ -291,7 +351,7 @@ public class MainActivity extends Activity {
                 e.printStackTrace();
             }
             while (recording) {
-                int numberOfShort = audioRecord.read(audioData, 0, minBufferSize);
+                int numberOfShort= audioRecord.read(audioData, 0, minBufferSize);
                 for (int i = 0; i < numberOfShort; i++) {
                     dataOutputStream.writeShort(audioData[i]);
                 }
@@ -359,8 +419,7 @@ public class MainActivity extends Activity {
 
     private void playRecord(String fileName){
         File file = new File(fileName);
-        int shortSizeInBytes = Short.SIZE/Byte.SIZE;
-        int bufferSizeInBytes = (int)(file.length()/shortSizeInBytes);
+        int bufferSizeInBytes =(int)file.length();
         Log.d(LOG_TAG,"audioData size: "+bufferSizeInBytes);
         short[] audioData = new short[bufferSize];
         boolean done = true;
@@ -390,8 +449,8 @@ public class MainActivity extends Activity {
                     audioRecord.getSampleRate(),
                     AudioFormat.CHANNEL_OUT_MONO,
                     audioRecord.getAudioFormat(),
-                    //bufferSizeInBytes,
-                    bufferSize*shortSizeInBytes,
+
+                    bufferSize,
                     AudioTrack.MODE_STREAM);
 
             audioTrack.play();
