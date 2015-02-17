@@ -6,6 +6,8 @@ import android.util.Log;
 import com.example.user.cucomposer_android.entity.Note;
 import com.leff.midi.MidiFile;
 import com.leff.midi.MidiTrack;
+import com.leff.midi.event.NoteOff;
+import com.leff.midi.event.NoteOn;
 import com.leff.midi.event.meta.Tempo;
 import com.leff.midi.event.meta.TimeSignature;
 
@@ -36,7 +38,7 @@ public class MidiPlay {
     }
 
     public String generateMidi(){
-        bpm = 90;
+        bpm = 120;
 
         MidiTrack tempoTrack = new MidiTrack();
         MidiTrack noteTrack = new MidiTrack();
@@ -58,10 +60,14 @@ public class MidiPlay {
             Note aNote = notes.get(i);
             if(aNote.getPitch()>=0) {
                 int channel = 0;
-                int pitch = aNote.getPitch() + 60;
+                int pitch = aNote.getPitch();
                 int velocity = 100;
                 long tick = (long)(offset*resolution);
                 long duration = (long)(aNote.getDuration()*resolution);
+                NoteOn on = new NoteOn(tick, channel, pitch, velocity);
+                NoteOff off = new NoteOff(tick + duration, channel, pitch, 0);
+                noteTrack.insertEvent(on);
+                noteTrack.insertEvent(off);
                 //long tick = (long)(calculateTime(bpm, offset) * resolution / 1000);
                 //long duration = (long)calculateTime(bpm, aNote.getDuration());
 

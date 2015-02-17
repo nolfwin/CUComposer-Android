@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.user.cucomposer_android.entity.Note;
+import com.example.user.cucomposer_android.utility.Key;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +30,62 @@ public class DrawNoteLine extends View {
     private static final int STATE_PLAYING = 2;
 
     public List<Note> getNotes() {
-        return notes;
+        List<Note> returnArray = new ArrayList<Note>();
+        for(int i=0;i<notes.size();i++){
+            Note aNote = notes.get(i);
+            if(aNote.getPitch()<0){
+                Note note = new Note(-1,notes.get(i).getDuration());
+                note.setOffset(aNote.getOffset());
+                returnArray.add(note);
+            }
+            else {
+                int pitch = Key.mapBackToPitch(aNote.getPitch()+startPitch, keyPitch, keyMode)+((aNote.getPitch()+startPitch)/7*12);
+                Note note = new Note(pitch, aNote.getDuration());
+                note.setOffset(aNote.getOffset());
+                returnArray.add(note);
+            }
+        }
+        return returnArray;
     }
 
-    public void setNotes(List<Note> notes) {
-        this.notes = notes;
+    public void setNotes(List<Note> notes,int keyPitch, boolean keyMode) {
+        List<Note> noteArray = new ArrayList<Note>();
+        int minPitch = 200;
+        int maxPitch = -1;
+        for(int i=0;i<notes.size();i++){
+            Note aNote = notes.get(i);
+            if(aNote.getPitch()<0){
+                noteArray.add(new Note(-1, notes.get(i).getDuration()));
+            }
+            else {
+                int pitch = Key.mapToKey(aNote.getPitch(), keyPitch, keyMode)+(aNote.getPitch()/12*7);
+                noteArray.add(new Note(pitch, aNote.getDuration()));
+                if(pitch<minPitch){
+                    minPitch = pitch;
+                }
+                else if(pitch>maxPitch){
+                   maxPitch = pitch;
+                }
+            }
+        }
+        startPitch = (maxPitch + minPitch)/2 - 10;
+        for(int i=0;i<noteArray.size();i++){
+            Note aNote = noteArray.get(i);
+            if(aNote.getPitch()>=0){
+                aNote.setPitch(aNote.getPitch()-startPitch);
+            }
+        }
+        this.notes = noteArray;
+        this.keyPitch = keyPitch;
+        this.keyMode = keyMode;
+        calculateOffset();
     }
 
-    private List<Note> notes;
+    private int startPitch;
+    private int keyPitch;
+    private boolean keyMode;
+
+    private List<Note> notes = new ArrayList<Note>();
 
 
 
@@ -128,20 +177,20 @@ public class DrawNoteLine extends View {
 
     private void init(){
 
-        paint.setColor(Color.BLACK);
-        notes = new ArrayList<Note>();
-        notes.add(new Note(3,2.5f));
-        notes.add(new Note(4,2f));
-        notes.add(new Note(1, 1f));
-        notes.add(new Note(10, 0.25f));
-        for(int i=0;i<20;i++){
-            notes.add(new Note(i,0.25f));
-        }
-        notes.add(new Note(-1,2));
-        for(int i=0;i<20;i++){
-            notes.add(new Note(i,2));
-        }
-        calculateOffset();
+//        paint.setColor(Color.BLACK);
+//        notes = new ArrayList<Note>();
+//        notes.add(new Note(3,2.5f));
+//        notes.add(new Note(4,2f));
+//        notes.add(new Note(1, 1f));
+//        notes.add(new Note(10, 0.25f));
+//        for(int i=0;i<20;i++){
+//            notes.add(new Note(i,0.25f));
+//        }
+//        notes.add(new Note(-1,2));
+//        for(int i=0;i<20;i++){
+//            notes.add(new Note(i,2));
+//        }
+//        calculateOffset();
 
     }
 
@@ -264,6 +313,7 @@ public class DrawNoteLine extends View {
         int i;
         for(i=0;i<notes.size();i++){
             offset[i] = lastOffset;
+            notes.get(i).setOffset(lastOffset);
             lastOffset += notes.get(i).getDuration();
         }
         offset[i] = lastOffset;
