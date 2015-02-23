@@ -67,110 +67,25 @@ public class Pitch {
         playDuration.clear();
         playNote.add(-1);
         frequencyArray.add((float) -1.0);
+
         pitchAnalysis(audioFloats,sampFreq,bufferSize,0);
+        playDuration.add(1000);
+        tuneMelody();
+
         Log.d(LOG_TAG,"test");
     }
-    private static void pitchAnalysis(float[] audioFloats, int sampfreq, int bufferSize,
-                                      int overlap) {
-        // TODO Auto-generated method stub
-        FastYin fyin = new FastYin(sampfreq,bufferSize);
-        int tracker = 0;
+    private static void tuneMelody(){
 
-        while(tracker+bufferSize-1< audioFloats.length){
-            PitchDetectionResult result = fyin.getPitch(Arrays.copyOfRange(audioFloats, tracker, tracker+bufferSize));
-
-
-            float pitchInHz = result.getPitch();
-            float pitchProp = result.getProbability();
-            Log.d(LOG_TAG,pitchInHz+" "+pitchProp );
-            String time = "";
-            count++;
-            DecimalFormat df = new DecimalFormat("#.00");
-            time = " "
-                    + df.format(((double) (count * bufferSize + 1))
-                    / sampFreq);
-            int noteAns;
-            pitchPropString = pitchPropString +pitchProp+"\n";
-            if (pitchProp > 0.95){
-                noteAns = findNote(pitchInHz);
-
-            }
-            else{
-                noteAns = lastNote;
-            }
-
-            Log.d(LOG_TAG,pitchInHz + " " + noteAns);
-            String noteP;
-            if (noteAns > 0)
-                noteP = note[noteAns];
-            else
-                noteP = "detect nothing";
-
-            if (pitchInHz == -1) {
-                String ans = time + " detect nothing";
-                if (!pitchBefore.equals("detect nothing")) {
-
-                    int duration = (int) (Double.parseDouble(time) * 1000)
-                            - lastDuration;
-                    lastDuration = (int) (Double.parseDouble(time) * 1000);
-
-                    if (noteAns > 0)
-                        playNote.add(noteAns + 12);
-                    else
-                        playNote.add(-1);
-                    frequencyArray.add(pitchInHz);
-                    lastNote = -1;
-                    lastFreq=pitchInHz;
-                    playDuration.add(duration);
-                    pitchAnswer = pitchAnswer + "\n" + ans;
-                    pitchBefore = "detect nothing";
-                }
-            } else {
-                String ans = time + " " + pitchInHz + " " + noteP/*
-																			 * +
-																			 * " "
-																			 * +
-																			 * percent
-																			 * +
-																			 * "%"
-																			 */;
-
-                Log.d(LOG_TAG,ans);
-                if (!pitchBefore.equals(noteP)) {
-                    pitchAnswer = pitchAnswer + "\n" + ans;
-                    pitchBefore = noteP;
-
-                    int duration = (int) (Double.parseDouble(time) * 1000)
-                            - lastDuration;
-                    lastDuration = (int) (Double.parseDouble(time) * 1000);
-
-                    lastNote = noteAns;
-                    lastFreq=pitchInHz;
-                    frequencyArray.add(pitchInHz);
-                    if (noteAns > 0)
-                        playNote.add(noteAns + 12);
-                    else
-                        playNote.add(-1);
-                    playDuration.add(duration);
-                }
-            }
-            tracker+=bufferSize;
-        }
-        Log.d(LOG_TAG,"Pitch prop = "+pitchPropString);
-        playDuration.add(1000);
 
         ArrayList<Integer> reallyPlayNote = new ArrayList<Integer>();
         ArrayList<Integer> reallyPlayduration = new ArrayList<Integer>();
         int currentSize = 0;
         if(playDuration.get(0)<0)playDuration.set(0,0);
-
         for (int i = 0; i < playNote.size(); i++) {
             Log.d(LOG_TAG,"note is " + playNote.get(i)
                     + " and the duration is " + playDuration.get(i)
                     + " and the frequency is " + frequencyArray.get(i));
         }
-
-
         for (int i = 0; i < playNote.size() - 1; i++) {
             if (i > 0)
                 Log.d(LOG_TAG,"i = " + i + " " + playNote.get(i) + " vs "
@@ -341,6 +256,93 @@ public class Pitch {
 
         Log.d(LOG_TAG,"---------------done------------");
         pitchAnswer = "";
+    }
+    private static void pitchAnalysis(float[] audioFloats, int sampfreq, int bufferSize,
+                                      int overlap) {
+        // TODO Auto-generated method stub
+        FastYin fyin = new FastYin(sampfreq,bufferSize);
+        int tracker = 0;
+
+        while(tracker+bufferSize-1< audioFloats.length){
+            PitchDetectionResult result = fyin.getPitch(Arrays.copyOfRange(audioFloats, tracker, tracker+bufferSize));
+
+
+            float pitchInHz = result.getPitch();
+            float pitchProp = result.getProbability();
+            Log.d(LOG_TAG,pitchInHz+" "+pitchProp );
+            String time = "";
+            count++;
+            DecimalFormat df = new DecimalFormat("#.00");
+            time = " "
+                    + df.format(((double) (count * bufferSize + 1))
+                    / sampFreq);
+            int noteAns;
+            pitchPropString = pitchPropString +pitchProp+"\n";
+            if (pitchProp > 0.95){
+                noteAns = findNote(pitchInHz);
+
+            }
+            else{
+                noteAns = lastNote;
+            }
+
+            Log.d(LOG_TAG,pitchInHz + " " + noteAns);
+            String noteP;
+            if (noteAns > 0)
+                noteP = note[noteAns];
+            else
+                noteP = "detect nothing";
+
+            if (pitchInHz == -1) {
+                String ans = time + " detect nothing";
+                if (!pitchBefore.equals("detect nothing")) {
+
+                    int duration = (int) (Double.parseDouble(time) * 1000)
+                            - lastDuration;
+                    lastDuration = (int) (Double.parseDouble(time) * 1000);
+
+                    if (noteAns > 0)
+                        playNote.add(noteAns + 12);
+                    else
+                        playNote.add(-1);
+                    frequencyArray.add(pitchInHz);
+                    lastNote = -1;
+                    lastFreq=pitchInHz;
+                    playDuration.add(duration);
+                    pitchAnswer = pitchAnswer + "\n" + ans;
+                    pitchBefore = "detect nothing";
+                }
+            } else {
+                String ans = time + " " + pitchInHz + " " + noteP/*
+																			 * +
+																			 * " "
+																			 * +
+																			 * percent
+																			 * +
+																			 * "%"
+																			 */;
+
+                Log.d(LOG_TAG,ans);
+                if (!pitchBefore.equals(noteP)) {
+                    pitchAnswer = pitchAnswer + "\n" + ans;
+                    pitchBefore = noteP;
+
+                    int duration = (int) (Double.parseDouble(time) * 1000)
+                            - lastDuration;
+                    lastDuration = (int) (Double.parseDouble(time) * 1000);
+
+                    lastNote = noteAns;
+                    lastFreq=pitchInHz;
+                    frequencyArray.add(pitchInHz);
+                    if (noteAns > 0)
+                        playNote.add(noteAns + 12);
+                    else
+                        playNote.add(-1);
+                    playDuration.add(duration);
+                }
+            }
+            tracker+=bufferSize;
+        }
     }
     //tuning melody
     public static void tuneMelodyKrumhanslSchmuckler(ArrayList<Integer> noteList, ArrayList<Integer> durationList,int musicKey){
