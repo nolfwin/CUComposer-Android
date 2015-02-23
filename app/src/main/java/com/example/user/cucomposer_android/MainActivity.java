@@ -32,7 +32,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import be.tarsos.dsp.pitch.FastYin;
 
@@ -254,7 +256,11 @@ public class MainActivity extends Activity {
             }
             Log.d(LOG_TAG,"audioData size: "+bufferSizeInBytes+" "+audioData.length+" "+i);
             try {
-               Pitch.pitchEst(floatMe(audioData));
+               float[] audioFloats = floatMe(audioData);
+               List<Integer> segmentOutput = Segment.segment(floatMe(audioData));
+               Pitch.pitchEst(audioFloats,segmentOutput);
+               Log.d(LOG_TAG,Arrays.toString(segmentOutput.toArray()));
+              // Pitch.pitchEst(floatMe(audioData));
             } catch (Exception e) {
                 e.printStackTrace();
             }

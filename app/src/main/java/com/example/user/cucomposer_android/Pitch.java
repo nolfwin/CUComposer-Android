@@ -5,6 +5,7 @@ import android.widget.Toast;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import be.tarsos.dsp.pitch.FastYin;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
@@ -59,7 +60,7 @@ public class Pitch {
 
 
     //pitch estimation method
-    public static void pitchEst(float[] audioFloats)
+    public static void pitchEst(float[] audioFloats,List<Integer> segmentOutput)
             throws Exception {
         initKey();
         playNote.clear();
