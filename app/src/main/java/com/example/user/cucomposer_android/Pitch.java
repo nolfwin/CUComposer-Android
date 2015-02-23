@@ -1,31 +1,13 @@
 package com.example.user.cucomposer_android;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
+
 import android.util.Log;
 import android.widget.Toast;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.ShortBuffer;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.AudioEvent;
-import be.tarsos.dsp.io.TarsosDSPAudioFloatConverter;
-import be.tarsos.dsp.io.TarsosDSPAudioFormat;
-import be.tarsos.dsp.io.TarsosDSPAudioInputStream;
-import be.tarsos.dsp.io.android.AndroidAudioInputStream;
-import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.pitch.FastYin;
-import be.tarsos.dsp.pitch.PitchDetectionHandler;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
-import be.tarsos.dsp.pitch.PitchProcessor;
-import be.tarsos.dsp.pitch.PitchProcessor.PitchEstimationAlgorithm;
 /**
  * Created by Nontawat on 9/2/2558.
  */
@@ -74,112 +56,16 @@ public class Pitch {
     static double [] minorWeight = {6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17};
     static int[][] majorKey = new int[12][12];
     static int[][] minorKey = new int[12][12];
-    public static void initKey(){
-        key[0][0]=0;key[0][1]=2;key[0][2]=4;key[0][3]=5;key[0][4]=7;key[0][5]=9 ; key[0][6]=11;
-        for(int i = 1 ; i < key.length;i++){
-            for(int j = 0 ; j < key[0].length;j++){
-                key[i][j] = (key[i-1][j]+1)%12;
-            }
-        }
-        for(int i = 1 ; i<key.length;i++){
-            Arrays.sort(key[i]);
-        }
-
-        majorKey[0][0]=0;majorKey[0][1]=1;majorKey[0][2]=2;majorKey[0][3]=3;majorKey[0][4]=4;majorKey[0][5]=5 ; majorKey[0][6]=6;
-        majorKey[0][7]=7;majorKey[0][8]=8;majorKey[0][9]=9;majorKey[0][10]=10;majorKey[0][11]=11;
-        for(int i = 1 ; i < majorKey.length;i++){
-            for(int j = 0 ; j < majorKey[0].length;j++){
-                majorKey[i][j] = (majorKey[i-1][j]+1)%12;
-            }
-        }
-        minorKey[0][0]=0;minorKey[0][1]=1;minorKey[0][2]=2;minorKey[0][3]=3;minorKey[0][4]=4;minorKey[0][5]=5 ; minorKey[0][6]=6;
-        minorKey[0][7]=7;minorKey[0][8]=8;minorKey[0][9]=9;minorKey[0][10]=10;minorKey[0][11]=11;
-        for(int i = 1 ; i < minorKey.length;i++){
-            for(int j = 0 ; j < minorKey[0].length;j++){
-                minorKey[i][j] = (minorKey[i-1][j]+1)%12;
-            }
-        }
-    }
-    public static int findKeyKrumhanslSchmuckler(ArrayList<Integer> noteList,ArrayList<Integer> durationList){
-        double [][] bucketMajor = new double[12][12];
-        double [][] bucketMinor = new double[12][12];
-        for(int i = 0; i< bucketMajor.length;i++){
-            for(int j = 0 ; j<bucketMajor[0].length;j++){
-                bucketMajor[i][j]=0;
-                bucketMinor[i][j]=0;
-            }
-        }
-
-        for(int i = 0 ; i < noteList.size();i++){
-            int note = noteList.get(i);
-            for(int j = 0 ; j <12;j++){
-                for(int k=0; k<12;k++){
-                    if(majorKey[j][k]==note%12) bucketMajor[j][k]+=durationList.get(i);
-                    if(minorKey[j][k]==note%12) bucketMinor[j][k]+=durationList.get(i);
-                }
-            }
-        }
-
-        double[] correlationMajor = new double[12];
-        double[] correlationMinor = new double[12];
-
-        for(int i = 0 ; i < 12 ; i++){
-            correlationMajor[i] = correlation(majorWeight,bucketMajor[i]);
-            correlationMinor[i] = correlation(minorWeight,bucketMinor[i]);
-        }
-   /*     Log.d(LOG_TAG,Arrays.deepToString(bucketMajor));
-        Log.d(LOG_TAG,Arrays.deepToString(bucketMinor));
-        Log.d(LOG_TAG,Arrays.toString(correlationMajor));
-        Log.d(LOG_TAG,Arrays.toString(correlationMinor));*/
-        int maxIndexMajor = 0;
-        int maxIndexMinor = 0;
-        for(int i = 1 ; i < 12 ; i++){
-            if(correlationMajor[i]>correlationMajor[maxIndexMajor])maxIndexMajor = i;
-            if(correlationMinor[i]>correlationMinor[maxIndexMinor])maxIndexMinor = i;
-        }
 
 
-        if(correlationMajor[maxIndexMajor]>=correlationMinor[maxIndexMinor]) return maxIndexMajor;
-        else return maxIndexMinor+12;
-    }
-
-    public static double correlation(double[] a,double[] b){
-
-        double up = partialCor(a,b);
-        double down1 = partialCor(a, a);
-        double down2 = partialCor(b, b);
-        double down = Math.sqrt(down1*down2);
-        return up/down;
-    }
-    public static double partialCor(double[]a,double[] b){
-        double meanA = mean(a);
-        double meanB = mean(b);
-        double ans  = 0;
-        for(int i = 0 ; i < a.length ;i++){
-            ans+= ((a[i]-meanA)*(b[i]-meanB));
-        }
-        return ans;
-    }
-    public static double mean(double[] a){
-        int ans=0;
-        for(int i = 0 ; i < a.length ;i++){
-            ans+=a[i];
-        }
-        return ans/a.length;
-    }
-
-
+    //pitch estimation method
     public static void pitchEst(float[] audioFloats)
             throws Exception {
         initKey();
-
-        Log.d(LOG_TAG, "checkpoint");
         playNote.clear();
         playDuration.clear();
         playNote.add(-1);
         frequencyArray.add((float) -1.0);
-
-        Log.d(LOG_TAG, "checkpoint2");
         pitchAnalysis(audioFloats,sampFreq,bufferSize,0);
         Log.d(LOG_TAG,"test");
     }
@@ -248,7 +134,7 @@ public class Pitch {
 																			 * "%"
 																			 */;
 
-               Log.d(LOG_TAG,ans);
+                Log.d(LOG_TAG,ans);
                 if (!pitchBefore.equals(noteP)) {
                     pitchAnswer = pitchAnswer + "\n" + ans;
                     pitchBefore = noteP;
@@ -348,8 +234,8 @@ public class Pitch {
         for (int i = 0; i < reallyPlayNote.size(); i++) {
             // JOptionPane.showMessageDialog(null, "fu");
             if(reallyPlayNote.get(i)>-1)
-            Log.d(LOG_TAG,"true note is " + reallyPlayNote.get(i)+ " ("+note[reallyPlayNote.get(i)]+")"
-                    + " and the true duration is " + reallyPlayduration.get(i));
+                Log.d(LOG_TAG,"true note is " + reallyPlayNote.get(i)+ " ("+note[reallyPlayNote.get(i)]+")"
+                        + " and the true duration is " + reallyPlayduration.get(i));
             else             Log.d(LOG_TAG,"SILENCE - true duration is " + reallyPlayduration.get(i));
         }
         Log.d(LOG_TAG,"---------------true end---------------");
@@ -455,8 +341,8 @@ public class Pitch {
         Log.d(LOG_TAG,"---------------done------------");
         pitchAnswer = "";
     }
+    //tuning melody
     public static void tuneMelodyKrumhanslSchmuckler(ArrayList<Integer> noteList, ArrayList<Integer> durationList,int musicKey){
-
         Log.d(LOG_TAG,"Music Key is "+musicKey);
         //   musicKey = 0;
         int[] majorStrict = {0,2,4,5,7,9,11};
@@ -502,8 +388,8 @@ public class Pitch {
                 nearestLeft = index-1;
                 nearestRight = index+1;
 
-                double weightLeft = (musicKey>11)? minorWeight[matlabMod(nearestLeft,12)]:majorWeight[matlabMod(nearestLeft,12)];
-                double weightRight = (musicKey>11)? minorWeight[matlabMod(nearestRight,12)]:majorWeight[matlabMod(nearestRight,12)];
+                double weightLeft = (musicKey>11)? minorWeight[scaleMod(nearestLeft,12)]:majorWeight[scaleMod(nearestLeft,12)];
+                double weightRight = (musicKey>11)? minorWeight[scaleMod(nearestRight,12)]:majorWeight[scaleMod(nearestRight,12)];
 
                 if(weightRight>=weightLeft){
                     noteList.set(i,12*multiplier+note+1);
@@ -514,9 +400,6 @@ public class Pitch {
 
             }
         }
-    }
-    public static int matlabMod(int a,int b){
-        return a < 0 ? b + a : a % b;
     }
     public static void tuneMelody(ArrayList<Integer> noteList, ArrayList<Integer> durationList,int musicKey){
         Log.d(LOG_TAG,Arrays.deepToString(key));
@@ -558,6 +441,103 @@ public class Pitch {
             }
         }
     }
+    public static int scaleMod(int a,int b){
+        return a < 0 ? b + a : a % b;
+    }
+
+    //key finding
+    public static void initKey(){
+        key[0][0]=0;key[0][1]=2;key[0][2]=4;key[0][3]=5;key[0][4]=7;key[0][5]=9 ; key[0][6]=11;
+        for(int i = 1 ; i < key.length;i++){
+            for(int j = 0 ; j < key[0].length;j++){
+                key[i][j] = (key[i-1][j]+1)%12;
+            }
+        }
+        for(int i = 1 ; i<key.length;i++){
+            Arrays.sort(key[i]);
+        }
+
+        majorKey[0][0]=0;majorKey[0][1]=1;majorKey[0][2]=2;majorKey[0][3]=3;majorKey[0][4]=4;majorKey[0][5]=5 ; majorKey[0][6]=6;
+        majorKey[0][7]=7;majorKey[0][8]=8;majorKey[0][9]=9;majorKey[0][10]=10;majorKey[0][11]=11;
+        for(int i = 1 ; i < majorKey.length;i++){
+            for(int j = 0 ; j < majorKey[0].length;j++){
+                majorKey[i][j] = (majorKey[i-1][j]+1)%12;
+            }
+        }
+        minorKey[0][0]=0;minorKey[0][1]=1;minorKey[0][2]=2;minorKey[0][3]=3;minorKey[0][4]=4;minorKey[0][5]=5 ; minorKey[0][6]=6;
+        minorKey[0][7]=7;minorKey[0][8]=8;minorKey[0][9]=9;minorKey[0][10]=10;minorKey[0][11]=11;
+        for(int i = 1 ; i < minorKey.length;i++){
+            for(int j = 0 ; j < minorKey[0].length;j++){
+                minorKey[i][j] = (minorKey[i-1][j]+1)%12;
+            }
+        }
+    }
+    public static int findKeyKrumhanslSchmuckler(ArrayList<Integer> noteList,ArrayList<Integer> durationList){
+        double [][] bucketMajor = new double[12][12];
+        double [][] bucketMinor = new double[12][12];
+        for(int i = 0; i< bucketMajor.length;i++){
+            for(int j = 0 ; j<bucketMajor[0].length;j++){
+                bucketMajor[i][j]=0;
+                bucketMinor[i][j]=0;
+            }
+        }
+
+        for(int i = 0 ; i < noteList.size();i++){
+            int note = noteList.get(i);
+            for(int j = 0 ; j <12;j++){
+                for(int k=0; k<12;k++){
+                    if(majorKey[j][k]==note%12) bucketMajor[j][k]+=durationList.get(i);
+                    if(minorKey[j][k]==note%12) bucketMinor[j][k]+=durationList.get(i);
+                }
+            }
+        }
+
+        double[] correlationMajor = new double[12];
+        double[] correlationMinor = new double[12];
+
+        for(int i = 0 ; i < 12 ; i++){
+            correlationMajor[i] = correlation(majorWeight,bucketMajor[i]);
+            correlationMinor[i] = correlation(minorWeight,bucketMinor[i]);
+        }
+   /*     Log.d(LOG_TAG,Arrays.deepToString(bucketMajor));
+        Log.d(LOG_TAG,Arrays.deepToString(bucketMinor));
+        Log.d(LOG_TAG,Arrays.toString(correlationMajor));
+        Log.d(LOG_TAG,Arrays.toString(correlationMinor));*/
+        int maxIndexMajor = 0;
+        int maxIndexMinor = 0;
+        for(int i = 1 ; i < 12 ; i++){
+            if(correlationMajor[i]>correlationMajor[maxIndexMajor])maxIndexMajor = i;
+            if(correlationMinor[i]>correlationMinor[maxIndexMinor])maxIndexMinor = i;
+        }
+
+
+        if(correlationMajor[maxIndexMajor]>=correlationMinor[maxIndexMinor]) return maxIndexMajor;
+        else return maxIndexMinor+12;
+    }
+    public static double correlation(double[] a,double[] b){
+
+        double up = partialCor(a,b);
+        double down1 = partialCor(a, a);
+        double down2 = partialCor(b, b);
+        double down = Math.sqrt(down1*down2);
+        return up/down;
+    }
+    public static double partialCor(double[]a,double[] b){
+        double meanA = mean(a);
+        double meanB = mean(b);
+        double ans  = 0;
+        for(int i = 0 ; i < a.length ;i++){
+            ans+= ((a[i]-meanA)*(b[i]-meanB));
+        }
+        return ans;
+    }
+    public static double mean(double[] a){
+        int ans=0;
+        for(int i = 0 ; i < a.length ;i++){
+            ans+=a[i];
+        }
+        return ans/a.length;
+    }
     public static int calculateKey(ArrayList<Integer> noteList,ArrayList<Integer> durationList){
         int[] bucket = {0,0,0,0,0,0,0,0,0,0,0,0};
         for(int i = 0; i < noteList.size();i++){
@@ -578,27 +558,15 @@ public class Pitch {
         Log.d(LOG_TAG,Arrays.toString(bucket));
         return maxIndex;
     }
+
+
     public static void main(String[] args) throws Exception {
-
-        // MatlabMethod.wavPlay("D:/testSound/D.wav");
-        String fileDestination = "C:/test.wav";
-/*
-        Thread thread = pitchEst(fileDestination);
-        while (thread.isAlive())
-            ;
-        Log.d(LOG_TAG,"Count = " + count);
+       // String fileDestination = "C:/test.wav";
         // pitchEst(MatlabMethod.wavRead(fileDestination));
-*/
     }
-
     public static void playNote(int note, int duration) {
     }
-
-    public static void tuneNote(ArrayList<Integer> noteList,
-                                ArrayList<Integer> durationList) {
-
-    }
-
+    //find note from frequency
     public static int findNote(double freq) {
         int noteAns = -2;
         // double percent = 0;
