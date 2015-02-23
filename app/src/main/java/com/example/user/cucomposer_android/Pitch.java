@@ -67,8 +67,17 @@ public class Pitch {
         playDuration.clear();
         playNote.add(-1);
         frequencyArray.add((float) -1.0);
-
-        pitchAnalysis(audioFloats,sampFreq,bufferSize,0);
+        DecimalFormat df = new DecimalFormat("#.00");
+        for(int i = 0 ; i < segmentOutput.size();i+=2){
+            pitchAnalysis(Arrays.copyOfRange(audioFloats,segmentOutput.get(i), segmentOutput.get(i+1)),sampFreq,bufferSize,0);
+            if(i+2<segmentOutput.size()) {
+                String time = " " + df.format(((double) (segmentOutput.get(i+2)-segmentOutput.get(i-1))) / sampFreq);
+                int duration = (int) (Double.parseDouble(time) * 1000);
+                playNote.add(-1);
+                playDuration.add(duration);
+                frequencyArray.add((float)-1.0);
+            }
+        }
         playDuration.add(1000);
         tuneMelody();
 
