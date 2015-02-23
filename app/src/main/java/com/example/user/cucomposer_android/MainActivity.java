@@ -18,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -32,11 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import be.tarsos.dsp.pitch.FastYin;
 
 public class MainActivity extends Activity {
 
@@ -56,7 +52,12 @@ public class MainActivity extends Activity {
     private Button[] recordButton = new Button[partSize];
     private Button[] playButton = new Button[partSize];
     private Button[] pitchButton = new Button[partSize];
+    private boolean isFoundAudioRecord = false;
     private int runningId = -1;
+
+    public static int sampleRate;
+    public static int audioFormat;
+    public static int channelConfig;
 
 
     private Handler timerHandler = new Handler();
@@ -305,6 +306,10 @@ public class MainActivity extends Activity {
 
                             if (recorder.getState() == AudioRecord.STATE_INITIALIZED) {
                                 Log.d(LOG_TAG, "success");
+                                MainActivity.sampleRate = recorder.getSampleRate();
+                                MainActivity.audioFormat = recorder.getAudioFormat();
+                                MainActivity.channelConfig = recorder.getChannelConfiguration();
+                                isFoundAudioRecord = true;
                                 return recorder;
                             } else {
                                 Log.d(LOG_TAG, "uninitial recorder");
@@ -330,7 +335,12 @@ public class MainActivity extends Activity {
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
             DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream);
             if (audioRecord == null) {
-                audioRecord = findAudioRecord();
+                if(isFoundAudioRecord){
+                    audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,sampleRate,channelConfig,audioFormat,AudioRecord.getMinBufferSize(sampleRate,channelConfig,audioFormat));
+                }
+                else {
+                    audioRecord = findAudioRecord();
+                }
                 if(NoiseSuppressor.isAvailable()) {
                     Log.d(LOG_TAG,"Noise suppressor is available");
                     NoiseSuppressor.create(audioRecord.getAudioSessionId());
@@ -345,6 +355,11 @@ public class MainActivity extends Activity {
             if (audioRecord == null) {
                 return false;
             }
+            else{
+                if (audioRecord.getState() == AudioRecord.STATE_UNINITIALIZED){
+                    audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,sampleRate,channelConfig,audioFormat,AudioRecord.getMinBufferSize(sampleRate,channelConfig,audioFormat));
+                }
+            }
 
             try {
                 audioRecord.startRecording();
@@ -355,6 +370,7 @@ public class MainActivity extends Activity {
             } catch (Exception e) {
 
                 e.printStackTrace();
+                return false;
             }
             while (recording) {
                 int numberOfShort= audioRecord.read(audioData, 0, minBufferSize);
@@ -363,6 +379,7 @@ public class MainActivity extends Activity {
                 }
             }
             audioRecord.stop();
+            audioRecord.release();
             dataOutputStream.close();
             runningId = -1;
 
@@ -429,13 +446,24 @@ public class MainActivity extends Activity {
         Log.d(LOG_TAG,"audioData size: "+bufferSizeInBytes);
         short[] audioData = new short[bufferSize];
         boolean done = true;
-        if(audioRecord==null){
+        if(!isFoundAudioRecord){
             audioRecord = findAudioRecord();
-
+            if(audioRecord!=null)
+                audioRecord.release();
+            else
+                return;
         }
 
         try {
-            bufferSize = AudioTrack.getMinBufferSize(audioRecord.getSampleRate(),AudioFormat.CHANNEL_OUT_MONO,audioRecord.getAudioFormat());
+
+            int channelOut;
+            if(channelConfig == AudioFormat.CHANNEL_IN_STEREO){
+                channelOut = AudioFormat.CHANNEL_OUT_STEREO;
+            }
+            else{
+                channelOut = AudioFormat.CHANNEL_OUT_MONO;
+            }
+            bufferSize = AudioTrack.getMinBufferSize(sampleRate,channelOut,audioFormat);
             InputStream inputStream = new FileInputStream(file);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             dataInputStream = new DataInputStream(bufferedInputStream);
@@ -452,10 +480,9 @@ public class MainActivity extends Activity {
 
             audioTrack = new AudioTrack(
                     AudioManager.STREAM_MUSIC,
-                    audioRecord.getSampleRate(),
-                    AudioFormat.CHANNEL_OUT_MONO,
-                    audioRecord.getAudioFormat(),
-
+                    sampleRate,
+                    channelOut,
+                    audioFormat,
                     bufferSize,
                     AudioTrack.MODE_STREAM);
 
