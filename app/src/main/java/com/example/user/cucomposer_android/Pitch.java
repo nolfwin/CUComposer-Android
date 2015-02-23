@@ -27,7 +27,7 @@ import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
 import be.tarsos.dsp.pitch.PitchProcessor.PitchEstimationAlgorithm;
 /**
- * Created by User on 9/2/2558.
+ * Created by Nontawat on 9/2/2558.
  */
 public class Pitch {
     private static final String LOG_TAG = "debuggerFromPitch";
@@ -142,10 +142,7 @@ public class Pitch {
         if(correlationMajor[maxIndexMajor]>=correlationMinor[maxIndexMinor]) return maxIndexMajor;
         else return maxIndexMinor+12;
     }
-    private static void JOptionPane(Object object, String string) {
-        // TODO Auto-generated method stub
 
-    }
     public static double correlation(double[] a,double[] b){
 
         double up = partialCor(a,b);
@@ -170,24 +167,12 @@ public class Pitch {
         }
         return ans/a.length;
     }
-  /*  public static Thread pitchEst(String directory)
-            throws IOException {
-        initKey();
-        AudioDispatcher dispatcher = AudioDispatcherFactory.fromFile(new File(
-                directory), bufferSize, 0);
-        playNote.clear();
-        playDuration.clear();
-        playNote.add(-1);
-        frequencyArray.add((float) -1.0);
-        Thread thread = dispatchPitchEst(dispatcher);
-        return thread;
-    } */
 
-    public static Thread pitchEst(float[] audioFloats)
+
+    public static void pitchEst(float[] audioFloats)
             throws Exception {
         initKey();
 
-    //    AudioDispatcher dispatcher = createDispatcherFromFloatArray(audioFloats,sampFreq,1024,0);
         Log.d(LOG_TAG, "checkpoint");
         playNote.clear();
         playDuration.clear();
@@ -195,43 +180,8 @@ public class Pitch {
         frequencyArray.add((float) -1.0);
 
         Log.d(LOG_TAG, "checkpoint2");
-       // Thread thread = dispatchPitchEst(dispatcher);
         pitchAnalysis(audioFloats,sampFreq,bufferSize,0);
         Log.d(LOG_TAG,"test");
-       // return thread;
-        return null;
-    }
-    public static float[] convertToFloats(byte[] audioBytes){
-        ShortBuffer sbuf =
-                ByteBuffer.wrap(audioBytes).order(ByteOrder.BIG_ENDIAN).asShortBuffer();
-        short[] audioShorts = new short[sbuf.capacity()];
-        sbuf.get(audioShorts);
-        float[] audioFloats = new float[audioShorts.length];
-        for (int i = 0; i < audioShorts.length; i++) {
-            audioFloats[i] = ((float)audioShorts[i])/0x8000;
-        }
-        return audioFloats;
-    }
-    public static AudioDispatcher createDispatcherFromFloatArray(float[] audioFloats,int sampFreq, int bufferSize, int bufferOverlap){
-
-        TarsosDSPAudioFormat  audioFormat = new TarsosDSPAudioFormat(sampFreq, 16, 1, true, false);
-        TarsosDSPAudioFloatConverter converter = TarsosDSPAudioFloatConverter.getConverter(audioFormat);
-        final byte[] byteArray = new byte[audioFloats.length * audioFormat.getFrameSize()];
-        converter.toByteArray(audioFloats, byteArray);
-    //    return AudioDispatcherFactory.fromByteArray(byteArray, audioFormat, bufferSize, bufferOverlap);
-        final ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
-        final long length = byteArray.length / audioFormat.getFrameSize();
-
-        AudioRecord audioInputStream = new AudioRecord(
-                MediaRecorder.AudioSource.MIC, sampFreq,
-                android.media.AudioFormat.CHANNEL_IN_MONO,
-                android.media.AudioFormat.ENCODING_PCM_16BIT,
-                bufferSize * 2);
-        audioInputStream.read(byteArray,0,byteArray.length);
-
-        TarsosDSPAudioInputStream audioStream = new AndroidAudioInputStream(audioInputStream, audioFormat);
-        return new AudioDispatcher(audioStream, bufferSize, bufferOverlap);
-
     }
     private static void pitchAnalysis(float[] audioFloats, int sampfreq, int bufferSize,
                                       int overlap) {
@@ -504,9 +454,6 @@ public class Pitch {
 
         Log.d(LOG_TAG,"---------------done------------");
         pitchAnswer = "";
-    }
-    public static Thread dispatchPitchEst(AudioDispatcher dispatcher) {
-        return null;
     }
     public static void tuneMelodyKrumhanslSchmuckler(ArrayList<Integer> noteList, ArrayList<Integer> durationList,int musicKey){
 
