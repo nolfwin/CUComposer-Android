@@ -116,8 +116,6 @@ public class Pitch {
         Log.d(LOG_TAG,Arrays.toString(playNote.toArray())+"\n"+Arrays.toString(playDuration.toArray()));
         Log.d(LOG_TAG,Arrays.toString(reallyPlayNote.toArray())+"\n"+Arrays.toString(reallyPlayduration.toArray()));
 
-
-
         Log.d(LOG_TAG,playNote.size()+" "+playDuration.size());
         int bpm = Tempo.tempoDetect(playDuration);
         Log.d(LOG_TAG,"BPM = "+bpm);
@@ -126,7 +124,10 @@ public class Pitch {
 
         MidiPlay mid = new MidiPlay(part.getNoteList());
         mid.setBpm(part.getBpm());
+        Log.d(LOG_TAG,"PARTDOTGETBPM = "+part.getBpm());
         mid.generateMidi();
+
+
     }
     public static void pitchEst(float[] audioFloats)
             throws Exception {
@@ -153,8 +154,6 @@ public class Pitch {
         playDuration.add(duration);
         Log.d(LOG_TAG,"TUNE WITHOUT SEGMENT");
         tuneMelody();
-        Log.d(LOG_TAG,Arrays.toString(playNote.toArray())+"\n"+Arrays.toString(playDuration.toArray()));
-        Log.d(LOG_TAG,Arrays.toString(reallyPlayNote.toArray())+"\n"+Arrays.toString(reallyPlayduration.toArray()));
 
 
     }

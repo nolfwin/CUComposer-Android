@@ -56,6 +56,7 @@ public class Tempo {
         double div = 15000.0 / bpm;
         Log.d("noteList", Arrays.toString(note.toArray()));
         Log.d("noteDur",Arrays.toString(duration.toArray()));
+        Log.d("bpm","THE BPM IS "+bpm);
         List<Note> noteList = new ArrayList<Note>();
         for(int i=0;i<duration.size();i++){
             if(duration.get(i)*2 < div)
@@ -67,24 +68,25 @@ public class Tempo {
             if(error1 < error2) {
                 if(duration1 == 0)
                     continue;
-                noteList.add(new Note(note.get(i), duration1));
+                noteList.add(new Note(note.get(i), ((float)duration1)/4));
             }
             else if(error1 > error2) {
                 if(duration2 == 0)
                     continue;
-                noteList.add(new Note(note.get(i), duration2));
+                noteList.add(new Note(note.get(i), ((float)duration2)/4));
             }
             else if(duration1 % 2 == 0) {
                 if(duration1 == 0)
                     continue;
-                noteList.add(new Note(note.get(i), duration1));
+                noteList.add(new Note(note.get(i),((float) duration1)/4));
             }
             else {
                 if(duration2 == 0)
                     continue;
-                noteList.add(new Note(note.get(i), duration2));
+                noteList.add(new Note(note.get(i), ((float)duration2)/4));
             }
         }
+            Log.d("noteListShow",Arrays.toString(noteList.toArray()));
         return new Part(noteList, bpm, key);
     }
 }
