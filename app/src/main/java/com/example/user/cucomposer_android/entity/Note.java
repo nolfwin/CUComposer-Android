@@ -41,5 +41,9 @@ public class Note {
         this.offset = offset;
     }
 
+    public  String toString(){
+        return "pitch = "+pitch+" duration = "+duration;
+
+    }
 
 }

@@ -22,7 +22,7 @@ public class NoteEditor extends Activity {
 
     private String LOG_TAG = "NoteEditor";
     private Handler playTimeHandler = new Handler();
-    private MediaPlayer mediaPlayer = new MediaPlayer();;
+    private MediaPlayer mediaPlayer = new MediaPlayer();
     private TextView playTimer;
     private DrawNoteLine drawNoteLine;
 
@@ -99,9 +99,9 @@ public class NoteEditor extends Activity {
             @Override
             public void onClick(View v) {
                 ChordGenerator chordGen = new ChordGenerator();
-                chordGen.setNotes(drawNoteLine.getNotes());
-                chordGen.setKey(0,Key.MAJOR);
-                chordGen.generateChords();
+         //       chordGen.setNotes(drawNoteLine.getNotes());
+         //      chordGen.setKey(0,Key.MAJOR);
+         //       chordGen.generateChords();
                 Toast toast = Toast.makeText(getApplicationContext(),"print chord generator",Toast.LENGTH_SHORT);
                 toast.show();
             }

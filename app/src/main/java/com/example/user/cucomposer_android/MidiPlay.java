@@ -38,7 +38,6 @@ public class MidiPlay {
     }
 
     public String generateMidi(){
-        bpm = 120;
 
         MidiTrack tempoTrack = new MidiTrack();
         MidiTrack noteTrack = new MidiTrack();
@@ -90,6 +89,15 @@ public class MidiPlay {
         }
         Log.d(LOG_TAG,file.getAbsolutePath());
         return file.getAbsolutePath();
+    }
+
+    public void setBpm(int bpm) {
+        this.bpm = bpm;
+    }
+
+    public int getBpm() {
+
+        return bpm;
     }
 
     public final static int calculateTick(float bpm,int ppq){

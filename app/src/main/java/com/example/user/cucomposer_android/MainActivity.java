@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -63,6 +64,8 @@ public class MainActivity extends Activity {
     private Handler timerHandler = new Handler();
 
     Button nextButton;
+    Button mergeButton;
+
     TextView timer;
 
     Boolean recording;
@@ -108,8 +111,11 @@ public class MainActivity extends Activity {
         }
         timer = (TextView) findViewById(R.id.timer);
         nextButton = (Button) findViewById(R.id.nextButton);
+        mergeButton = (Button) findViewById(R.id.mergeButton);
+
 
         nextButton.setOnClickListener(nextButtonOnClickListener);
+        mergeButton.setOnClickListener(mergeButtonOnClickListener);
 
         File appFolder = new File(Config.appFolder);
         if (!appFolder.exists()) {
@@ -211,7 +217,13 @@ public class MainActivity extends Activity {
         }
 
     };
-
+    OnClickListener mergeButtonOnClickListener =  new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast toast = Toast.makeText(getApplicationContext(),"Let's Merge",Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    };
     OnClickListener nextButtonOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -259,8 +271,12 @@ public class MainActivity extends Activity {
             try {
                float[] audioFloats = floatMe(audioData);
                List<Integer> segmentOutput = Segment.segment(floatMe(audioData));
+                Pitch.pitchEstWithoutSegment(audioFloats);
                Pitch.pitchEst(audioFloats,segmentOutput);
+
                Log.d(LOG_TAG,Arrays.toString(segmentOutput.toArray()));
+               Log.d(LOG_TAG,audioFloats.length+"");
+              Log.d(LOG_TAG,"Number of syllables:"+segmentOutput.size()/2);
               // Pitch.pitchEst(floatMe(audioData));
             } catch (Exception e) {
                 e.printStackTrace();

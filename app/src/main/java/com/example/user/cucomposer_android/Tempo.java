@@ -1,9 +1,12 @@
 package com.example.user.cucomposer_android;
 
+import android.util.Log;
+
 import com.example.user.cucomposer_android.entity.Note;
 import com.example.user.cucomposer_android.entity.Part;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,9 +54,11 @@ public class Tempo {
 
     public static Part toPart(List<Integer> note, List<Integer> duration, int bpm, int key){
         double div = 15000.0 / bpm;
+        Log.d("noteList", Arrays.toString(note.toArray()));
+        Log.d("noteDur",Arrays.toString(duration.toArray()));
         List<Note> noteList = new ArrayList<Note>();
         for(int i=0;i<duration.size();i++){
-            if(duration.get(i)*2 > div)
+            if(duration.get(i)*2 < div)
                 continue;
             int duration1 = (int) (duration.get(i) / div);
             double error1 = (duration.get(i) / div - duration1);

@@ -2,6 +2,9 @@ package com.example.user.cucomposer_android;
 
 import android.util.Log;
 import android.widget.Toast;
+
+import com.example.user.cucomposer_android.entity.Part;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +28,8 @@ public class Pitch {
     static String pitchPropString="";
     static ArrayList<Integer> playNote = new ArrayList<Integer>();
     static ArrayList<Integer> playDuration = new ArrayList<Integer>();
+    static ArrayList<Integer> reallyPlayNote = new ArrayList<Integer>();
+    static ArrayList<Integer> reallyPlayduration = new ArrayList<Integer>();
     static ArrayList<Float> frequencyArray = new ArrayList<Float>();
     static String[] note = { "C0", "C#0", "D0", "D#0", "E0", "F0", "F#0", "G0",
             "G#0", "A0", "A#0", "B0", "C1", "C#1", "D1", "D#1", "E1", "F1",
@@ -58,7 +63,7 @@ public class Pitch {
     static double [] minorWeight = {6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17};
     static int[][] majorKey = new int[12][12];
     static int[][] minorKey = new int[12][12];
-
+    boolean useKrumhansl = true;
 
     //pitch estimation method
     public static void pitchEst(float[] audioFloats,List<Integer> segmentOutput)
@@ -69,15 +74,25 @@ public class Pitch {
 //        playNote.add(-1);
 //        frequencyArray.add((float) -1.0);
         DecimalFormat df = new DecimalFormat("#.00");
+
+        pitchEst(Arrays.copyOfRange(audioFloats,0, segmentOutput.get(0)));
+        String time = " " + df.format(((double) (segmentOutput.get(0))) / sampFreq);
+        int duration = (int) (Double.parseDouble(time) * 1000);
+        playDuration.add(duration);
+        playNote.add(-2);
+        playDuration.add(0);
+
         for(int i = 0 ; i < segmentOutput.size();i+=2){
            pitchEst(Arrays.copyOfRange(audioFloats,segmentOutput.get(i), segmentOutput.get(i+1)));
             if(i+2<segmentOutput.size()) {
 
-               String time = " " + df.format(((double) (segmentOutput.get(i+1)-segmentOutput.get(i))) / sampFreq);
-                int duration = (int) (Double.parseDouble(time) * 1000)
+                time = " " + df.format(((double) (segmentOutput.get(i+1)-segmentOutput.get(i))) / sampFreq);
+                 duration = (int) (Double.parseDouble(time) * 1000)
                         - lastDuration;
                 playDuration.add(duration);
 
+                playNote.add(-2);
+                playDuration.add(0);
                 pitchEst(Arrays.copyOfRange(audioFloats,segmentOutput.get(i+1)+1, segmentOutput.get(i+2)-1));
                 time = " " + df.format(((double) (segmentOutput.get(i+2)-segmentOutput.get(i+1))) / sampFreq);
                  duration = (int) (Double.parseDouble(time) * 1000)
@@ -85,21 +100,33 @@ public class Pitch {
                 playDuration.add(duration);
 //                time = " " + df.format(((double) (segmentOutput.get(i+2)-segmentOutput.get(i+1))) / sampFreq);
 //                duration = (int) (Double.parseDouble(time) * 1000);
-//                playNote.add(-2);
-//                playDuration.add(duration);
+                playNote.add(-2);
+                playDuration.add(0);
 //                frequencyArray.add((float)-2.0);
 
             }
         }
-        String time = " " + df.format(((double) (audioFloats.length))/sampFreq);
+         time = " " + df.format(((double) (audioFloats.length))/sampFreq);
         String lastTime = " " + df.format(segmentOutput.get(segmentOutput.size()-1)/((double)sampFreq));
-        int duration = (int) (Double.parseDouble(time) * 1000) -(int) Double.parseDouble(lastTime) * 1000;
+         duration = (int) (Double.parseDouble(time) * 1000) -(int) Double.parseDouble(lastTime) * 1000;
         playDuration.add(duration);
         Log.d(LOG_TAG,"TUNE WITH SEGMENT");
-        Log.d(LOG_TAG,Arrays.toString(playNote.toArray())+"\n"+Arrays.toString(playDuration.toArray()));
+
         tuneMelody();
+        Log.d(LOG_TAG,Arrays.toString(playNote.toArray())+"\n"+Arrays.toString(playDuration.toArray()));
+        Log.d(LOG_TAG,Arrays.toString(reallyPlayNote.toArray())+"\n"+Arrays.toString(reallyPlayduration.toArray()));
+
+
 
         Log.d(LOG_TAG,playNote.size()+" "+playDuration.size());
+        int bpm = Tempo.tempoDetect(playDuration);
+        Log.d(LOG_TAG,"BPM = "+bpm);
+        Part part = Tempo.toPart(reallyPlayNote,reallyPlayduration,bpm,0);
+        Log.d(LOG_TAG,"noteList is"+part.getNoteList().size());
+
+        MidiPlay mid = new MidiPlay(part.getNoteList());
+        mid.setBpm(part.getBpm());
+        mid.generateMidi();
     }
     public static void pitchEst(float[] audioFloats)
             throws Exception {
@@ -125,42 +152,46 @@ public class Pitch {
                 - lastDuration;
         playDuration.add(duration);
         Log.d(LOG_TAG,"TUNE WITHOUT SEGMENT");
-        Log.d(LOG_TAG,Arrays.toString(playNote.toArray())+"\n"+Arrays.toString(playDuration.toArray()));
         tuneMelody();
+        Log.d(LOG_TAG,Arrays.toString(playNote.toArray())+"\n"+Arrays.toString(playDuration.toArray()));
+        Log.d(LOG_TAG,Arrays.toString(reallyPlayNote.toArray())+"\n"+Arrays.toString(reallyPlayduration.toArray()));
+
 
     }
     private static void tuneMelody(){
 
 
-        ArrayList<Integer> reallyPlayNote = new ArrayList<Integer>();
-        ArrayList<Integer> reallyPlayduration = new ArrayList<Integer>();
+         reallyPlayNote = new ArrayList<Integer>();
+         reallyPlayduration = new ArrayList<Integer>();
         int currentSize = 0;
         if(playDuration.get(0)<0)playDuration.set(0,0);
-        for (int i = 0; i < playNote.size(); i++) {
-            Log.d(LOG_TAG,"note is " + playNote.get(i)
-                    + " and the duration is " + playDuration.get(i)
-                    + " and the frequency is " + frequencyArray.get(i));
-        }
-        for (int i = 0; i < playNote.size() - 1; i++) {
-            if (i > 0)
-                Log.d(LOG_TAG,"i = " + i + " " + playNote.get(i) + " vs "
-                        + reallyPlayNote.get(currentSize));
+//        for (int i = 0; i < playNote.size(); i++) {
+//            Log.d(LOG_TAG,"note is " + playNote.get(i)
+//                    + " and the duration is " + playDuration.get(i)
+//                    + " and the frequency is " + frequencyArray.get(i));
+//        }
+        Log.d(LOG_TAG,"note is "+ Arrays.toString(playNote.toArray())+"\n"+Arrays.toString(playDuration.toArray()));
+        for (int i = 0; i < playNote.size() ; i++) {
+//            if (i > 0)
+//                Log.d(LOG_TAG,"i = " + i + " " + playNote.get(i) + " vs "
+//                        + reallyPlayNote.get(currentSize));
 
             if (i == 0) {
                 reallyPlayNote.add(playNote.get(0));
                 reallyPlayduration.add(playDuration.get(0));
-                Log.d(LOG_TAG,"add " + playNote.get(0) + " to index "
-                        + currentSize);
+//                Log.d(LOG_TAG,"add " + playNote.get(0) + " to index "
+//                        + currentSize);
             } else if ((Math.abs(playNote.get(i)
                     - reallyPlayNote.get(currentSize)) < 2)) {
                 int j = i;
                 int currentDuration = reallyPlayduration.get(currentSize);
                 int otherDuration = 0;
                 for (; j < playNote.size(); j++) {
+                 //   if(playNote.get(j)==-2)break;
                     if (playNote.get(j) == reallyPlayNote.get(currentSize)) {
-                        Log.d(LOG_TAG,"Current duration = "
-                                + currentDuration + " Other duration = "
-                                + otherDuration);
+//                        Log.d(LOG_TAG,"Current duration = "
+//                                + currentDuration + " Other duration = "
+//                                + otherDuration);
                         currentDuration += playDuration.get(j);
                         if (currentDuration > otherDuration)
                             reallyPlayduration.set(currentSize,
@@ -168,24 +199,29 @@ public class Pitch {
                                             + playDuration.get(i));
                         else {
                             if (i > 0)
-                                Log.d(LOG_TAG,"i = " + i + " "
-                                        + playNote.get(i) + " differ "
-                                        + playNote.get(i - 1));
+//                                Log.d(LOG_TAG,"i = " + i + " "
+//                                        + playNote.get(i) + " differ "
+//                                        + playNote.get(i - 1));
                             reallyPlayNote.add(playNote.get(i));
                             reallyPlayduration.add(playDuration.get(i));
                             currentSize++;
+//                            Log.d(LOG_TAG,"add " + playNote.get(i) + " to index "
+//                                    + currentSize);
                         }
                         break;
                     } else
                         otherDuration += playDuration.get(j);
                     if (j == playNote.size() - 1) {
                         if (i > 0)
-                            Log.d(LOG_TAG,"i = " + i + " "
-                                    + playNote.get(i) + " differ "
-                                    + playNote.get(i - 1));
+//                            Log.d(LOG_TAG,"i = " + i + " "
+//                                    + playNote.get(i) + " differ "
+//                                    + playNote.get(i - 1));
+
                         reallyPlayNote.add(playNote.get(i));
                         reallyPlayduration.add(playDuration.get(i));
                         currentSize++;
+//                        Log.d(LOG_TAG,"add " + playNote.get(i) + " to index "
+//                                + currentSize);
                     }
                 }
 
@@ -197,18 +233,19 @@ public class Pitch {
                 reallyPlayduration.add(playDuration.get(i));
 
                 currentSize++;
-                Log.d(LOG_TAG,"add " + playNote.get(i) + " to index "
-                        + currentSize);
+//                Log.d(LOG_TAG,"add " + playNote.get(i) + " to index "
+//                        + currentSize);
             }
         }
         Log.d(LOG_TAG,"---------------end---------------");
-        for (int i = 0; i < reallyPlayNote.size(); i++) {
-            // JOptionPane.showMessageDialog(null, "fu");
-            if(reallyPlayNote.get(i)>-1)
-                Log.d(LOG_TAG,"true note is " + reallyPlayNote.get(i)+ " ("+note[reallyPlayNote.get(i)]+")"
-                        + " and the true duration is " + reallyPlayduration.get(i));
-            else             Log.d(LOG_TAG,"SILENCE - true duration is " + reallyPlayduration.get(i));
-        }
+//        for (int i = 0; i < reallyPlayNote.size(); i++) {
+//            // JOptionPane.showMessageDialog(null, "fu");
+//            if(reallyPlayNote.get(i)>-1)
+//                Log.d(LOG_TAG,"true note is " + reallyPlayNote.get(i)+ " ("+note[reallyPlayNote.get(i)]+")"
+//                        + " and the true duration is " + reallyPlayduration.get(i));
+//            else             Log.d(LOG_TAG,"SILENCE - true duration is " + reallyPlayduration.get(i));
+//        }
+        Log.d(LOG_TAG,Arrays.toString(reallyPlayNote.toArray())+"\n"+Arrays.toString(reallyPlayduration.toArray()));
         Log.d(LOG_TAG,"---------------true end---------------");
 
         for (int i = 0; i < reallyPlayNote.size(); i++) {
@@ -287,12 +324,13 @@ public class Pitch {
                 reallyPlayduration.remove(i);
             }
         }
-        for (int i = 0; i < reallyPlayNote.size(); i++) {
-            if(reallyPlayNote.get(i)>-1)
-                Log.d(LOG_TAG,"really true note is " + reallyPlayNote.get(i)+ " ("+note[reallyPlayNote.get(i)]+")"
-                        + " and the really true duration is " + reallyPlayduration.get(i));
-            else             Log.d(LOG_TAG,"SILENCE - true duration is " + reallyPlayduration.get(i));
-        }
+//        for (int i = 0; i < reallyPlayNote.size(); i++) {
+//            if(reallyPlayNote.get(i)>-1)
+//                Log.d(LOG_TAG,"really true note is " + reallyPlayNote.get(i)+ " ("+note[reallyPlayNote.get(i)]+")"
+//                        + " and the really true duration is " + reallyPlayduration.get(i));
+//            else             Log.d(LOG_TAG,"SILENCE - true duration is " + reallyPlayduration.get(i));
+//        }
+        Log.d(LOG_TAG,Arrays.toString(reallyPlayNote.toArray())+"\n"+Arrays.toString(reallyPlayduration.toArray()));
         Log.d(LOG_TAG,"---------------really true end---------------");
 
 
@@ -300,13 +338,15 @@ public class Pitch {
         int musicKey2 = findKeyKrumhanslSchmuckler(reallyPlayNote, reallyPlayduration);
         //	tuneMelody(reallyPlayNote,reallyPlayduration,musicKey);
         tuneMelodyKrumhanslSchmuckler(reallyPlayNote,reallyPlayduration,musicKey2);
-        for (int i = 0; i < reallyPlayNote.size(); i++) {
-            // JOptionPane.showMessageDialog(null, "fu");
-            if(reallyPlayNote.get(i)>-1)
-                Log.d(LOG_TAG,"After tune note is " + reallyPlayNote.get(i)+ " ("+note[reallyPlayNote.get(i)]+")"
-                        + " and the After tune duration is " + reallyPlayduration.get(i));
-            else             Log.d(LOG_TAG,"SILENCE - true duration is " + reallyPlayduration.get(i));
-        }
+//        for (int i = 0; i < reallyPlayNote.size(); i++) {
+//            // JOptionPane.showMessageDialog(null, "fu");
+//            if(reallyPlayNote.get(i)>-1)
+//                Log.d(LOG_TAG,"After tune note is " + reallyPlayNote.get(i)+ " ("+note[reallyPlayNote.get(i)]+")"
+//                        + " and the After tune duration is " + reallyPlayduration.get(i));
+//            else             Log.d(LOG_TAG,"SILENCE - true duration is " + reallyPlayduration.get(i));
+//        }
+        Log.d(LOG_TAG,Arrays.toString(reallyPlayNote.toArray())+"\n"+Arrays.toString(reallyPlayduration.toArray()));
+
         Log.d(LOG_TAG,"---------------After tune---------------");
 
         Log.d(LOG_TAG,"---------------done------------");
