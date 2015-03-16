@@ -23,7 +23,7 @@ public class MidiPlay {
 
     private int resolution = 96;
     private List<Note> notes;
-    private int bpm;
+    private int bpm=120;
 
     private String LOG_TAG = "MidiPlay";
     public MidiPlay(){

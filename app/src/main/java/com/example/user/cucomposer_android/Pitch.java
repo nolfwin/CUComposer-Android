@@ -31,6 +31,8 @@ public class Pitch {
     static ArrayList<Integer> reallyPlayNote = new ArrayList<Integer>();
     static ArrayList<Integer> reallyPlayduration = new ArrayList<Integer>();
     static ArrayList<Float> frequencyArray = new ArrayList<Float>();
+    public static final String[] keyString = {"C Major","C# Major","D Major","D# Major","E Major","F Major","F# Major","G Major","G# Major","A Major","A# Major","B Major",
+            "C Minor", "C# Minor", "D Minor", "D# Minor", "E Minor", "F Minor", "F# Minor", "G Minor", "G# Minor", "A Minor", "A# Minor", "B Minor",};
     static String[] note = { "C0", "C#0", "D0", "D#0", "E0", "F0", "F#0", "G0",
             "G#0", "A0", "A#0", "B0", "C1", "C#1", "D1", "D#1", "E1", "F1",
             "F#1", "G1", "G#1", "A1", "A#1", "B1", "C2", "C#2", "D2", "D#2",
@@ -57,24 +59,22 @@ public class Pitch {
             5274.04, 5587.65, 5919.91, 6271.93, 6644.88, 7040, 7458.62, 7902.13 };
     static int bufferSize = 1024;
     static int sampFreq = 8000;
-
     static int[][] key = new int[12][7];
     static double[] majorWeight ={6.35,2.23,3.48,2.33,4.38	,4.09,2.52,5.19,2.39,3.66,2.29,2.88};
     static double [] minorWeight = {6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17};
     static int[][] majorKey = new int[12][12];
     static int[][] minorKey = new int[12][12];
-    boolean useKrumhansl = true;
+    static int musicKeyToSend=0;
+    static boolean useKrumhansl = true;
 
-    //pitch estimation method
-    public static void pitchEst(float[] audioFloats,List<Integer> segmentOutput)
+    //pitch estimation method with Segment
+
+    public static Part pitchEst(float[] audioFloats,List<Integer> segmentOutput,int preprocessKey)
             throws Exception {
         initKey();
         playNote.clear();
         playDuration.clear();
-//        playNote.add(-1);
-//        frequencyArray.add((float) -1.0);
         DecimalFormat df = new DecimalFormat("#.00");
-
         pitchEst(Arrays.copyOfRange(audioFloats,0, segmentOutput.get(0)));
         String time = " " + df.format(((double) (segmentOutput.get(0))) / sampFreq);
         int duration = (int) (Double.parseDouble(time) * 1000);
@@ -98,11 +98,8 @@ public class Pitch {
                  duration = (int) (Double.parseDouble(time) * 1000)
                         - lastDuration;
                 playDuration.add(duration);
-//                time = " " + df.format(((double) (segmentOutput.get(i+2)-segmentOutput.get(i+1))) / sampFreq);
-//                duration = (int) (Double.parseDouble(time) * 1000);
                 playNote.add(-2);
                 playDuration.add(0);
-//                frequencyArray.add((float)-2.0);
 
             }
         }
@@ -111,36 +108,30 @@ public class Pitch {
          duration = (int) (Double.parseDouble(time) * 1000) -(int) Double.parseDouble(lastTime) * 1000;
         playDuration.add(duration);
         Log.d(LOG_TAG,"TUNE WITH SEGMENT");
-
-        tuneMelody();
+        tuneMelody(preprocessKey);
         Log.d(LOG_TAG,Arrays.toString(playNote.toArray())+"\n"+Arrays.toString(playDuration.toArray()));
         Log.d(LOG_TAG,Arrays.toString(reallyPlayNote.toArray())+"\n"+Arrays.toString(reallyPlayduration.toArray()));
-
         Log.d(LOG_TAG,playNote.size()+" "+playDuration.size());
         int bpm = Tempo.tempoDetect(playDuration);
         Log.d(LOG_TAG,"BPM = "+bpm);
-        Part part = Tempo.toPart(reallyPlayNote,reallyPlayduration,bpm,0);
+        Part part = Tempo.toPart(reallyPlayNote,reallyPlayduration,bpm,musicKeyToSend);
+        part.setPartType(Part.PartType.values()[MainActivity.runningId]);
         Log.d(LOG_TAG,"noteList is"+part.getNoteList().size());
-
         MidiPlay mid = new MidiPlay(part.getNoteList());
         mid.setBpm(part.getBpm());
         Log.d(LOG_TAG,"PARTDOTGETBPM = "+part.getBpm());
         mid.generateMidi();
-
+        Log.d(LOG_TAG,"Description "+part.toString());
+        return part;
 
     }
     public static void pitchEst(float[] audioFloats)
             throws Exception {
-
-//        playNote.clear();
-//        playDuration.clear();
         playNote.add(-1);
         frequencyArray.add((float) -1.0);
         pitchAnalysis(audioFloats,sampFreq,bufferSize,0);
-
-//        tuneMelody();
     }
-    public static void pitchEstWithoutSegment(float[] audioFloats){
+    public static Part pitchEstWithoutSegment(float[] audioFloats,int preprocessKey){
         initKey();
         playNote.clear();
         playDuration.clear();
@@ -153,11 +144,23 @@ public class Pitch {
                 - lastDuration;
         playDuration.add(duration);
         Log.d(LOG_TAG,"TUNE WITHOUT SEGMENT");
-        tuneMelody();
+        tuneMelody(preprocessKey);
 
+        Log.d(LOG_TAG,playNote.size()+" "+playDuration.size());
+        int bpm = Tempo.tempoDetect(playDuration);
+        Log.d(LOG_TAG,"BPM = "+bpm);
+        Part part = Tempo.toPart(reallyPlayNote,reallyPlayduration,bpm,musicKeyToSend);
+        Log.d(LOG_TAG,"noteList is"+part.getNoteList().size());
+
+        MidiPlay mid = new MidiPlay(part.getNoteList());
+        mid.setBpm(part.getBpm());
+        Log.d(LOG_TAG,"PARTDOTGETBPM = "+part.getBpm());
+        mid.generateMidi();
+
+        return part;
 
     }
-    private static void tuneMelody(){
+    private static void tuneMelody(int preprocessKey){
 
 
          reallyPlayNote = new ArrayList<Integer>();
@@ -332,18 +335,19 @@ public class Pitch {
         Log.d(LOG_TAG,Arrays.toString(reallyPlayNote.toArray())+"\n"+Arrays.toString(reallyPlayduration.toArray()));
         Log.d(LOG_TAG,"---------------really true end---------------");
 
+        int musicKey;
 
-        int musicKey =calculateKey(reallyPlayNote,reallyPlayduration);
-        int musicKey2 = findKeyKrumhanslSchmuckler(reallyPlayNote, reallyPlayduration);
-        //	tuneMelody(reallyPlayNote,reallyPlayduration,musicKey);
-        tuneMelodyKrumhanslSchmuckler(reallyPlayNote,reallyPlayduration,musicKey2);
-//        for (int i = 0; i < reallyPlayNote.size(); i++) {
-//            // JOptionPane.showMessageDialog(null, "fu");
-//            if(reallyPlayNote.get(i)>-1)
-//                Log.d(LOG_TAG,"After tune note is " + reallyPlayNote.get(i)+ " ("+note[reallyPlayNote.get(i)]+")"
-//                        + " and the After tune duration is " + reallyPlayduration.get(i));
-//            else             Log.d(LOG_TAG,"SILENCE - true duration is " + reallyPlayduration.get(i));
-//        }
+        if(useKrumhansl){
+            musicKey = preprocessKey>=0 ? preprocessKey : findKeyKrumhanslSchmuckler(reallyPlayNote, reallyPlayduration);
+            tuneMelodyKrumhanslSchmuckler(reallyPlayNote,reallyPlayduration,musicKey);
+        }
+        else{
+            musicKey =  preprocessKey>=0 ? preprocessKey : calculateKey(reallyPlayNote,reallyPlayduration);
+            tuneMelody(reallyPlayNote,reallyPlayduration,musicKey);
+        }
+
+
+        musicKeyToSend = musicKey;
         Log.d(LOG_TAG,Arrays.toString(reallyPlayNote.toArray())+"\n"+Arrays.toString(reallyPlayduration.toArray()));
 
         Log.d(LOG_TAG,"---------------After tune---------------");
