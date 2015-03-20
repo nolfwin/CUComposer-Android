@@ -1,5 +1,10 @@
 package com.example.user.cucomposer_android.utility;
 
+import com.example.user.cucomposer_android.entity.Note;
+
+import java.util.List;
+
+
 /**
  * Created by Nuttapong on 2/15/2015.
  */
@@ -37,5 +42,21 @@ public class Key {
             seq = MINOR_SEQUENCE;
         }
         return (seq[noteKey%7]+keyPitch)%12;
+    }
+
+    public static int[] ProjectNotes(List<Note> notes,int keyPitch,boolean keyMode){
+        Note lastNote = notes.get(notes.size()-1);
+        //System.out.println("last note: "+lastNote.getOffset()+" "+lastNote.getDuration());
+        int[] projectedNotes = new int[((int)(Math.ceil((lastNote.getOffset()+lastNote.getDuration())/4)))*16];
+        for(int i=0;i<notes.size();i++){
+            Note aNote = notes.get(i);
+            if(aNote.getPitch()<0){
+                continue;
+            }
+            for(int j=(int)(aNote.getOffset()*4);j<(int)((aNote.getOffset()+aNote.getDuration())*4);j++){
+                projectedNotes[j] = Key.mapToKey(aNote.getPitch(),keyPitch,keyMode)+1;
+            }
+        }
+        return projectedNotes;
     }
 }

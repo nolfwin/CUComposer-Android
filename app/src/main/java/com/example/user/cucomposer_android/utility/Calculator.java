@@ -103,4 +103,12 @@ public class Calculator {
             arr[i] = Math.log10(arr[i]);
         }
     }
+
+    public static final double precision(int tp,int fp){
+        return 1.0*tp/(tp+fp);
+    }
+
+    public static final double recall(int tp,int fn){
+        return 1.0*tp/(tp+fn);
+    }
 }

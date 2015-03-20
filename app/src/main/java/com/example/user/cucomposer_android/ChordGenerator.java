@@ -22,18 +22,18 @@ public class ChordGenerator {
     private int[] keySequence = null;
     private double[][] noteInChord = null;
     private double[][] nextChord = null;
-    private int[] projectedPitch = null;
-    //    private int[] projectedPitch = {
-//    		6, 6, 6, 6, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 7, 7, 7, 7, 7, 7, 1, 1, 1, 1, 7, 7, 7, 7, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 7, 7, 7, 7, 7, 5, 5, 5, 5, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3, 3, 1, 1, 1, 1, 7, 7, 7, 7, 1, 1, 1, 1, 1, 1, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 5, 5, 5, 5, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 7, 7, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 6, 6, 1, 1, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 6, 6, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 6, 6, 7, 7, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 1, 1, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1
-//    };
+    //private int[] projectedPitch = null;
+    private int[] projectedNotes = {
+            6, 6, 6, 6, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 7, 7, 7, 7, 7, 7, 1, 1, 1, 1, 7, 7, 7, 7, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 7, 7, 7, 7, 7, 5, 5, 5, 5, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3, 3, 1, 1, 1, 1, 7, 7, 7, 7, 1, 1, 1, 1, 1, 1, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 5, 5, 5, 5, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 7, 7, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 6, 6, 1, 1, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 6, 6, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 6, 6, 7, 7, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 1, 1, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1
+    };
     private double[][] entropyObservation = null;
     private double[] chordAppearance = null;
     private int considerTime = 8;
     private int baseNote = 0;
 
-    public void generateChords(){
-        if(projectedPitch == null){
-            initProjectedPitch();
+    public int[] generateChords(){
+        if(projectedNotes == null){
+            initProjectedNotes();
         }
         //System.out.println("note size: "+notes.size());
 //        System.out.println("pitch size: "+projectedPitch.length);
@@ -124,14 +124,14 @@ public class ChordGenerator {
         System.out.println(entropyObservation.length);
         int[] chordPath = new int[entropyObservation.length];
         for(int i=entropyObservation.length-1;i>0;i--){
-            chordPath[i] = bestCandidate%numState;
+            chordPath[i] = bestCandidate;
             bestCandidate = path[i][bestCandidate];
         }
         chordPath[0] = bestCandidate;
         for(int i=0;i<chordPath.length;i++){
-
             System.out.print(" "+ (chordPath[i]%numState>=7 )+(chordPath[i]%numState%7 + 1));
         }
+        return chordPath;
     }
 
 
@@ -150,19 +150,8 @@ public class ChordGenerator {
         }
     }
 
-    public void initProjectedPitch(){
-        Note lastNote = notes.get(notes.size()-1);
-        System.out.println("last note: "+lastNote.getOffset()+" "+lastNote.getDuration());
-        projectedPitch = new int[((int)(Math.ceil((lastNote.getOffset()+lastNote.getDuration())/4)))*16];
-        for(int i=0;i<notes.size();i++){
-            Note aNote = notes.get(i);
-            if(aNote.getPitch()<0){
-                continue;
-            }
-            for(int j=(int)(aNote.getOffset()*4);j<(int)((aNote.getOffset()+aNote.getDuration())*4);j++){
-                projectedPitch[j] = Key.mapToKey(aNote.getPitch(),keyPitch,keyMode)+1;
-            }
-        }
+    public void initProjectedNotes(){
+        this.projectedNotes = Key.ProjectNotes(notes, keyPitch, keyMode);
     }
 
     public void initNoteInChord(){
@@ -213,13 +202,13 @@ public class ChordGenerator {
     }
 
     public void calculateEntropyObservation(){
-        entropyObservation = new double[projectedPitch.length/16][numState];
+        entropyObservation = new double[projectedNotes.length/16][numState];
         for(int i=0;i<entropyObservation.length;i++) {
             double[] noteCounter = new double[7];
             boolean hasPitch = false;
             for(int j=i*16;j<i*16+16;j++){
-                if(projectedPitch[j]!=0) {
-                    noteCounter[projectedPitch[j]-1] += 1;
+                if(projectedNotes[j]!=0) {
+                    noteCounter[projectedNotes[j]-1] += 1;
                     hasPitch = true;
                 }
             }
