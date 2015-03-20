@@ -20,6 +20,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.cucomposer_android.entity.Note;
+import com.example.user.cucomposer_android.entity.Part;
+
+import org.jfugue.Player;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -32,13 +37,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import jp.kshoji.javax.sound.midi.UsbMidiSystem;
 
 public class MainActivity extends Activity {
 
     private static final String LOG_TAG = "debugger";
-    Integer[] freqset = {8000, 11025, 16000, 22050, 44100};
+    Integer[] freqset = {11025, 16000, 22050, 44100};
     private ArrayAdapter<Integer> adapter;
     private AudioRecord audioRecord = null;
     private AudioTrack audioTrack = null;
@@ -53,14 +64,15 @@ public class MainActivity extends Activity {
     private Button[] recordButton = new Button[partSize];
     private Button[] playButton = new Button[partSize];
     private Button[] pitchButton = new Button[partSize];
+    private Button[] modifyButton = new Button[partSize];
     private boolean isFoundAudioRecord = false;
-    private int runningId = -1;
+    public static int runningId = -1;
 
     public static int sampleRate;
     public static int audioFormat;
     public static int channelConfig;
 
-
+    public static Part[] partArray = new Part[4];
     private Handler timerHandler = new Handler();
 
     Button nextButton;
@@ -70,7 +82,7 @@ public class MainActivity extends Activity {
 
     Boolean recording;
     Boolean playing;
-
+    UsbMidiSystem usbMidiSystem;
     /**
      * Called when the activity is first created.
      */
@@ -108,6 +120,11 @@ public class MainActivity extends Activity {
             pitchButton[i].setOnClickListener(pitchOnClickListener);
             partLayout[i].addView(pitchButton[i],layoutParams);
 
+            modifyButton[i] = new Button(this);
+            modifyButton[i].setText("modify");
+            modifyButton[i].setId(i);
+            modifyButton[i].setOnClickListener(modifyOnClickListener);
+            partLayout[i].addView(modifyButton[i],layoutParams);
         }
         timer = (TextView) findViewById(R.id.timer);
         nextButton = (Button) findViewById(R.id.nextButton);
@@ -125,7 +142,7 @@ public class MainActivity extends Activity {
 
         }
     }
-
+    @Override
     OnClickListener startRecOnClickListener
             = new OnClickListener() {
 
@@ -166,6 +183,8 @@ public class MainActivity extends Activity {
                 playButton[i].setEnabled(false);
             if(isRecord||id!=i)
                 pitchButton[i].setEnabled(false);
+            if(isRecord||id!=i)
+                modifyButton[i].setEnabled(false);
         }
     }
 
@@ -174,6 +193,7 @@ public class MainActivity extends Activity {
             recordButton[i].setEnabled(true);
             playButton[i].setEnabled(true);
             pitchButton[i].setEnabled(true);
+            modifyButton[i].setEnabled(true);
         }
     }
 
@@ -220,8 +240,30 @@ public class MainActivity extends Activity {
     OnClickListener mergeButtonOnClickListener =  new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast toast = Toast.makeText(getApplicationContext(),"Let's Merge",Toast.LENGTH_SHORT);
-            toast.show();
+//            Player player = new Player();
+//            player.play("C D E F G A B");
+//
+//            Toast toast = Toast.makeText(getApplicationContext(),"Let's Merge",Toast.LENGTH_SHORT);
+//            toast.show();
+
+            for(int i = 0; i < partSize ; i++){
+                runningId = i;
+                partArray[i]=null;
+                partArray[i] = getPartFromRunningID(runningId);
+                if(partArray[i]==null) Log.d("NULL","running ID = "+i+" is null");
+                else  Log.d("Part","get running ID = "+i+" part");
+                Log.d("Key",partArray[i].toString());
+            }
+            int baseKey = calculateMediumKey(partArray);
+            int meanBpm = calculateMeanBpm(partArray);
+            for(int i = 0 ; i < partArray.length;i++){
+                if(partArray[i]==null) continue;
+                partArray[i].setKey(baseKey);
+                partArray[i].setBpm(meanBpm);
+                Log.d("Key",partArray[i].toString());
+            }
+//            Toast toast = Toast.makeText(getApplicationContext(),"Let's Merge",Toast.LENGTH_SHORT);
+//            toast.show();
         }
     };
     OnClickListener nextButtonOnClickListener = new OnClickListener() {
@@ -235,55 +277,198 @@ public class MainActivity extends Activity {
         public void onClick(View v) {
 //pitchfucca
             runningId = v.getId();
-            File file = new File(Config.appFolder + "/test"+runningId+".pcm");
-            int shortSizeInBytes = Short.SIZE/Byte.SIZE;
-
-            int bufferSizeInBytes = (int)(file.length()/shortSizeInBytes);
-            short[] audioData = new short[bufferSizeInBytes];
-
-            boolean done = true;
-            if(audioRecord==null){
-                audioRecord = findAudioRecord();
-            }
-            int i = 0;
-            try {
-                bufferSize = AudioTrack.getMinBufferSize(audioRecord.getSampleRate(),AudioFormat.CHANNEL_OUT_MONO,audioRecord.getAudioFormat());
-                InputStream inputStream = new FileInputStream(file);
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-                dataInputStream = new DataInputStream(bufferedInputStream);
-
-
-                while(dataInputStream.available() > 0){
-                    if(i==audioData.length){
-                        done = false;
-                        break;
-                    }
-                    audioData[i] = dataInputStream.readShort();
-                    i++;
+            getPartFromRunningID(runningId);
+        }
+    };
+    OnClickListener modifyOnClickListener = new OnClickListener() {
+        @Override
+            public void onClick(View v) {
+                runningId = v.getId();
+                Log.d("RUNNING ID","Running ID "+runningId);
+                partArray[runningId]=null;
+                partArray[runningId] = getPartFromRunningID(runningId);
+                runningId=v.getId();
+                if(partArray[runningId]==null) {
+                    Log.d("NULL","running ID = "+runningId+" is null");
+                    return;
                 }
-                dataInputStream.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Log.d(LOG_TAG,"audioData size: "+bufferSizeInBytes+" "+audioData.length+" "+i);
-            try {
-               float[] audioFloats = floatMe(audioData);
-               List<Integer> segmentOutput = Segment.segment(floatMe(audioData));
-                Pitch.pitchEstWithoutSegment(audioFloats);
-               Pitch.pitchEst(audioFloats,segmentOutput);
+                else  Log.d("Part","get running ID = "+runningId+" part");
 
-               Log.d(LOG_TAG,Arrays.toString(segmentOutput.toArray()));
-               Log.d(LOG_TAG,audioFloats.length+"");
-              Log.d(LOG_TAG,"Number of syllables:"+segmentOutput.size()/2);
-              // Pitch.pitchEst(floatMe(audioData));
+            callNextActivity();
+        }
+    };
+    public int calculateMeanBpm(Part[] partArray){
+        int ans = 0;
+        int count = 0;
+        for(int i = 0 ; i < partArray.length;i++){
+            if(partArray[i]==null)continue;
+            ans+=partArray[i].getBpm();
+            count++;
+        }
+        return ans/count;
+    }
+    public int calculateMediumKey(Part[] partArray){
+        boolean[] isMajor = new boolean[partArray.length];
+        int baseKey = -1;
+        for(int i = 0 ; i< partArray.length;i++){
+            if(partArray[i]==null) continue;
+            if(partArray[i].getKey()>11)isMajor[i]=false;
+            else isMajor[i]=true;
+        }
+        boolean isAllMajor=true;
+        boolean isAllMinor=true;
+        for(int i = 0; i < isMajor.length;i++){
+            if(partArray[i]==null)continue;
+            if(!isMajor[i]){
+                isAllMajor=false;
+            }
+            else{
+                isAllMinor=false;
+            }
+        }
+
+        if(isAllMajor||isAllMinor){
+            //now based on the mode value of the key in each part
+            int[] keyArray = new int[partArray.length];
+            for(int i = 0; i < partArray.length;i++){
+                if(partArray[i]==null)keyArray[i]=-1;
+                else keyArray[i]=partArray[i].getKey();
+            }
+            baseKey = getMode(keyArray);
+            for(int i = 0; i < partArray.length;i++){
+                if(partArray[i]==null)continue;
+                transpose(partArray[i],baseKey-partArray[i].getKey());
+            }
+
+        }
+        else{
+            float[] mergeAudio = new float[0];
+
+            for(int i = 0; i < partArray.length;i++){
+                float[] audioFloats = getAudioFloatFromRunningID(i);
+                if(audioFloats==null)continue;
+                else mergeAudio = concat(mergeAudio,audioFloats);
+            }
+            List<Integer> segmentOutput = Segment.segment(mergeAudio);
+            try {
+                Part mergePart = Pitch.pitchEstWithoutSegment(mergeAudio,-1);
+                baseKey = mergePart.getKey();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            runningId= -1;
+            for(int i = 0; i < partArray.length;i++){
+                float[] audioFloats = getAudioFloatFromRunningID(i);
+                segmentOutput = Segment.segment(audioFloats);
+                if(audioFloats==null)continue;
+                try {
+                    partArray[i] = Pitch.pitchEstWithoutSegment(audioFloats,baseKey);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
-    };
+        return baseKey;
+    }
+    public static int getMode(int[] values) {
+        HashMap<Integer,Integer> freqs = new HashMap<Integer,Integer>();
+        for (int val : values) {
+            if(val<0)continue;
+            Integer freq = freqs.get(val);
+            freqs.put(val, (freq == null ? 1 : freq+1));
+        }
+
+        int mode = 0;
+        int maxFreq = 0;
+
+        for (Map.Entry<Integer,Integer> entry : freqs.entrySet()) {
+            int freq = entry.getValue();
+            if (freq > maxFreq) {
+                maxFreq = freq;
+                mode = entry.getKey();
+            }
+        }
+
+        return mode;
+    }
+    public float[] concat(float[] a, float[] b) {
+        int aLen = a.length;
+        int bLen = b.length;
+        float[] c= new float[aLen+bLen];
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+        return c;
+    }
+    public void transpose(Part part,int trans){
+        List<Note> noteList = part.getNoteList();
+
+        for(int i = 0 ; i < noteList.size();i++){
+            Note note = noteList.get(i);
+            note.setPitch(note.getPitch()+trans);
+            noteList.set(i,note);
+        }
+        part.setNoteList(noteList);
+    }
+    public float[] getAudioFloatFromRunningID(int ID){
+        runningId = ID;
+        File file = new File(Config.appFolder + "/test"+runningId+".pcm");
+        int shortSizeInBytes = Short.SIZE/Byte.SIZE;
+
+        int bufferSizeInBytes = (int)(file.length()/shortSizeInBytes);
+        short[] audioData = new short[bufferSizeInBytes];
+
+        boolean done = true;
+        if(audioRecord==null){
+            audioRecord = findAudioRecord();
+        }
+        int i = 0;
+        try {
+            bufferSize = AudioTrack.getMinBufferSize(audioRecord.getSampleRate(),AudioFormat.CHANNEL_OUT_MONO,audioRecord.getAudioFormat());
+            InputStream inputStream = new FileInputStream(file);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+            dataInputStream = new DataInputStream(bufferedInputStream);
+
+
+            while(dataInputStream.available() > 0){
+                if(i==audioData.length){
+                    done = false;
+                    break;
+                }
+                audioData[i] = dataInputStream.readShort();
+                i++;
+            }
+            dataInputStream.close();
+        } catch (FileNotFoundException e) {
+            Log.d(LOG_TAG,"error file "+ID+" file not found");
+            return  null;
+
+        } catch (IOException e) {
+            Log.d(LOG_TAG,"error file "+ID+" IOException");
+            return null;
+        }
+        Log.d(LOG_TAG,"audioData size: "+bufferSizeInBytes+" "+audioData.length+" "+i);
+        return floatMe(audioData);
+    }
+    public  Part getPartFromRunningID(int ID){
+        runningId = ID;
+        float[] audioFloats = getAudioFloatFromRunningID(ID);
+
+        Part partWithSegment=null;
+        Part partWithoutSegment=null;
+        try {
+            List<Integer> segmentOutput = Segment.segment(audioFloats);
+           partWithoutSegment= Pitch.pitchEstWithoutSegment(audioFloats,-1);
+           partWithSegment =  Pitch.pitchEst(audioFloats,segmentOutput,-1);
+
+            Log.d(LOG_TAG,Arrays.toString(segmentOutput.toArray()));
+            Log.d(LOG_TAG,audioFloats.length+"");
+            Log.d(LOG_TAG,"Number of syllables:"+segmentOutput.size()/2);
+            // Pitch.pitchEst(floatMe(audioData));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        runningId= -1;
+        return partWithoutSegment;
+    }
     public static short[] shortMe(byte[] bytes) {
         short[] out = new short[bytes.length / 2]; // will drop last byte if odd number
         ByteBuffer bb = ByteBuffer.wrap(bytes);
@@ -306,7 +491,7 @@ public class MainActivity extends Activity {
 
 
     public AudioRecord findAudioRecord() {
-        int[] mSampleRates = new int[]{8000, 11025, 22050, 44100, 48000};
+        int[] mSampleRates = new int[]{11025, 22050, 44100, 48000};
         //int[] mSampleRates = new int[] { 48000, 44100, 22050, 11025, 8000 };
         for (int rate : mSampleRates) {
             for (short audioFormat : new short[]{AudioFormat.ENCODING_PCM_8BIT, AudioFormat.ENCODING_PCM_16BIT}) {
@@ -529,8 +714,4 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
     }
-
-
-
-
 }

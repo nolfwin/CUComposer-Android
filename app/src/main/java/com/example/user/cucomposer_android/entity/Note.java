@@ -15,6 +15,7 @@ public class Note {
     public Note(int pitch,float duration){
         this.pitch = pitch;
         this.duration = duration;
+
     }
 
     public int getPitch() {

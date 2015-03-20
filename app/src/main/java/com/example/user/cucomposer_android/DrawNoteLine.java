@@ -221,7 +221,7 @@ public class DrawNoteLine extends View {
             paint.setColor(roomTextColor);
             String roomText = ""+(i+roomOffset+1);
             paint.getTextBounds(roomText,0,roomText.length(),textBound);
-            canvas.drawText(roomText,roomSize*(i+1.5f)-textBound.centerX()-drawOffset,roomBarY/2-textBound.centerY(),paint);
+            canvas.drawText(roomText,roomSize*(i+0.5f)-textBound.centerX()-drawOffset,roomBarY/2-textBound.centerY(),paint);
         }
 
         float smallestNoteSize = roomSize/16.0f;
@@ -312,9 +312,9 @@ public class DrawNoteLine extends View {
         float lastOffset = 0;
         int i;
         for(i=0;i<notes.size();i++){
-            offset[i] = lastOffset;
-            notes.get(i).setOffset(lastOffset);
-            lastOffset += notes.get(i).getDuration();
+            Note aNote = notes.get(i);
+            offset[i] = aNote.getOffset();
+            lastOffset += aNote.getDuration();
         }
         offset[i] = lastOffset;
         maxRoomOffset = (int)(Math.ceil(lastOffset)/4) ;

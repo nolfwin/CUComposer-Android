@@ -87,6 +87,6 @@ public class Tempo {
             }
         }
             Log.d("noteListShow",Arrays.toString(noteList.toArray()));
-        return new Part(noteList, bpm, key);
+        return new Part(noteList, bpm, key,Part.PartType.values()[MainActivity.runningId]);
     }
 }
