@@ -30,6 +30,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.user.cucomposer_android.MainActivity" />
         </activity>
+        <activity
+            android:name=".SectionMerger"
+            android:label="@string/title_activity_section_merger"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.user.cucomposer_android.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

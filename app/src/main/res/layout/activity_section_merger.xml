@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:stretchColumns="*">
+
+        <TableRow
+            android:id="@+id/topRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/topSectionMerger"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffedb8"
+                android:clickable="true"
+                android:padding="@dimen/paddingMini"
+                android:gravity="left|center"
+                android:text="Section Merger"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/sectionRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="2"
+            android:background="#ffffffff">
+
+            <TextView
+                android:id="@+id/part01"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/part02"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/part03"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/part04"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/part05"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/part06"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/part07"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/part08"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/part09"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/part10"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/part11"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/part12"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/buttonRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/empty1"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="3"
+                android:background="#ffffffff" />
+
+            <TextView
+                android:id="@+id/defaultButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:background="#ffdddddd"
+                android:gravity="center"
+                android:text="Default"
+                android:textColor="#000000"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:id="@+id/resetButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:background="#ffcccccc"
+                android:gravity="center"
+                android:text="Clear all"
+                android:textColor="#000000"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:id="@+id/mergeButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:background="#ffbbbbbb"
+                android:gravity="center"
+                android:text="Merge"
+                android:textColor="#000000"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:id="@+id/empty3"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="3"
+                android:background="#ffffffff" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/messageRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="#ffffffff">
+
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="@dimen/textMini" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/emptyRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="#ffffffff">
+
+            <TextView
+                android:id="@+id/empty"
+                android:layout_width="100dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/partRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1.5">
+
+            <TextView
+                android:id="@+id/partIntro"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffff9800"
+                android:gravity="center"
+                android:text="Intro"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/partVerse"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffdd00"
+                android:gravity="center"
+                android:text="Verse"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/partPrechorus"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffa4ff16"
+                android:gravity="center"
+                android:text="Pre-chorus"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/partChorus"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ff00e785"
+                android:gravity="center"
+                android:text="Chorus"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/partBridge"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ff00e2c9"
+                android:gravity="center"
+                android:text="Bridge"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/partSolo"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ff00b5ff"
+                android:gravity="center"
+                android:text="Solo"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/textRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.5"
+            android:background="#ffffffff">
+
+            <TextView
+                android:id="@+id/partText"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:text="\n"
+                android:textSize="@dimen/textMini" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/directionRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.5"
+            android:background="#ffffffff">
+
+            <TextView
+                android:id="@+id/direction"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffffff"
+                android:gravity="right|center"
+                android:paddingRight="@dimen/paddingMini"
+                android:text="Click on a part to see what it is. Drag and drop a part onto the section order to add it to your song.\nDrag and drop a part out of the section order to remove it from your song.\nIf you didn't record for any parts, they will be automatically removed from your section order."
+                android:textColor="#000000"
+                android:textSize="@dimen/textSuperMini" />
+        </TableRow>
+    </TableLayout>
+
+    <RelativeLayout
+        android:id="@+id/frame"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#00ffffff" >
+        <TextView
+            android:id="@+id/box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00ffffff"
+            android:gravity="center"
+            android:padding="@dimen/padding"
+            android:text=""
+            android:textColor="#000000"
+            android:textSize="@dimen/text" />
+    </RelativeLayout>
+</FrameLayout>

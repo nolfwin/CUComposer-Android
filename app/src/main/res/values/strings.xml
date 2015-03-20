@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="hello">Hello!</string>
     <string name="title_activity_note_editor">NoteEditor</string>
+    <string name="title_activity_section_merger">SectionMerger</string>
 
 </resources>
