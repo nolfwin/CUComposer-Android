@@ -58,7 +58,7 @@ public class Pitch {
             3520, 3729.31, 3951.07, 4186.01, 4434.92, 4698.63, 4978.03,
             5274.04, 5587.65, 5919.91, 6271.93, 6644.88, 7040, 7458.62, 7902.13 };
     static int bufferSize = 1024;
-    static int sampFreq = 8000;
+    static int sampFreq = MainActivity.sampleRate;
     static int[][] key = new int[12][7];
     static double[] majorWeight ={6.35,2.23,3.48,2.33,4.38	,4.09,2.52,5.19,2.39,3.66,2.29,2.88};
     static double [] minorWeight = {6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17};

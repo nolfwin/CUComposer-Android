@@ -23,6 +23,8 @@ import android.widget.Toast;
 import com.example.user.cucomposer_android.entity.Note;
 import com.example.user.cucomposer_android.entity.Part;
 
+import org.jfugue.Player;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -42,10 +44,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jp.kshoji.javax.sound.midi.UsbMidiSystem;
+
 public class MainActivity extends Activity {
 
     private static final String LOG_TAG = "debugger";
-    Integer[] freqset = {8000, 11025, 16000, 22050, 44100};
+    Integer[] freqset = {11025, 16000, 22050, 44100};
     private ArrayAdapter<Integer> adapter;
     private AudioRecord audioRecord = null;
     private AudioTrack audioTrack = null;
@@ -78,7 +82,7 @@ public class MainActivity extends Activity {
 
     Boolean recording;
     Boolean playing;
-
+    UsbMidiSystem usbMidiSystem;
     /**
      * Called when the activity is first created.
      */
@@ -138,7 +142,7 @@ public class MainActivity extends Activity {
 
         }
     }
-
+    @Override
     OnClickListener startRecOnClickListener
             = new OnClickListener() {
 
@@ -236,6 +240,12 @@ public class MainActivity extends Activity {
     OnClickListener mergeButtonOnClickListener =  new OnClickListener() {
         @Override
         public void onClick(View v) {
+//            Player player = new Player();
+//            player.play("C D E F G A B");
+//
+//            Toast toast = Toast.makeText(getApplicationContext(),"Let's Merge",Toast.LENGTH_SHORT);
+//            toast.show();
+
             for(int i = 0; i < partSize ; i++){
                 runningId = i;
                 partArray[i]=null;
@@ -252,8 +262,8 @@ public class MainActivity extends Activity {
                 partArray[i].setBpm(meanBpm);
                 Log.d("Key",partArray[i].toString());
             }
-            Toast toast = Toast.makeText(getApplicationContext(),"Let's Merge",Toast.LENGTH_SHORT);
-            toast.show();
+//            Toast toast = Toast.makeText(getApplicationContext(),"Let's Merge",Toast.LENGTH_SHORT);
+//            toast.show();
         }
     };
     OnClickListener nextButtonOnClickListener = new OnClickListener() {
@@ -481,7 +491,7 @@ public class MainActivity extends Activity {
 
 
     public AudioRecord findAudioRecord() {
-        int[] mSampleRates = new int[]{8000, 11025, 22050, 44100, 48000};
+        int[] mSampleRates = new int[]{11025, 22050, 44100, 48000};
         //int[] mSampleRates = new int[] { 48000, 44100, 22050, 11025, 8000 };
         for (int rate : mSampleRates) {
             for (short audioFormat : new short[]{AudioFormat.ENCODING_PCM_8BIT, AudioFormat.ENCODING_PCM_16BIT}) {
