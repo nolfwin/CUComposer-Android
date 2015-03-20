@@ -11,8 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.cucomposer_android.entity.Note;
-import com.example.user.cucomposer_android.entity.Part;
 import com.example.user.cucomposer_android.utility.Key;
+import com.example.user.cucomposer_android.utility.NotesUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,8 +34,8 @@ public class NoteEditor extends Activity {
         setContentView(R.layout.activity_note_editor);
         drawNoteLine= (DrawNoteLine)findViewById(R.id.drawNoteLine);
         List<Note> notes = new ArrayList<Note>();
-        Part interestedPart = MainActivity.partArray[MainActivity.runningId];
-        notes = interestedPart.getNoteList();
+        //Part interestedPart = MainActivity.partArray[MainActivity.runningId];
+        //notes = interestedPart.getNoteList();
         if(notes.size()==0) {
             notes.add(new Note(69, 1));
             notes.add(new Note(76, 1.5f));
@@ -57,6 +57,8 @@ public class NoteEditor extends Activity {
                 }
             }
         }
+
+        NotesUtil.calculateOffset(notes);
 
         drawNoteLine.setNotes(notes,0, Key.MAJOR);
 

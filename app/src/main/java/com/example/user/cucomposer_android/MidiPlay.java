@@ -8,6 +8,7 @@ import com.leff.midi.MidiFile;
 import com.leff.midi.MidiTrack;
 import com.leff.midi.event.NoteOff;
 import com.leff.midi.event.NoteOn;
+import com.leff.midi.event.ProgramChange;
 import com.leff.midi.event.meta.Tempo;
 import com.leff.midi.event.meta.TimeSignature;
 
@@ -41,6 +42,32 @@ public class MidiPlay {
 
         MidiTrack tempoTrack = new MidiTrack();
         MidiTrack noteTrack = new MidiTrack();
+        MidiTrack drumTrack = new MidiTrack();
+
+        int ch = 2;
+        ProgramChange drumProg = new ProgramChange(0,ch, ProgramChange.MidiProgram.ACOUSTIC_GUITAR_STEEL.programNumber());
+        drumTrack.insertEvent(drumProg);
+        drumTrack.insertNote(ch,48,100,0,96);
+        drumTrack.insertNote(ch,52,100,96,96);
+        drumTrack.insertNote(ch,55,100,192,96);
+        drumTrack.insertNote(ch,60,100,288,96);
+        drumTrack.insertNote(ch,64,100,384,96);
+        drumTrack.insertNote(ch,67,100,480,96);
+//        {
+//            float offset = 0;
+//            for (int i = 0; i < 20; i++) {
+//                int channel = 10;
+//                int pitch = 60 + i;
+//                int velocity = 100;
+//                long tick = (long) (offset * resolution);
+//                long duration = (long) (0.5 * resolution);
+//                NoteOn on = new NoteOn(tick, channel, pitch, velocity);
+//                NoteOff off = new NoteOff(tick + duration, channel, pitch, 0);
+//                drumTrack.insertEvent(on);
+//                drumTrack.insertEvent(off);
+//                offset += 0.5;
+//            }
+//        }
 
         TimeSignature ts = new TimeSignature();
         ts.setTimeSignature(4,4,TimeSignature.DEFAULT_METER,TimeSignature.DEFAULT_DIVISION);
@@ -75,9 +102,16 @@ public class MidiPlay {
             offset += aNote.getDuration();
         }
 
+
+
+
+        ProgramChange prog = new ProgramChange(10*resolution,0, ProgramChange.MidiProgram.FLUTE.programNumber());
+        noteTrack.insertEvent(prog);
+
         ArrayList<MidiTrack> tracks = new ArrayList<MidiTrack>();
         tracks.add(tempoTrack);
-        tracks.add(noteTrack);
+        //tracks.add(noteTrack);
+        tracks.add(drumTrack);
 
         MidiFile midiFile = new MidiFile(resolution,tracks);
         File file = new File(Environment.getExternalStorageDirectory(), "test.mid");

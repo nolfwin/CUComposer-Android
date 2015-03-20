@@ -54,12 +54,17 @@ public class DrawNoteLine extends View {
         int maxPitch = -1;
         for(int i=0;i<notes.size();i++){
             Note aNote = notes.get(i);
+            Note aNoteAdd = new Note();
             if(aNote.getPitch()<0){
-                noteArray.add(new Note(-1, notes.get(i).getDuration()));
+                aNoteAdd.setPitch(aNote.getPitch());
+                aNoteAdd.setOffset(aNote.getOffset());
+                aNoteAdd.setDuration(aNote.getDuration());
             }
             else {
                 int pitch = Key.mapToKey(aNote.getPitch(), keyPitch, keyMode)+(aNote.getPitch()/12*7);
-                noteArray.add(new Note(pitch, aNote.getDuration()));
+                aNoteAdd.setPitch(pitch);
+                aNoteAdd.setDuration(aNote.getDuration());
+                aNoteAdd.setOffset(aNote.getOffset());
                 if(pitch<minPitch){
                     minPitch = pitch;
                 }
@@ -67,6 +72,7 @@ public class DrawNoteLine extends View {
                    maxPitch = pitch;
                 }
             }
+            noteArray.add(aNoteAdd);
         }
         startPitch = (maxPitch + minPitch)/2 - 10;
         for(int i=0;i<noteArray.size();i++){
@@ -315,8 +321,11 @@ public class DrawNoteLine extends View {
             Note aNote = notes.get(i);
             offset[i] = aNote.getOffset();
             lastOffset += aNote.getDuration();
+            Log.d(LOG_TAG,"offset note "+aNote.getOffset());
+            Log.d(LOG_TAG,"offset "+offset[i]);
         }
         offset[i] = lastOffset;
+        Log.d(LOG_TAG,"offset "+offset[i]);
         maxRoomOffset = (int)(Math.ceil(lastOffset)/4) ;
     }
 
