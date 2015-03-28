@@ -1,10 +1,17 @@
 package com.example.user.cucomposer_android.utility.NeuralNetwork;
 
+import android.content.res.Resources;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
-import java.text.*;
-import java.util.*;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Random;
+import java.util.Scanner;
 
 public class NeuralNetwork {
     static {
@@ -442,6 +449,21 @@ public class NeuralNetwork {
     public void loadWeight(String weightFile) throws IOException{
         File file = new File(weightFile);
         Scanner in=new Scanner(file);
+        this.weightUpdate.clear();
+        while(in.hasNext()){
+            String s=in.next();
+            if(!s.equals("")){
+                int j=s.indexOf(",");
+                this.weightUpdate.put(s.substring(0,j), Double.parseDouble(s.substring(j+1,s.length())));
+            }
+        }
+        this.updateAllWeights();
+        in.close();
+    }
+
+    public void loadWeight(int id){
+        InputStream inputStream = Resources.getSystem().openRawResource(id);
+        Scanner in=new Scanner(inputStream);
         this.weightUpdate.clear();
         while(in.hasNext()){
             String s=in.next();

@@ -85,6 +85,7 @@ public class MidiPlay {
 
 
 
+
         TimeSignature ts = new TimeSignature();
         ts.setTimeSignature(4,4,TimeSignature.DEFAULT_METER,TimeSignature.DEFAULT_DIVISION);
 
@@ -159,6 +160,7 @@ public class MidiPlay {
                 int k = chords.get(i);
                 NoteOn on = new NoteOn(tick, bassCh, scale[k] + 12 * octave, velocity);
                 NoteOff off = new NoteOff(tick + duration, bassCh, scale[k], 0);
+
 
 
                 bassTrack.insertEvent(on);
