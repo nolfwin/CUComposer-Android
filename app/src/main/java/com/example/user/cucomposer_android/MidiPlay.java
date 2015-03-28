@@ -266,6 +266,7 @@ public class MidiPlay {
             int velocity = 100;
 
             int k = chords.get(i);
+            k%=7;
             if(accomStyle == 0 ) {
                 int[] step = {0,2,4,2};
                 for (int j = 0; j < step.length; j++) {
