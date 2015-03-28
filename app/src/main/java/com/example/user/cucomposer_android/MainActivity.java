@@ -1,6 +1,7 @@
 package com.example.user.cucomposer_android;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -19,14 +20,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.user.cucomposer_android.entity.Note;
 import com.example.user.cucomposer_android.entity.Part;
 import com.example.user.cucomposer_android.utility.Key;
 import com.example.user.cucomposer_android.utility.NotesUtil;
-
-import org.jfugue.Player;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -42,7 +40,6 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +78,8 @@ public class MainActivity extends Activity {
     Button nextButton;
     Button mergeButton;
 
+    private static Context appContext;
+
     TextView timer;
 
     Boolean recording;
@@ -94,6 +93,7 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        appContext = getApplicationContext();
         LinearLayout outerLayout = (LinearLayout) findViewById(R.id.outerLayout);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
         for(int i=0;i<partSize;i++) {
@@ -407,9 +407,9 @@ public class MainActivity extends Activity {
             MidiPlay midiPlay = new MidiPlay(part.getNoteList(),chordPath,key,isMajor);
             midiPlay.setBpm(part.getBpm());
 
-//            BarDetector bd = new BarDetector(part.getNoteList(),key,isMajor);
-//            double barOffset = bd.barDetect();
-//            Log.d(LOG_TAG,"BAR OFFSET IS "+barOffset);
+            BarDetector bd = new BarDetector(part.getNoteList(),key,isMajor);
+            double barOffset = bd.barDetect();
+            Log.d(LOG_TAG,"BAR OFFSET IS "+barOffset);
             if(mediaPlayer.isPlaying()){
                 mediaPlayer.stop();
                 return;
@@ -860,5 +860,9 @@ public class MainActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Context getAppContext() {
+        return appContext;
     }
 }

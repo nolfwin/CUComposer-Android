@@ -436,11 +436,12 @@ public class BarDetector {
     }
 
     public void loadWeight(){
-        nn.loadWeight(R.raw.nn_bar_detector_weight);
+
+        nn.loadWeight(R.raw.nn_bar_detector_weight,MainActivity.getAppContext());
     }
 
     public void loadWeightRound2(){
-        nn2.loadWeight(R.raw.nn_bar_detector2_weight);
+        nn2.loadWeight(R.raw.nn_bar_detector2_weight,MainActivity.getAppContext());
     }
 
     public void saveWeight(){
