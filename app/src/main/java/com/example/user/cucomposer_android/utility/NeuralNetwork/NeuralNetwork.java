@@ -1,6 +1,6 @@
 package com.example.user.cucomposer_android.utility.NeuralNetwork;
 
-import android.content.res.Resources;
+import android.content.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -461,8 +461,8 @@ public class NeuralNetwork {
         in.close();
     }
 
-    public void loadWeight(int id){
-        InputStream inputStream = Resources.getSystem().openRawResource(id);
+    public void loadWeight(int id,Context context){
+        InputStream inputStream = context.getResources().openRawResource(id);
         Scanner in=new Scanner(inputStream);
         this.weightUpdate.clear();
         while(in.hasNext()){
