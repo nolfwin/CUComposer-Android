@@ -76,6 +76,8 @@ public class BarDetector {
             double[] anInput = new double[16];
             anInput[2] = aNote.getDuration();
 
+            anInput[6] = aNote.getOffset()%4.0;
+
             anInput[4] = Key.mapToKey(aNote.getPitch(), keyPitch, keyMode) + 1;
 
             anInput[7] = aNote.getPitch();
@@ -429,8 +431,8 @@ public class BarDetector {
                 best = i;
             }
         }
-        //System.out.println(Arrays.toString(score));
-        //System.out.println(Arrays.toString(count));
+        System.out.println(Arrays.toString(score));
+        System.out.println(Arrays.toString(count));
         //System.out.println("return "+best);
         return best/4;
     }
