@@ -152,16 +152,16 @@ public class MidiPlay {
         float offset = 0;
         int octave = 3;
         for(int i = 0 ; i < chords.size();i++) {
+            octave = 2;
+            int velocity = 100;
+
+            int k = chords.get(i);
+            k%=7;
             if (accomStyle == 0) {
-                octave = 2;
-                int velocity = 100;
-                long tick = (long) (offset * resolution);
                 long duration = (long) (1.0f * resolution);
-                int k = chords.get(i);
+                long tick = (long) (offset * resolution);
                 NoteOn on = new NoteOn(tick, bassCh, scale[k] + 12 * octave, velocity);
                 NoteOff off = new NoteOff(tick + duration, bassCh, scale[k], 0);
-
-
 
                 bassTrack.insertEvent(on);
                 bassTrack.insertEvent(off);
@@ -169,11 +169,8 @@ public class MidiPlay {
             } else if (accomStyle == 1) {
                 int[] step = {0, 2, 4, 2};
                 for (int j = 0; j < step.length; j++) {
-                    octave = 2;
-                    int velocity = 100;
-                    long tick = (long) (offset * resolution);
                     long duration = (long) (1.0f * resolution);
-                    int k = chords.get(i);
+                    long tick = (long) (offset * resolution);
                     NoteOn on = new NoteOn(tick, bassCh, scale[(k + step[j]) % 7] + 12 * (octave + (k + step[j]) / 7), velocity);
                     NoteOff off = new NoteOff(tick + duration, bassCh, scale[(k + step[j]) % 7] + 12 * (octave + (k + step[j]) / 7), 0);
 
@@ -185,11 +182,8 @@ public class MidiPlay {
                 int[] step = {0, 2, 4, 2, 7, 4, 2, 4};
 
                 for (int j = 0; j < step.length; j++) {
-                    octave = 2;
-                    int velocity = 100;
-                    long tick = (long) (offset * resolution);
                     long duration = (long) (0.5f * resolution);
-                    int k = chords.get(i);
+                    long tick = (long) (offset * resolution);
                     NoteOn on = new NoteOn(tick, bassCh, scale[(k + step[j]) % 7] + 12 * (octave + (k + step[j]) / 7), velocity);
                     NoteOff off = new NoteOff(tick + duration, bassCh, scale[(k + step[j]) % 7] + 12 * (octave + (k + step[j]) / 7), 0);
 
@@ -204,17 +198,18 @@ public class MidiPlay {
     public void setTrackForPiano(int accomStyle){
         int[] scale = isMajor ? majorScale : minorScale;
         float offset = 0;
-        int octave = 5;
-        for(int i = 0 ; i < chords.size();i++){
 
+        for(int i = 0 ; i < chords.size();i++){
+            int octave = 5;
+            int velocity = 100;
+
+            int k = chords.get(i);
+            k%=7;
             if(accomStyle == 0 ) {
                 int[] step = {0,2,4,2};
                 for (int j = 0; j < step.length; j++) {
-                    octave = 5;
-                    int velocity = 100;
-                    long tick = (long) (offset * resolution);
                     long duration = (long) (1.0f * resolution);
-                    int k = chords.get(i);
+                    long tick = (long) (offset * resolution);
                     NoteOn on = new NoteOn(tick, pianoCh, scale[(k+step[j])%7]+12*(octave+(k+step[j])/7), velocity);
                     NoteOff off = new NoteOff(tick + duration, pianoCh, scale[(k+step[j])%7]+12*(octave+(k+step[j])/7), 0);
 
@@ -225,11 +220,9 @@ public class MidiPlay {
             }
             else if (accomStyle==1) {
                 for (int j = 0; j < 4; j++) {
-                    octave = 5;
-                    int velocity = 100;
-                    long tick = (long) (offset * resolution);
+
                     long duration = (long) (1.0f * resolution);
-                    int k = chords.get(i);
+                    long tick = (long) (offset * resolution);
                     NoteOn on = new NoteOn(tick, pianoCh, scale[k] + 12 * octave, velocity);
                     NoteOff off = new NoteOff(tick + duration, pianoCh, scale[k], 0);
                     NoteOn on1 = new NoteOn(tick, pianoCh, scale[(k + 2) % 7] + 12 * octave, velocity);
@@ -251,12 +244,9 @@ public class MidiPlay {
 //            scale[(k+step[j])%7]+12*octave
 
                 for (int j = 0; j < step.length; j++) {
-                    octave = 5;
-                    int velocity = 100;
-                    long tick = (long) (offset * resolution);
-                    long duration = (long) (0.5f * resolution);
-                    int k = chords.get(i);
 
+                    long duration = (long) (0.5f * resolution);
+                    long tick = (long) (offset * resolution);
                     NoteOn on = new NoteOn(tick, pianoCh, scale[(k+step[j])%7]+12*(octave+(k+step[j])/7), velocity);
                     NoteOff off = new NoteOff(tick + duration, pianoCh, scale[(k+step[j])%7]+12*(octave+(k+step[j])/7), 0);
 
@@ -272,15 +262,15 @@ public class MidiPlay {
         float offset = 0;
         int octave = 5;
         for(int i = 0 ; i < chords.size();i++){
+            octave = 5;
+            int velocity = 100;
 
+            int k = chords.get(i);
             if(accomStyle == 0 ) {
                 int[] step = {0,2,4,2};
                 for (int j = 0; j < step.length; j++) {
-                    octave = 5;
-                    int velocity = 100;
                     long tick = (long) (offset * resolution);
                     long duration = (long) (1.0f * resolution);
-                    int k = chords.get(i);
                     NoteOn on = new NoteOn(tick, guitarCh, scale[(k+step[j])%7]+12*(octave+(k+step[j])/7), velocity);
                     NoteOff off = new NoteOff(tick + duration, guitarCh, scale[(k+step[j])%7]+12*(octave+(k+step[j])/7), 0);
 
@@ -291,11 +281,8 @@ public class MidiPlay {
             }
             else if (accomStyle==1) {
                 for (int j = 0; j < 4; j++) {
-                    octave = 5;
-                    int velocity = 100;
                     long tick = (long) (offset * resolution);
                     long duration = (long) (1.0f * resolution);
-                    int k = chords.get(i);
                     NoteOn on = new NoteOn(tick, guitarCh, scale[k] + 12 * octave, velocity);
                     NoteOff off = new NoteOff(tick + duration, guitarCh, scale[k], 0);
                     NoteOn on1 = new NoteOn(tick, guitarCh, scale[(k + 2) % 7] + 12 * octave, velocity);
@@ -317,11 +304,8 @@ public class MidiPlay {
 //            scale[(k+step[j])%7]+12*octave
 
                 for (int j = 0; j < step.length; j++) {
-                    octave = 5;
-                    int velocity = 100;
                     long tick = (long) (offset * resolution);
                     long duration = (long) (0.5f * resolution);
-                    int k = chords.get(i);
                     NoteOn on = new NoteOn(tick, guitarCh, scale[(k+step[j])%7]+12*(octave+(k+step[j])/7), velocity);
                     NoteOff off = new NoteOff(tick + duration, guitarCh, scale[(k+step[j])%7]+12*(octave+(k+step[j])/7), 0);
 

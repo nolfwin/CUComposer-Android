@@ -391,10 +391,7 @@ public class MainActivity extends Activity {
                 cg.setKey(key, Key.MINOR);
             }
             int[] chordPath= cg.generateChords();
-            for(int i = 0 ; i < chordPath.length;i++){
-                chordPath[i] = chordPath[i]%35;
-                chordPath[i] = chordPath[i]%7;
-            }
+
             if(isMajor){
                 Log.d(LOG_TAG,"KEY IS "+key+" MAJOR");
             }
