@@ -43,7 +43,7 @@ public class Note {
     }
 
     public  String toString(){
-        return "pitch = "+pitch+" duration = "+duration;
+        return "("+pitch+","+duration+")";
 
     }
 

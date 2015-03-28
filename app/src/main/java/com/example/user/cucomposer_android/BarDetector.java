@@ -75,7 +75,7 @@ public class BarDetector {
                 continue;
             double[] anInput = new double[16];
             anInput[2] = aNote.getDuration();
-            anInput[4] = Key.mapToKey(aNote.getPitch(), keyPitch, keyMode);
+            anInput[4] = Key.mapToKey(aNote.getPitch(), keyPitch, keyMode)+1;
             anInput[7] = aNote.getPitch();
             int[] countNote = new int[8];
             int startOffset = (int)(aNote.getOffset()*4);
