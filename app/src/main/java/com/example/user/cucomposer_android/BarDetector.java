@@ -75,7 +75,7 @@ public class BarDetector {
                 continue;
             double[] anInput = new double[16];
             anInput[2] = aNote.getDuration();
-            anInput[4] = Key.mapToKey(aNote.getPitch(), keyPitch, keyMode);
+            anInput[4] = Key.mapToKey(aNote.getPitch(), keyPitch, keyMode) + 1;
             anInput[7] = aNote.getPitch();
             int[] countNote = new int[8];
             int startOffset = (int)(aNote.getOffset()*4);
@@ -434,21 +434,11 @@ public class BarDetector {
     }
 
     public void loadWeight(){
-        try {
-            nn.loadWeight(weightFile);
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
+        nn.loadWeight(R.raw.nn_bar_detector_weight);
     }
 
     public void loadWeightRound2(){
-        try {
-            nn2.loadWeight(weightFileRound2);
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
+        nn2.loadWeight(R.raw.nn_bar_detector2_weight);
     }
 
     public void saveWeight(){
