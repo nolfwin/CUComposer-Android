@@ -7,9 +7,6 @@ import com.example.user.cucomposer_android.utility.Key;
 
 import java.util.List;
 
-/**
- * Created by Nuttapong on 2/9/2015.
- */
 public class ChordGenerator {
     private List<Note> notes;
     private int keyPitch;
@@ -22,26 +19,30 @@ public class ChordGenerator {
     private int[] keySequence = null;
     private double[][] noteInChord = null;
     private double[][] nextChord = null;
-    //private int[] projectedPitch = null;
-    private int[] projectedNotes = {
-            6, 6, 6, 6, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 7, 7, 7, 7, 7, 7, 1, 1, 1, 1, 7, 7, 7, 7, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 7, 7, 7, 7, 7, 5, 5, 5, 5, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3, 3, 1, 1, 1, 1, 7, 7, 7, 7, 1, 1, 1, 1, 1, 1, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 5, 5, 5, 5, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 7, 7, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 6, 6, 1, 1, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 6, 6, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 6, 6, 7, 7, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 1, 1, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1
-    };
+    private int[] projectedNotes = null;
+    //private int[] projectedNotes = {
+    //        6, 6, 6, 6, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 7, 7, 7, 7, 7, 7, 1, 1, 1, 1, 7, 7, 7, 7, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 7, 7, 7, 7, 7, 5, 5, 5, 5, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3, 3, 1, 1, 1, 1, 7, 7, 7, 7, 1, 1, 1, 1, 1, 1, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 5, 5, 5, 5, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 7, 7, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 6, 6, 1, 1, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 6, 6, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 6, 6, 7, 7, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 1, 1, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1
+    //};
     private double[][] entropyObservation = null;
     private double[] chordAppearance = null;
     private int considerTime = 8;
     private int baseNote = 0;
 
+    private double notesContribute = 0.3;
+    private double popularChordContribute = 0.3;
+    private double variation = 0.0;
+    private double expertParameter = 0.75;
+
     public int[] generateChords(){
         if(projectedNotes == null){
+            entropyObservation = null;
             initProjectedNotes();
         }
-        //System.out.println("note size: "+notes.size());
-//        System.out.println("pitch size: "+projectedPitch.length);
-//        for(int i=0;i<projectedPitch.length;i++){
-//
-//            System.out.println("pitch "+i+": "+projectedPitch[i]);
-//        }
         if(keySequence == null){
+            noteInChord = null;
+            nextChord = null;
+            chordAppearance = null;
+            entropyObservation = null;
             initKeySequence();
         }
         if(noteInChord==null){
@@ -78,8 +79,6 @@ public class ChordGenerator {
                     int bestCandidate = 0;
                     for(int tb = 0;tb<considerTime;tb++){
                         for(int k=0;k<numState;k++){
-                            //if(j==k)
-                            //	continue;
                             if((j==baseNote)&&(t!=0))
                                 continue;
                             if((t==0)&&(j!=baseNote))
@@ -89,11 +88,9 @@ public class ChordGenerator {
                             if((t==0)&&(j==baseNote)&&(tb<3)){
                                 continue;
                             }
-                            double score = entropyObservation[i][j]+nextChord[k][j]+chordAppearance[j] + hmmNow[k+tb*numState];
-//		                	{
-//		                		System.out.println(""+score+" "+entropyObservation[i][j]+" "+nextChord[k][j]+" "+chordAppearance[j]+" "+hmmNow[k+tb*numState]);
-//		                	}
-                            if(score>=hmmNow[j] && hmmNow[j]>-1000){
+                            double score = notesContribute*entropyObservation[i][j]+(1.0-notesContribute)*nextChord[k][j]+popularChordContribute*chordAppearance[j] + hmmNow[k+tb*numState] + variation * Math.random();
+
+                            if(score>=hmmNow[j] && hmmNow[j]>-10000){
                                 System.out.println(""+hmmNow[j]+" "+score);
                             }
                             if(score>bestScore){
@@ -106,11 +103,7 @@ public class ChordGenerator {
                     path[i][j+t*numState] = bestCandidate;
                 }
             }
-            for(int j=0;j<numState*considerTime;j++){
-                hmmNow[j] = hmmNext[j];
-                System.out.print(" "+hmmNow[j]);
-            }
-            System.out.println();
+            System.arraycopy(hmmNext, 0, hmmNow, 0, numState * considerTime);
         }
 
         int bestCandidate = 0;
@@ -129,20 +122,32 @@ public class ChordGenerator {
         }
         chordPath[0] = bestCandidate;
         for(int i=0;i<chordPath.length;i++){
-            System.out.print(" "+ (chordPath[i]%numState>=7 )+(chordPath[i]%numState%7 + 1));
+            chordPath[i] = chordPath[i]%35;
+            System.out.print(" "+ chordName(chordPath[i]));
         }
         return chordPath;
     }
 
 
     public void setNotes(List<Note> notes){
+        projectedNotes = null;
         this.notes = notes;
     }
 
     public void setKey(int keyPitch,boolean keyMode){
+        if(this.keyMode != keyMode){
+            keySequence = null;
+            projectedNotes = null;
+            this.keyMode = keyMode;
+            this.keyMode = keyMode;
+        }
+        else{
+            if(this.keyPitch != keyPitch){
+                projectedNotes = null;
+            }
+        }
         this.keyPitch = keyPitch;
-        this.keyMode = keyMode;
-        if(keyMode == Key.MAJOR){
+        if(keyMode){
             baseNote = 0;
         }
         else{
@@ -156,7 +161,7 @@ public class ChordGenerator {
 
     public void initNoteInChord(){
         double[][] db;
-        if(keyMode == Key.MAJOR){
+        if(keyMode){
             db = Database.noteInChordMajor;
         }
         else{
@@ -166,11 +171,9 @@ public class ChordGenerator {
         for(int i=0;i<noteInChord.length;i++){
             for(int j=0;j<noteInChord[i].length;j++){
                 noteInChord[i][j] = db[i][keySequence[j]];
-                //System.out.println("note in chord "+i+" "+j+": "+noteInChord[i][j]);
             }
             Calculator.normalize(noteInChord[i]);
             Calculator.calLogArray(noteInChord[i]);
-            //System.out.println(""+i+": "+Arrays.toString(noteInChord[i]));
         }
     }
 
@@ -216,9 +219,8 @@ public class ChordGenerator {
 
 
             if(hasPitch){
-                Calculator.normalize(noteCounter);
                 for(int j=0;j<numState;j++) {
-                    entropyObservation[i][j] = Calculator.calDotArray(noteCounter,noteInChord[j]);
+                    entropyObservation[i][j] = Calculator.calDotArray(noteCounter,noteInChord[j]) * ((j<14)?1.0:expertParameter);
                 }
             }
             else{
@@ -226,7 +228,6 @@ public class ChordGenerator {
                     entropyObservation[i][j] = 0;
                 }
             }
-            Calculator.normalize(entropyObservation[i]);
         }
     }
 
@@ -234,6 +235,27 @@ public class ChordGenerator {
         ChordGenerator cg = new ChordGenerator();
         cg.setKey(0, Key.MAJOR);
         cg.generateChords();
+    }
+
+    public static String chordName(int chordNum){
+        String name = ""+(chordNum%7+1)+"_";
+        switch (chordNum/7){
+            case 0: name += "maj";
+                break;
+            case 1: name += "min";
+                break;
+            case 2: name += "maj7";
+                break;
+            case 3: name += "7";
+                break;
+            case 4: name += "min7";
+                break;
+        }
+        return name;
+    }
+
+    public void setVariation(double variation){
+        this.variation = variation;
     }
 
 }
