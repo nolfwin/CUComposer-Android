@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.example.user.cucomposer_android.entity.Note;
 import com.example.user.cucomposer_android.entity.Part;
 import com.example.user.cucomposer_android.utility.Key;
+import com.example.user.cucomposer_android.utility.NotesUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,29 +35,31 @@ public class NoteEditor extends Activity {
         setContentView(R.layout.activity_note_editor);
         drawNoteLine= (DrawNoteLine)findViewById(R.id.drawNoteLine);
         List<Note> notes = new ArrayList<Note>();
-        Part interestedPart = MainActivity.partArray[MainActivity.runningId];
+        final Part interestedPart = MainActivity.partArray[MainActivity.runningId];
         notes = interestedPart.getNoteList();
-        if(notes.size()==0) {
-            notes.add(new Note(69, 1));
-            notes.add(new Note(76, 1.5f));
-            notes.add(new Note(74, 0.5f));
-            notes.add(new Note(74, 1));
-            notes.add(new Note(72, 0.5f));
-            notes.add(new Note(71, 1.5f));
-            notes.add(new Note(72, 1));
-            notes.add(new Note(71, 1));
-            notes.add(new Note(67, 1.25f));
-            notes.add(new Note(69, 1.75f));
-            notes.add(new Note(72, 1));
-            notes.add(new Note(-1, 1));
-            notes.add(new Note(71, 2));
-            notes.add(new Note(74, 1));
-            for (int j = 0; j < 2; j++) {
-                for (int i = 0; i < 7; i++) {
-                    notes.add(new Note(12 * j + 60 + Key.mapBackToPitch(i, 0, Key.MAJOR), 0.5f));
-                }
-            }
-        }
+//        if(notes.size()==0) {
+//            notes.add(new Note(69, 1));
+//            notes.add(new Note(76, 1.5f));
+//            notes.add(new Note(74, 0.5f));
+//            notes.add(new Note(74, 1));
+//            notes.add(new Note(72, 0.5f));
+//            notes.add(new Note(71, 1.5f));
+//            notes.add(new Note(72, 1));
+//            notes.add(new Note(71, 1));
+//            notes.add(new Note(67, 1.25f));
+//            notes.add(new Note(69, 1.75f));
+//            notes.add(new Note(72, 1));
+//            notes.add(new Note(-1, 1));
+//            notes.add(new Note(71, 2));
+//            notes.add(new Note(74, 1));
+//            for (int j = 0; j < 2; j++) {
+//                for (int i = 0; i < 7; i++) {
+//                    notes.add(new Note(12 * j + 60 + Key.mapBackToPitch(i, 0, Key.MAJOR), 0.5f));
+//                }
+//            }
+//        }
+
+        NotesUtil.calculateOffset(notes);
 
         drawNoteLine.setNotes(notes,0, Key.MAJOR);
 
@@ -85,6 +88,7 @@ public class NoteEditor extends Activity {
                     return;
                 }
                 MidiPlay midiPlay = new MidiPlay(drawNoteLine.getNotes());
+                midiPlay.setBpm(interestedPart.getBpm());
                 String filePath = midiPlay.generateMidi();
                 mediaPlayer.reset();
                 try {

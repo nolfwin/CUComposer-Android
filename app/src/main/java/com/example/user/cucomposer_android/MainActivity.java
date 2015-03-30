@@ -1,11 +1,13 @@
 package com.example.user.cucomposer_android;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.audiofx.NoiseSuppressor;
 import android.os.Bundle;
@@ -18,12 +20,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.user.cucomposer_android.entity.Note;
 import com.example.user.cucomposer_android.entity.Part;
-
-import org.jfugue.Player;
+import com.example.user.cucomposer_android.utility.Key;
+import com.example.user.cucomposer_android.utility.NotesUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -39,7 +40,6 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,7 @@ import java.util.Map;
 import jp.kshoji.javax.sound.midi.UsbMidiSystem;
 
 public class MainActivity extends Activity {
-
+    private MediaPlayer mediaPlayer = new MediaPlayer();
     private static final String LOG_TAG = "debugger";
     Integer[] freqset = {11025, 16000, 22050, 44100};
     private ArrayAdapter<Integer> adapter;
@@ -78,6 +78,8 @@ public class MainActivity extends Activity {
     Button nextButton;
     Button mergeButton;
 
+    private static Context appContext;
+
     TextView timer;
 
     Boolean recording;
@@ -91,6 +93,7 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        appContext = getApplicationContext();
         LinearLayout outerLayout = (LinearLayout) findViewById(R.id.outerLayout);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
         for(int i=0;i<partSize;i++) {
@@ -131,8 +134,8 @@ public class MainActivity extends Activity {
         mergeButton = (Button) findViewById(R.id.mergeButton);
 
 
-        nextButton.setOnClickListener(nextButtonOnClickListener);
-        mergeButton.setOnClickListener(mergeButtonOnClickListener);
+        nextButton.setOnClickListener(nextOnClickListener);
+        mergeButton.setOnClickListener(mergeOnClickListener);
 
         File appFolder = new File(Config.appFolder);
         if (!appFolder.exists()) {
@@ -142,7 +145,7 @@ public class MainActivity extends Activity {
 
         }
     }
-    @Override
+
     OnClickListener startRecOnClickListener
             = new OnClickListener() {
 
@@ -237,36 +240,177 @@ public class MainActivity extends Activity {
         }
 
     };
-    OnClickListener mergeButtonOnClickListener =  new OnClickListener() {
+
+    OnClickListener mergeOnClickListener =  new OnClickListener() {
         @Override
         public void onClick(View v) {
-//            Player player = new Player();
-//            player.play("C D E F G A B");
-//
-//            Toast toast = Toast.makeText(getApplicationContext(),"Let's Merge",Toast.LENGTH_SHORT);
-//            toast.show();
+            runningId=5;
+//            int[] chordSequence = {0,4,5,2,3,0,0,4,5,2,3,0};
+           int[] chordSequencez = { 0, 4, 1, 5, 3, 3, 4, 4, 0, 4, 1, 5, 3, 3, 4, 0};
+            ChordGenerator cg = new ChordGenerator();
+            List<Note> noteList = new ArrayList<Note>();
+            noteList.add(new Note(-1,32.0f));
 
-            for(int i = 0; i < partSize ; i++){
-                runningId = i;
-                partArray[i]=null;
-                partArray[i] = getPartFromRunningID(runningId);
-                if(partArray[i]==null) Log.d("NULL","running ID = "+i+" is null");
-                else  Log.d("Part","get running ID = "+i+" part");
-                Log.d("Key",partArray[i].toString());
+            cg.setKey(9,Key.MAJOR);
+            cg.setNotes(noteList);
+            cg.setFixedLastChord(5);
+            int[] chordSequence = cg.generateChords();
+            Log.d(LOG_TAG,"CHORD LOGD = "+Arrays.toString(chordSequence));
+            
+            int offset = 9;
+            int[] major = {offset,2+offset,4+offset,5+offset,7+offset,9+offset,11+offset};
+            int[] minor = {offset,2+offset,3+offset,5+offset,7+offset,8+offset,10+offset};
+            int[] scale = major;
+            int octave = 5;
+            int beforeChord = -1;
+            int lastNote = -1;
+            int round = 0;
+            int bpm = 100;
+            ArrayList<Note> testNoteList = new ArrayList<Note>();
+            for(int i = 0 ; i < chordSequence.length ; i++){
+                int k = chordSequence[i];
+                for(int j = 0 ; j<4;j++ ) {
+                    if(j==3 && i==chordSequence.length-1&&k==0){
+                        int noteToPlay;
+                        noteToPlay = scale[0]+octave*12;
+                        testNoteList.add(new Note(noteToPlay,4.0f));
+                        break;
+                    }
+                    if (Math.random() > 0.5) {
+                        int noteToPlay;
+                        double rand = Math.random();
+                        if(rand>0.66){
+                            noteToPlay = scale[((k)%7)]+octave*12;
+                        }
+                        else if(rand>0.33){
+                            noteToPlay = scale[((k+2)%7)]+octave*12;
+                        }
+                        else{
+                            noteToPlay = scale[((k+4)%7)]+octave*12;
+                        }
+                        boolean isPlus = lastNote>noteToPlay;
+                        double randThres =0.75;
+                        if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
+                        if(Math.random()>randThres){
+                            if(isPlus&&octave<6){
+                                noteToPlay+=12;
+                                octave++;
+                            }
+                            else if(octave>4) {
+                                noteToPlay-=12;
+                                octave--;
+                            }
+                        }
+                        testNoteList.add(new Note(noteToPlay,1.0f));
+                        lastNote = noteToPlay;
+                    } else {
+                        for(int times = 0 ; times < 2 ;times++) {
+                            int noteToPlay;
+                            if(Math.random()>0.3){
+                                double rand = Math.random();
+                                if (rand > 0.66) {
+                                    noteToPlay = scale[((k)%7)]+octave*12;
+                                } else if (rand > 0.33) {
+                                    noteToPlay = scale[((k+2)%7)]+octave*12;
+                                } else {
+                                    noteToPlay = scale[((k+4)%7)]+octave*12;
+                                }
+                                boolean isPlus = lastNote>noteToPlay;
+                                double randThres =0.75;
+                                if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
+                                if(Math.random()>randThres){
+                                    if(isPlus&&octave<6){
+                                        noteToPlay+=12;
+                                        octave++;
+                                    }
+                                    else if(octave>4) {
+                                        noteToPlay-=12;
+                                        octave--;
+                                    }
+                                }
+                                testNoteList.add(new Note(noteToPlay, 0.5f));
+                                lastNote = noteToPlay;
+                            }
+                            else{
+                                for(int sixteenthTimes = 0 ; sixteenthTimes < 2 ; sixteenthTimes++){
+                                    double rand = Math.random();
+                                    if (rand > 0.66) {
+                                        noteToPlay = scale[((k)%7)]+octave*12;
+                                    } else if (rand > 0.33) {
+                                        noteToPlay = scale[((k+2)%7)]+octave*12;
+                                    } else {
+                                        noteToPlay = scale[((k+4)%7)]+octave*12;
+                                    }
+                                    boolean isPlus = lastNote>noteToPlay;
+                                    double randThres =0.75;
+                                    if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
+                                    if(Math.random()>randThres){
+                                        if(isPlus&&octave<6){
+                                            noteToPlay+=12;
+                                            octave++;
+                                        }
+                                        else if(octave>4) {
+                                            noteToPlay-=12;
+                                            octave--;
+                                        }
+                                    }
+                                    testNoteList.add(new Note(noteToPlay, 0.25f));
+                                    lastNote = noteToPlay;
+                                }
+                            }
+
+
+                        }
+                    }
+                }
             }
-            int baseKey = calculateMediumKey(partArray);
-            int meanBpm = calculateMeanBpm(partArray);
-            for(int i = 0 ; i < partArray.length;i++){
-                if(partArray[i]==null) continue;
-                partArray[i].setKey(baseKey);
-                partArray[i].setBpm(meanBpm);
-                Log.d("Key",partArray[i].toString());
+
+
+
+            Log.d(LOG_TAG,"Size of testNote = "+testNoteList.size());
+            for(int i = 0 ; i < testNoteList.size();i++){
+                Log.d(LOG_TAG,(testNoteList.get(i)).getPitch()+"");
             }
+            MidiPlay midiPlay = new MidiPlay(testNoteList,chordSequence,offset,true);
+
+            midiPlay.setBpm(bpm);
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.stop();
+                return;
+            }
+
+            String filePath = midiPlay.generateMidi();
+            mediaPlayer.reset();
+            try {
+                mediaPlayer.setDataSource(filePath);
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            runningId = -1;
+//            for(int i = 0; i < partSize ; i++){
+//                runningId = i;
+//                partArray[i]=null;
+//                partArray[i] = getPartFromRunningID(runningId);
+//                if(partArray[i]==null) Log.d("NULL","running ID = "+i+" is null");
+//                else  Log.d("Part","get running ID = "+i+" part");
+//                Log.d("Key",partArray[i].toString());
+//            }
+//            int baseKey = calculateMediumKey(partArray);
+//            int meanBpm = calculateMeanBpm(partArray);
+//            for(int i = 0 ; i < partArray.length;i++){
+//                if(partArray[i]==null) continue;
+//                partArray[i].setKey(baseKey);
+//                partArray[i].setBpm(meanBpm);
+//                Log.d("Key",partArray[i].toString());
+//            }
 //            Toast toast = Toast.makeText(getApplicationContext(),"Let's Merge",Toast.LENGTH_SHORT);
 //            toast.show();
         }
     };
-    OnClickListener nextButtonOnClickListener = new OnClickListener() {
+
+    OnClickListener nextOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             callNextActivity();
@@ -277,7 +421,56 @@ public class MainActivity extends Activity {
         public void onClick(View v) {
 //pitchfucca
             runningId = v.getId();
-            getPartFromRunningID(runningId);
+            Part part = getPartFromRunningID(runningId);
+            ChordGenerator cg = new ChordGenerator();
+            NotesUtil.calculateOffset(part.getNoteList());
+            boolean isMajor = part.getKey()<=11 ? true: false;
+            int key = isMajor? part.getKey():part.getKey()%12;
+            BarDetector bd = new BarDetector(part.getNoteList(),key,isMajor);
+            double barOffset = bd.barDetect();
+
+            part.getNoteList().add(0,new Note(-1,4.0f-(float)barOffset));
+            NotesUtil.calculateOffset(part.getNoteList());
+            cg.setNotes(part.getNoteList());
+
+            if(isMajor){
+                cg.setKey(key, Key.MAJOR);
+            }
+            else{
+                cg.setKey(key, Key.MINOR);
+            }
+            int[] chordPath= cg.generateChords();
+
+            if(isMajor){
+                Log.d(LOG_TAG,"KEY IS "+key+" MAJOR");
+            }
+            else{
+                Log.d(LOG_TAG,"KEY IS "+key+" MINOR");
+            }
+            Log.d(LOG_TAG,"NOTES ARE"+Arrays.toString(part.getNoteList().toArray()));
+            Log.d(LOG_TAG,"CHORDS ARE "+Arrays.toString(chordPath));
+
+            MidiPlay midiPlay = new MidiPlay(part.getNoteList(),chordPath,key,isMajor);
+            midiPlay.setBpm(part.getBpm());
+
+
+
+            Log.d(LOG_TAG,"BAR OFFSET IS "+barOffset);
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.stop();
+                return;
+            }
+
+            String filePath = midiPlay.generateMidi();
+            mediaPlayer.reset();
+            try {
+                mediaPlayer.setDataSource(filePath);
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            runningId=-1;
         }
     };
     OnClickListener modifyOnClickListener = new OnClickListener() {
@@ -455,18 +648,17 @@ public class MainActivity extends Activity {
         Part partWithSegment=null;
         Part partWithoutSegment=null;
         try {
-            List<Integer> segmentOutput = Segment.segment(audioFloats);
+       //  List<Integer> segmentOutput = Segment.segment(audioFloats);
            partWithoutSegment= Pitch.pitchEstWithoutSegment(audioFloats,-1);
-           partWithSegment =  Pitch.pitchEst(audioFloats,segmentOutput,-1);
+     //    partWithSegment =  Pitch.pitchEst(audioFloats,segmentOutput,-1);
 
-            Log.d(LOG_TAG,Arrays.toString(segmentOutput.toArray()));
-            Log.d(LOG_TAG,audioFloats.length+"");
-            Log.d(LOG_TAG,"Number of syllables:"+segmentOutput.size()/2);
+//         Log.d(LOG_TAG,Arrays.toString(segmentOutput.toArray()));
+//         Log.d(LOG_TAG,audioFloats.length+"");
+//         Log.d(LOG_TAG,"Number of syllables:"+segmentOutput.size()/2);
             // Pitch.pitchEst(floatMe(audioData));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        runningId= -1;
         return partWithoutSegment;
     }
     public static short[] shortMe(byte[] bytes) {
@@ -713,5 +905,12 @@ public class MainActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public static List<Note> generateIntro(int room, int key){
+        return null;
+    }
+
+    public static Context getAppContext() {
+        return appContext;
     }
 }
