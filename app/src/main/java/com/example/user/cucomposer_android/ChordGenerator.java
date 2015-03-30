@@ -36,7 +36,7 @@ public class ChordGenerator {
 
     private double notesContribute = 0.3;
     private double popularChordContribute = 0.3;
-    private double variation = 0.0;
+    private double variation = 0.5;
     private double expertParameter = 0.75;
 
     public int[] generateChords(){
@@ -115,7 +115,7 @@ public class ChordGenerator {
         int bestCandidate = 0;
         double bestScore = -100000;
         for(int j=0;j<numState*considerTime;j++){
-            if(fixedLastChord>=0 && numState%7 != fixedLastChord)
+            if(fixedLastChord>=0 && j%7 != fixedLastChord)
                 continue;
             if (bestScore < hmmNow[j]) {
                 bestCandidate = j;
@@ -125,9 +125,11 @@ public class ChordGenerator {
         System.out.println(entropyObservation.length);
         int[] chordPath = new int[entropyObservation.length];
         for(int i=entropyObservation.length-1;i>0;i--){
+            System.out.print(bestCandidate+" ");
             chordPath[i] = bestCandidate;
             bestCandidate = path[i][bestCandidate];
         }
+        System.out.println();
         chordPath[0] = bestCandidate;
         for(int i=0;i<chordPath.length;i++){
             chordPath[i] = chordPath[i]%35;

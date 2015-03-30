@@ -246,7 +246,17 @@ public class MainActivity extends Activity {
         public void onClick(View v) {
             runningId=5;
 //            int[] chordSequence = {0,4,5,2,3,0,0,4,5,2,3,0};
-           int[] chordSequence = { 0, 4, 1, 5, 3, 3, 4, 4, 0, 4, 1, 5, 3, 3, 4, 0};
+           int[] chordSequencez = { 0, 4, 1, 5, 3, 3, 4, 4, 0, 4, 1, 5, 3, 3, 4, 0};
+            ChordGenerator cg = new ChordGenerator();
+            List<Note> noteList = new ArrayList<Note>();
+            noteList.add(new Note(-1,32.0f));
+
+            cg.setKey(9,Key.MAJOR);
+            cg.setNotes(noteList);
+            cg.setFixedLastChord(5);
+            int[] chordSequence = cg.generateChords();
+            Log.d(LOG_TAG,"CHORD LOGD = "+Arrays.toString(chordSequence));
+            
             int offset = 9;
             int[] major = {offset,2+offset,4+offset,5+offset,7+offset,9+offset,11+offset};
             int[] minor = {offset,2+offset,3+offset,5+offset,7+offset,8+offset,10+offset};
@@ -895,6 +905,9 @@ public class MainActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public static List<Note> generateIntro(int room, int key){
+        return null;
     }
 
     public static Context getAppContext() {

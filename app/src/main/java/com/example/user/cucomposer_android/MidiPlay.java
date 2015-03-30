@@ -98,9 +98,9 @@ public class MidiPlay {
         tempoTrack.insertEvent(tempo);
 
         setTrackForMainMelody(notes);
-        setTrackForPiano(2);
-        setTrackForGuitar(1);
-        setTrackForBass(1);
+        setTrackForPiano(1);
+        setTrackForGuitar(0);
+        setTrackForBass(2);
 
         ArrayList<MidiTrack> tracks = new ArrayList<MidiTrack>();
         tracks.add(tempoTrack);
@@ -178,8 +178,9 @@ public class MidiPlay {
                     step[2]=6;
                     step[3]=4;
                 }
+                
                 for (int j = 0; j < step.length; j++) {
-                    long duration = (long) (1.0f * resolution);
+                    long duration = (long) (4.0f/step.length * resolution);
                     long tick = (long) (offset * resolution);
                     int note = scale[(k + step[j]) % 7] + 12 * (octave + (k + step[j]) / 7) ;
                     if(step[j]==6)note+=sevenOffset;
@@ -188,7 +189,7 @@ public class MidiPlay {
 
                     bassTrack.insertEvent(on);
                     bassTrack.insertEvent(off);
-                    offset += 1.0f;
+                    offset += 4.0f/step.length;
                 }
             } else if (accomStyle == 2) {
                 int[] step = {0, 2, 4, 2, 7, 4, 2, 4};
@@ -196,7 +197,7 @@ public class MidiPlay {
                     step[4]=6;
                 }
                 for (int j = 0; j < step.length; j++) {
-                    long duration = (long) (0.5f * resolution);
+                    long duration = (long) (4.0f/step.length * resolution);
                     long tick = (long) (offset * resolution);
                     int note =  scale[(k + step[j]) % 7] + 12 * (octave + (k + step[j]) / 7) ;
                     if(step[j]==6)note+=sevenOffset;
@@ -205,7 +206,7 @@ public class MidiPlay {
 
                     bassTrack.insertEvent(on);
                     bassTrack.insertEvent(off);
-                    offset += 0.5f;
+                    offset += 4.0f/step.length;
                 }
             }
         }
