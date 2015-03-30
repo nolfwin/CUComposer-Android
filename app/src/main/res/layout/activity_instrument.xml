@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:stretchColumns="*">
+
+        <TableRow
+            android:id="@+id/topRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/backButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffc080"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="Back"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+            <TextView
+                android:id="@+id/topAccom"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="10"
+                android:background="#ffffedb8"
+                android:clickable="true"
+                android:padding="@dimen/paddingMini"
+                android:gravity="center"
+                android:text="Instrument Combination"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+            <TextView
+                android:id="@+id/nextButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffc080"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="Next"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/emptyRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1.5"
+            android:background="#ffffffff">
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/row12"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="2"
+            android:background="#00000000">
+
+            <TextView
+                android:id="@+id/empty001"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/combi1"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#ffff9800"
+                android:gravity="center"
+                android:text="Piano + Guitar"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/empty002"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/combi2"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#ff00e785"
+                android:gravity="center"
+                android:text="Piano + Guitar + Bass"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/empty003"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/emptyRow2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="#ffffffff">
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/row34"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="2"
+            android:background="#00000000">
+            <TextView
+                android:id="@+id/empty011"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/combi3"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#ffffdd00"
+                android:gravity="center"
+                android:text="Piano Only"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/empty012"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/combi4"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#ff00e2c9"
+                android:gravity="center"
+                android:text="Piano + Bass"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/empty013"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/emptyRow3"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="#ffffffff">
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/row56"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="2"
+            android:background="#00000000">
+            <TextView
+                android:id="@+id/empty021"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/combi5"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#ffa4ff16"
+                android:gravity="center"
+                android:text="Guitar Only"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/empty022"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/combi6"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#ff00b5ff"
+                android:gravity="center"
+                android:text="Guitar + Bass"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/empty023"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/directionRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.5"
+            android:background="#ffffffff">
+
+            <TextView
+                android:id="@+id/direction"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffffff"
+                android:gravity="right|center"
+                android:paddingRight="@dimen/paddingMini"
+                android:text="\n\nSelect an instrument combination you want to use in your song."
+                android:textColor="#000000"
+                android:textSize="@dimen/textMini" />
+        </TableRow>
+    </TableLayout>
+</FrameLayout>

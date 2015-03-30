@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:stretchColumns="*">
+
+        <TableRow
+            android:id="@+id/topRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/backButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffc080"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="Back"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+            <TextView
+                android:id="@+id/topRecord"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="10"
+                android:background="#ffffedb8"
+                android:clickable="true"
+                android:padding="@dimen/paddingMini"
+                android:gravity="center"
+                android:text="Main"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+            <TextView
+                android:id="@+id/nextButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffc080"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="Next"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/emptyRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="#ffffffff">
+
+            <TextView
+                android:id="@+id/empty"
+                android:layout_width="100dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/partRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1.5"
+            android:background="#00000000">
+
+            <TextView
+                android:id="@+id/partIntro"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffff9800"
+                android:gravity="center"
+                android:text="Intro"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/partVerse"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffdd00"
+                android:gravity="center"
+                android:text="Verse"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/partPrechorus"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffa4ff16"
+                android:gravity="center"
+                android:text="Pre-chorus"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/partChorus"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ff00e785"
+                android:gravity="center"
+                android:text="Chorus"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/partBridge"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ff00e2c9"
+                android:gravity="center"
+                android:text="Bridge"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/partSolo"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ff00b5ff"
+                android:gravity="center"
+                android:text="Solo"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/textRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.5"
+            android:background="#00000000">
+
+            <TextView
+                android:id="@+id/partText"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:text="\n"
+                android:textSize="@dimen/textMini" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/emptyRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.5"
+            android:background="#00000000">
+
+            <TextView
+                android:id="@+id/empty01"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#00000000"
+                android:gravity="center"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="@dimen/textMini" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/sectionRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="2"
+            android:background="#00000000">
+
+            <TextView
+                android:id="@+id/recordMessage"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/buttonRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="#00000000">
+
+            <TextView
+                android:id="@+id/empty1"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#00000000"/>
+
+            <TextView
+                android:id="@+id/recordButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:id="@+id/playButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:id="@+id/empty3"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#00000000"/>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/emptyRow2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.5"
+            android:background="#00000000">
+
+            <TextView
+                android:id="@+id/empty02"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#00000000"
+                android:gravity="center"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="@dimen/textMini" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/directionRow"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.5"
+            android:background="#ffffffff">
+
+            <TextView
+                android:id="@+id/direction"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffffff"
+                android:gravity="right|center"
+                android:paddingRight="@dimen/paddingMini"
+                android:text="\nSelect a part to see what it is and record your voice.\nTo check and edit your song, please press on the edit button."
+                android:textColor="#000000"
+                android:textSize="@dimen/textMini" />
+        </TableRow>
+    </TableLayout>
+</FrameLayout>

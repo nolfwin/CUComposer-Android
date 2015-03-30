@@ -18,18 +18,43 @@
             android:gravity="center_horizontal">
 
             <TextView
-                android:id="@+id/topSectionMerger"
-                android:layout_width="fill_parent"
+                android:id="@+id/backButton"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="#ffffedb8"
+                android:background="#ffffc080"
                 android:clickable="true"
-                android:padding="@dimen/paddingMini"
-                android:gravity="left|center"
-                android:text="Section Merger"
+                android:gravity="center"
+                android:text="Back"
                 android:textAlignment="center"
                 android:textColor="#000"
                 android:textSize="@dimen/textMini" />
+            <TextView
+                android:id="@+id/topSection"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="10"
+                android:background="#ffffedb8"
+                android:clickable="true"
+                android:padding="@dimen/paddingMini"
+                android:gravity="center"
+                android:text="Section Order"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+            <TextView
+                android:id="@+id/nextButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffc080"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="Next"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+
 
         </TableRow>
 
@@ -348,9 +373,9 @@
                 android:background="#ffffffff"
                 android:gravity="right|center"
                 android:paddingRight="@dimen/paddingMini"
-                android:text="Click on a part to see what it is. Drag and drop a part onto the section order to add it to your song.\nDrag and drop a part out of the section order to remove it from your song.\nIf you didn't record for any parts, they will be automatically removed from your section order."
+                android:text="Select a part to see what it is. Drag and drop a part onto the section order to add it to your song.\nDrag and drop a part out of the section order to remove it from your song.\nIf you didn't record for any parts, they will be automatically removed from your section order."
                 android:textColor="#000000"
-                android:textSize="@dimen/textSuperMini" />
+                android:textSize="@dimen/textMini" />
         </TableRow>
     </TableLayout>
 

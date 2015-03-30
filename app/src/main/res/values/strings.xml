@@ -7,5 +7,8 @@
     <string name="hello">Hello!</string>
     <string name="title_activity_note_editor">NoteEditor</string>
     <string name="title_activity_section_merger">SectionMerger</string>
+    <string name="title_activity_record">Record</string>
+    <string name="title_activity_instrument">Instrument</string>
+    <string name="title_activity_section_setting">SectionSetting</string>
 
 </resources>
