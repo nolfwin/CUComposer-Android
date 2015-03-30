@@ -638,13 +638,13 @@ public class MainActivity extends Activity {
         Part partWithSegment=null;
         Part partWithoutSegment=null;
         try {
-            List<Integer> segmentOutput = Segment.segment(audioFloats);
+       //  List<Integer> segmentOutput = Segment.segment(audioFloats);
            partWithoutSegment= Pitch.pitchEstWithoutSegment(audioFloats,-1);
-           partWithSegment =  Pitch.pitchEst(audioFloats,segmentOutput,-1);
+     //    partWithSegment =  Pitch.pitchEst(audioFloats,segmentOutput,-1);
 
-            Log.d(LOG_TAG,Arrays.toString(segmentOutput.toArray()));
-            Log.d(LOG_TAG,audioFloats.length+"");
-            Log.d(LOG_TAG,"Number of syllables:"+segmentOutput.size()/2);
+//         Log.d(LOG_TAG,Arrays.toString(segmentOutput.toArray()));
+//         Log.d(LOG_TAG,audioFloats.length+"");
+//         Log.d(LOG_TAG,"Number of syllables:"+segmentOutput.size()/2);
             // Pitch.pitchEst(floatMe(audioData));
         } catch (Exception e) {
             e.printStackTrace();
