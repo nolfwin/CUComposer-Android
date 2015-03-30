@@ -64,7 +64,7 @@ public class BarDetector {
             hasWeight = true;
         }
         convertToInputFromNotes();
-        return this.doublePredict();
+        return this.predict();
     }
 
     public void convertToInputFromNotes(){
@@ -163,7 +163,15 @@ public class BarDetector {
                 inputSize += 1;
             }
             else{
-                skip[i] = true;
+                if(offset>predictedOffset){
+                    offset -= 4;
+                }
+                if (offset <= predictedOffset + epsilon && offset >= predictedOffset - 0.5 - epsilon) {
+                    skip[i] = false;
+                    inputSize += 1;
+                } else {
+                    skip[i] = true;
+                }
             }
         }
         double[][] inputData = new double[inputSize][17];
@@ -395,9 +403,9 @@ public class BarDetector {
                 best = i;
             }
         }
-        //System.out.println(Arrays.toString(score));
-        //System.out.println(Arrays.toString(count));
-        //System.out.println("return "+best);
+        System.out.println(Arrays.toString(score));
+        System.out.println(Arrays.toString(count));
+        System.out.println("return "+best);
         return best/4;
     }
 
@@ -413,10 +421,10 @@ public class BarDetector {
             if(skip[i])
                 continue;
             int offset = (int)(input.get(i)[6]*4);
-            if(output[j][0]>predict2Threshold){
-                score[offset] += 1;
-            }
-            //score[offset] += output[j][0];
+//            if(output[j][0]>predict2Threshold){
+//                score[offset] += 1;
+//            }
+            score[offset] += output[j][0];
             count[offset] += 1;
             countTotal += 1;
             j+=1;
@@ -424,7 +432,7 @@ public class BarDetector {
         double best = 0;
         double bestScore = 0;
         for(int i=0;i<score.length;i++){
-            if(count[i]<countTotal/4)
+            if(count[i]==0)
                 continue;
             if(bestScore<score[i]/count[i]){
                 bestScore = score[i]/count[i];
