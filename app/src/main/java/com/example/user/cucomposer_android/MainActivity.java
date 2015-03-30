@@ -244,8 +244,10 @@ public class MainActivity extends Activity {
     OnClickListener mergeOnClickListener =  new OnClickListener() {
         @Override
         public void onClick(View v) {
-            int[] chordSequence = {0,4,5,2,3,0,0,4,5,2,3,0};
-            int offset = 2;
+            runningId=5;
+//            int[] chordSequence = {0,4,5,2,3,0,0,4,5,2,3,0};
+           int[] chordSequence = { 0, 4, 1, 5, 3, 3, 4, 4, 0, 4, 1, 5, 3, 3, 4, 0};
+            int offset = 9;
             int[] major = {offset,2+offset,4+offset,5+offset,7+offset,9+offset,11+offset};
             int[] minor = {offset,2+offset,3+offset,5+offset,7+offset,8+offset,10+offset};
             int[] scale = major;
@@ -294,29 +296,60 @@ public class MainActivity extends Activity {
                     } else {
                         for(int times = 0 ; times < 2 ;times++) {
                             int noteToPlay;
-                            double rand = Math.random();
-                            if (rand > 0.66) {
-                                noteToPlay = scale[((k)%7)]+octave*12;
-                            } else if (rand > 0.33) {
-                                noteToPlay = scale[((k+2)%7)]+octave*12;
-                            } else {
-                                noteToPlay = scale[((k+4)%7)]+octave*12;
-                            }
-                            boolean isPlus = lastNote>noteToPlay;
-                            double randThres =0.75;
-                            if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
-                            if(Math.random()>randThres){
-                                if(isPlus&&octave<6){
-                                    noteToPlay+=12;
-                                    octave++;
+                            if(Math.random()>0.3){
+                                double rand = Math.random();
+                                if (rand > 0.66) {
+                                    noteToPlay = scale[((k)%7)]+octave*12;
+                                } else if (rand > 0.33) {
+                                    noteToPlay = scale[((k+2)%7)]+octave*12;
+                                } else {
+                                    noteToPlay = scale[((k+4)%7)]+octave*12;
                                 }
-                                else if(octave>4) {
-                                    noteToPlay-=12;
-                                    octave--;
+                                boolean isPlus = lastNote>noteToPlay;
+                                double randThres =0.75;
+                                if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
+                                if(Math.random()>randThres){
+                                    if(isPlus&&octave<6){
+                                        noteToPlay+=12;
+                                        octave++;
+                                    }
+                                    else if(octave>4) {
+                                        noteToPlay-=12;
+                                        octave--;
+                                    }
+                                }
+                                testNoteList.add(new Note(noteToPlay, 0.5f));
+                                lastNote = noteToPlay;
+                            }
+                            else{
+                                for(int sixteenthTimes = 0 ; sixteenthTimes < 2 ; sixteenthTimes++){
+                                    double rand = Math.random();
+                                    if (rand > 0.66) {
+                                        noteToPlay = scale[((k)%7)]+octave*12;
+                                    } else if (rand > 0.33) {
+                                        noteToPlay = scale[((k+2)%7)]+octave*12;
+                                    } else {
+                                        noteToPlay = scale[((k+4)%7)]+octave*12;
+                                    }
+                                    boolean isPlus = lastNote>noteToPlay;
+                                    double randThres =0.75;
+                                    if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
+                                    if(Math.random()>randThres){
+                                        if(isPlus&&octave<6){
+                                            noteToPlay+=12;
+                                            octave++;
+                                        }
+                                        else if(octave>4) {
+                                            noteToPlay-=12;
+                                            octave--;
+                                        }
+                                    }
+                                    testNoteList.add(new Note(noteToPlay, 0.25f));
+                                    lastNote = noteToPlay;
                                 }
                             }
-                            testNoteList.add(new Note(noteToPlay, 0.5f));
-                            lastNote = noteToPlay;
+
+
                         }
                     }
                 }
@@ -345,7 +378,7 @@ public class MainActivity extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            runningId = -1;
 //            for(int i = 0; i < partSize ; i++){
 //                runningId = i;
 //                partArray[i]=null;
@@ -381,9 +414,15 @@ public class MainActivity extends Activity {
             Part part = getPartFromRunningID(runningId);
             ChordGenerator cg = new ChordGenerator();
             NotesUtil.calculateOffset(part.getNoteList());
-            cg.setNotes(part.getNoteList());
             boolean isMajor = part.getKey()<=11 ? true: false;
             int key = isMajor? part.getKey():part.getKey()%12;
+            BarDetector bd = new BarDetector(part.getNoteList(),key,isMajor);
+            double barOffset = bd.barDetect();
+
+            part.getNoteList().add(0,new Note(-1,4.0f-(float)barOffset));
+            NotesUtil.calculateOffset(part.getNoteList());
+            cg.setNotes(part.getNoteList());
+
             if(isMajor){
                 cg.setKey(key, Key.MAJOR);
             }
@@ -404,8 +443,8 @@ public class MainActivity extends Activity {
             MidiPlay midiPlay = new MidiPlay(part.getNoteList(),chordPath,key,isMajor);
             midiPlay.setBpm(part.getBpm());
 
-            BarDetector bd = new BarDetector(part.getNoteList(),key,isMajor);
-            double barOffset = bd.barDetect();
+
+
             Log.d(LOG_TAG,"BAR OFFSET IS "+barOffset);
             if(mediaPlayer.isPlaying()){
                 mediaPlayer.stop();
@@ -417,11 +456,11 @@ public class MainActivity extends Activity {
             try {
                 mediaPlayer.setDataSource(filePath);
                 mediaPlayer.prepare();
-
                 mediaPlayer.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            runningId=-1;
         }
     };
     OnClickListener modifyOnClickListener = new OnClickListener() {
@@ -610,7 +649,6 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        runningId= -1;
         return partWithoutSegment;
     }
     public static short[] shortMe(byte[] bytes) {
