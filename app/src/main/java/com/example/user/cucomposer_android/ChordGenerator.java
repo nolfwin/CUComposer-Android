@@ -21,6 +21,10 @@ public class ChordGenerator {
     private double[][] nextChord = null;
     private int[] projectedNotes = null;
 
+    private int fixedLastChord = -1;
+
+
+
 //    private int[] projectedNotes = {
 //            6, 6, 6, 6, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 7, 7, 7, 7, 7, 7, 1, 1, 1, 1, 7, 7, 7, 7, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 1, 1, 0, 0, 0, 0, 7, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 7, 7, 7, 7, 7, 5, 5, 5, 5, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3, 3, 3, 1, 1, 1, 1, 7, 7, 7, 7, 1, 1, 1, 1, 1, 1, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 5, 5, 5, 5, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 7, 7, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 6, 6, 1, 1, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 6, 6, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 6, 6, 7, 7, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 1, 1, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1
 //    };
@@ -111,7 +115,9 @@ public class ChordGenerator {
         int bestCandidate = 0;
         double bestScore = -100000;
         for(int j=0;j<numState*considerTime;j++){
-            if(bestScore < hmmNow[j]){
+            if(fixedLastChord>=0 && numState%7 != fixedLastChord)
+                continue;
+            if (bestScore < hmmNow[j]) {
                 bestCandidate = j;
                 bestScore = hmmNow[j];
             }
@@ -127,6 +133,7 @@ public class ChordGenerator {
             chordPath[i] = chordPath[i]%35;
             System.out.print(" "+ chordName(chordPath[i]));
         }
+        System.out.println();
         return chordPath;
     }
 
@@ -259,5 +266,10 @@ public class ChordGenerator {
     public void setVariation(double variation){
         this.variation = variation;
     }
+
+    public void setFixedLastChord(int chord){
+        fixedLastChord = chord-1;
+    }
+
 
 }
