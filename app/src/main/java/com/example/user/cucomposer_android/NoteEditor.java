@@ -35,8 +35,9 @@ public class NoteEditor extends Activity {
         setContentView(R.layout.activity_note_editor);
         drawNoteLine= (DrawNoteLine)findViewById(R.id.drawNoteLine);
         List<Note> notes = new ArrayList<Note>();
-        final Part interestedPart = MainActivity.partArray[MainActivity.runningId];
-        notes = interestedPart.getNoteList();
+        final Part interestedPart = null;//MainActivity.partArray[MainActivity.runningId];
+        //notes = interestedPart.getNoteList();
+
 //        if(notes.size()==0) {
 //            notes.add(new Note(69, 1));
 //            notes.add(new Note(76, 1.5f));

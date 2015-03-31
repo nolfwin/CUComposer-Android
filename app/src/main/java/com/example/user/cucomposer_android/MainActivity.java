@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.cucomposer_android.entity.Note;
 import com.example.user.cucomposer_android.entity.Part;
@@ -76,7 +77,6 @@ public class MainActivity extends Activity {
     public static int audioFormat;
     public static int channelConfig;
 
-    public static Part[] partArray = new Part[4];
     private Handler timerHandler = new Handler();
 
     Button nextButton;
@@ -89,11 +89,11 @@ public class MainActivity extends Activity {
     Boolean recording;
     Boolean playing;
 
-    private Config.SectionDescription[] section = {
-            Config.SectionDescription.Verse,
-            Config.SectionDescription.PreChorus,
-            Config.SectionDescription.Chorus,
-            Config.SectionDescription.Bridge
+    private Part.PartType[] section = {
+            Part.PartType.VERSE,
+            Part.PartType.PRECRORUS,
+            Part.PartType.CHORUS,
+            Part.PartType.BRIDGE
     };
 
     private int[] sectionId = {
@@ -122,6 +122,7 @@ public class MainActivity extends Activity {
     @Override
 
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(LOG_TAG,"on create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         appContext = getApplicationContext();
@@ -151,9 +152,19 @@ public class MainActivity extends Activity {
         findViewById(R.id.direction).setOnClickListener(pitchOnClickListener);
 
         findViewById(R.id.backButton).setOnClickListener(mergeOnClickListener);
-        
 
+
+
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        runningId = -1;
         setSelectedSectionId(0);
+        enableAllButton();
+        recording = false;
+        playing = false;
+
     }
 
     OnClickListener segmentOnClickListener = new OnClickListener() {
@@ -187,6 +198,7 @@ public class MainActivity extends Activity {
             if(runningId>=0){
                 recording = false;
                 enableAllButton();
+                ((TextView)findViewById(sectionId[selectedSectionId])).setText("["+section[selectedSectionId].NAME()+"]");
             }
             else {
                 runningId = selectedSectionId;
@@ -456,7 +468,15 @@ public class MainActivity extends Activity {
     OnClickListener nextOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            callSectionMergerActivity();
+            if(runningId<0)
+                callNextActivity();
+            else{
+                if(playing) {
+                    Toast.makeText(appContext, "Playing...", Toast.LENGTH_LONG).show();
+                }
+                if(recording)
+                    Toast.makeText(appContext,"Recording...",Toast.LENGTH_LONG).show();
+            }
         }
     };
     OnClickListener pitchOnClickListener = new OnClickListener() {
@@ -521,14 +541,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 runningId = selectedSectionId;
                 Log.d("RUNNING ID","Running ID "+runningId);
-                partArray[runningId]=null;
-                partArray[runningId] = getPartFromRunningID(runningId);
                 runningId= selectedSectionId;
-                if(partArray[runningId]==null) {
-                    Log.d("NULL","running ID = "+runningId+" is null");
-                    return;
-                }
-                else  Log.d("Part","get running ID = "+runningId+" part");
 
             callNextActivity();
         }
@@ -720,13 +733,29 @@ public class MainActivity extends Activity {
         return floaters;
     }
     private void callNextActivity() {
-        Intent nextIntent = new Intent(this, NoteEditor.class);
+        Part[] parts = setParts();
+        Intent nextIntent = new Intent(this, SectionSetting.class);
+        nextIntent.putExtra("parts",parts);
         startActivity(nextIntent);
     }
 
-    public void callSectionMergerActivity(){
-        Intent nextIntent = new Intent(this, SectionSetting.class);
-        startActivity(nextIntent);
+    public Part[] setParts(){
+        Part[] parts = new Part[4];
+        for(int i=0;i<4;i++) {
+            Part part = getPartFromRunningID(i);
+            ChordGenerator cg = new ChordGenerator();
+            NotesUtil.calculateOffset(part.getNoteList());
+            boolean isMajor = part.getKey() <= 11 ? true : false;
+            int key = isMajor ? part.getKey() : part.getKey() % 12;
+            BarDetector bd = new BarDetector(part.getNoteList(), key, isMajor);
+            double barOffset = bd.barDetect();
+
+            part.getNoteList().add(0, new Note(-1, 4.0f - (float) barOffset));
+            NotesUtil.calculateOffset(part.getNoteList());
+            part.setPartType(section[i]);
+            parts[i] = part;
+        }
+        return parts;
     }
 
 

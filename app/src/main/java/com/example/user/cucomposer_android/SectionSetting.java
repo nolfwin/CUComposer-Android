@@ -3,12 +3,18 @@ package com.example.user.cucomposer_android;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.user.cucomposer_android.entity.Part;
+
+import java.util.Arrays;
 
 /**
  * Created by Wongse on 16/3/2558.
@@ -40,9 +46,25 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
     private int tmp1 = 0;
     private int tmp2 = 0;
 
+    private Part[] parts = new Part[6];
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+        Bundle bundle = getIntent().getExtras();
+
+        Parcelable[] partsParcel = bundle.getParcelableArray("parts");
+        for(int i=0;i<partsParcel.length;i++){
+            this.parts[i+1] = (Part)(partsParcel[i]);
+            Log.i("", Arrays.toString((this.parts[i+1]).getNoteList().toArray()));
+            Log.i("", parts[i+1].getPartType().NAME());
+        }
+
+
         setContentView(R.layout.activity_section_setting);
 
         TextView editButton = (TextView) findViewById(R.id.editButton);
