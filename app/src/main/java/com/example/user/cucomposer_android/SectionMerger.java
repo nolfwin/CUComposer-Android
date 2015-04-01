@@ -83,6 +83,9 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
         TextView box = (TextView) findViewById(R.id.box);
         box.setOnTouchListener(this);
 
+        TextView nextButton = (TextView) findViewById(R.id.nextButton);
+        nextButton.setOnTouchListener(this);
+
         setSectionBySectionList();
     }
 
@@ -185,7 +188,7 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
                 for (int i = 0; i < firstTailIndex; i++) {
                     TextView section = (TextView) findViewById(sectionId[i]);
                     // Insert a white box to the section order
-                    if (isOnView(section, X, Y) && boxPart != 6) {
+                    if (isOnViewForPart(section, X, Y) && boxPart != 6) {
                         removeWhiteBox();
                         Log.v("insert", String.valueOf(targetIndex));
                         addWhiteBox(i);
@@ -208,23 +211,32 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
         hasIntro = false;
         hasBridge = false;
         hasSolo = false;
-        String sectionString = "";
+        int introIndex = sectionList.length;
         for (int i = 0; i < sectionList.length; i++) {
             TextView section = (TextView) findViewById(sectionId[i]);
             section.setBackgroundColor(color[sectionList[i]]);
             section.setText(text[sectionList[i]]);
-            if (sectionList[i] == 0) hasIntro = true;
-            else if (sectionList[i] == 4) hasBridge = true;
+            if (sectionList[i] == 0) {
+                hasIntro = true;
+                introIndex = i;
+            } else if (sectionList[i] == 4) hasBridge = true;
             else if (sectionList[i] == 5) hasSolo = true;
-            sectionString += String.valueOf(sectionList[i]) + " ";
         }
-        Log.v("section", String.valueOf(sectionString));
-    }
-
-    private boolean isOnView(View view, int X, int Y) {
-        Rect viewRect = new Rect();
-        view.getGlobalVisibleRect(viewRect);
-        return viewRect.left <= X && X <= viewRect.right && viewRect.top <= Y && Y <= viewRect.bottom;
+        if (hasIntro && introIndex != 0) {
+            int newSectionList[] = new int[sectionList.length];
+            newSectionList[0] = 0;
+            int j = 1;
+            for (int i = 0; i < sectionList.length; i++) {
+                if (sectionList[i] != 0) {
+                    newSectionList[j] = sectionList[i];
+                    j++;
+                }
+            }
+            for (int i = 0; i < sectionList.length; i++) {
+                sectionList[i] = newSectionList[i];
+            }
+            setSectionBySectionList();
+        }
     }
 
     private int getTargetIndex() {
@@ -241,8 +253,20 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
         return firstTailIndex;
     }
 
-    private void addPart(TextView target, int X, int Y, int targetIndex) {
-        if (isOnView(target, X, Y)) {
+    private boolean isOnView(View view, int X, int Y) {
+        Rect viewRect = new Rect();
+        view.getGlobalVisibleRect(viewRect);
+        return viewRect.left <= X && X <= viewRect.right && viewRect.top <= Y && Y <= viewRect.bottom;
+    }
+
+    private boolean isOnViewForPart(View view, int X, int Y) {
+        Rect viewRect = new Rect();
+        view.getGlobalVisibleRect(viewRect);
+        return viewRect.left <= X && X <= viewRect.right && Y <= viewRect.bottom;
+    }
+
+    private void addPart(View target, int X, int Y, int targetIndex) {
+        if (isOnViewForPart(target, X, Y)) {
             if (boxPart == 0 && hasIntro) ;
             else if (boxPart == 4 && hasBridge) ;
             else if (boxPart == 5 && hasSolo) ;

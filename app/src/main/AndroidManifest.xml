@@ -41,6 +41,33 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.user.cucomposer_android.MainActivity" />
         </activity>
+        <activity
+            android:name=".Record"
+            android:label="@string/title_activity_record"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.user.cucomposer_android.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Instrument"
+            android:label="@string/title_activity_instrument"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.user.cucomposer_android.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SectionSetting"
+            android:label="@string/title_activity_section_setting"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.user.cucomposer_android.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

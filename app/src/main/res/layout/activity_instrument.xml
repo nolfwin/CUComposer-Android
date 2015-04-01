@@ -30,7 +30,7 @@
                 android:textColor="#000"
                 android:textSize="@dimen/textMini" />
             <TextView
-                android:id="@+id/topSetting"
+                android:id="@+id/topAccom"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="10"
@@ -38,7 +38,7 @@
                 android:clickable="true"
                 android:padding="@dimen/paddingMini"
                 android:gravity="center"
-                android:text="Recorder"
+                android:text="Instrument Combination"
                 android:textAlignment="center"
                 android:textColor="#000"
                 android:textSize="@dimen/textMini" />
@@ -57,91 +57,69 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/emptyRow"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.5"
-            android:background="#ffffffff">
-
-            <TextView
-                android:id="@+id/empty"
-                android:layout_width="100dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/partRow"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="2.5"
-            android:background="#00000000">
-
-            <TextView
-                android:id="@+id/partVerse"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:background="#ffffdd00"
-                android:gravity="center"
-                android:text="Verse"
-                android:textColor="#000000"
-                android:textSize="@dimen/text" />
-
-            <TextView
-                android:id="@+id/partPrechorus"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:background="#ffa4ff16"
-                android:gravity="center"
-                android:text="Pre-chorus"
-                android:textColor="#000000"
-                android:textSize="@dimen/text" />
-
-            <TextView
-                android:id="@+id/partChorus"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:background="#ff00e785"
-                android:gravity="center"
-                android:text="Chorus"
-                android:textColor="#000000"
-                android:textSize="@dimen/text" />
-
-            <TextView
-                android:id="@+id/partBridge"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:background="#ff00e2c9"
-                android:gravity="center"
-                android:text="Bridge"
-                android:textColor="#000000"
-                android:textSize="@dimen/text" />
-
-        </TableRow>
-
-        <TableRow
             android:id="@+id/emptyRow1"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.1"
+            android:layout_weight="1.5"
+            android:background="#ffffffff">
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/row12"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="2"
             android:background="#00000000">
 
             <TextView
+                android:id="@+id/empty001"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/combi1"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#ffff9800"
+                android:gravity="center"
+                android:text="Piano + Guitar"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/empty002"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="#00000000"
+                android:background="#ffffffff"
                 android:gravity="center"
-                android:text=""
                 android:textColor="#000000"
-                android:textSize="@dimen/textSuperMini" />
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/combi2"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#ff00e785"
+                android:gravity="center"
+                android:text="Piano + Guitar + Bass"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/empty003"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
         </TableRow>
 
         <TableRow
@@ -149,70 +127,64 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.1"
-            android:background="#00000000">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:background="#00000000"
-                android:gravity="center"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="@dimen/textSuperMini" />
+            android:layout_weight="1"
+            android:background="#ffffffff">
         </TableRow>
 
         <TableRow
-            android:id="@+id/row1"
+            android:id="@+id/row34"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
             android:layout_weight="2"
             android:background="#00000000">
-
             <TextView
-                android:id="@+id/empty11"
+                android:id="@+id/empty011"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:background="#00000000"/>
-
-            <Button
-                android:id="@+id/recordButton"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="2"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
                 android:gravity="center"
-                android:text="Record"
-                android:textSize="@dimen/textSmall" />
-
-            <TextView
-                android:id="@+id/emptyButton"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="2"
-                android:gravity="center"
-                android:text=""
                 android:textColor="#000000"
-                android:background="#00000000"
-                android:textSize="@dimen/textSmall" />
-
-            <Button
-                android:id="@+id/playButton"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/combi3"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="2"
+                android:layout_weight="4"
+                android:background="#ffffdd00"
                 android:gravity="center"
-                android:text="Play"
-                android:textSize="@dimen/textSmall" />
-
+                android:text="Piano Only"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
             <TextView
-                android:id="@+id/empty12"
+                android:id="@+id/empty012"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="#00000000"/>
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/combi4"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#ff00e2c9"
+                android:gravity="center"
+                android:text="Piano + Bass"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/empty013"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
         </TableRow>
 
         <TableRow
@@ -220,108 +192,64 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.1"
-            android:background="#00000000">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:background="#00000000"
-                android:gravity="center"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="@dimen/textSuperMini" />
+            android:layout_weight="1"
+            android:background="#ffffffff">
         </TableRow>
 
         <TableRow
-            android:id="@+id/row2"
+            android:id="@+id/row56"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
             android:layout_weight="2"
             android:background="#00000000">
-
             <TextView
-                android:id="@+id/empty21"
+                android:id="@+id/empty021"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="3"
-                android:background="#00000000"/>
-
-            <TextView
-                android:id="@+id/actionText"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="2"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
                 android:gravity="center"
-                android:text=""
-                android:textSize="@dimen/textSmall" />
-
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
             <TextView
-                android:id="@+id/emptyCenter2"
+                android:id="@+id/combi5"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#ffa4ff16"
+                android:gravity="center"
+                android:text="Guitar Only"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/empty022"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:text=" "
-                android:textColor="#000000"
-                android:background="#00000000"
-                android:textSize="@dimen/textSmall" />
-
-            <TextView
-                android:id="@+id/playTimer"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="2"
-                android:gravity="center"
-                android:text=""
-                android:textSize="@dimen/textSmall" />
-
-            <TextView
-                android:id="@+id/empty22"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="3"
-                android:background="#00000000"/>
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/emptyRow4"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.1"
-            android:background="#00000000">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:background="#00000000"
-                android:gravity="center"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="@dimen/textSuperMini" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/textRow"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.5"
-            android:background="#ffffffff">
-
-            <TextView
-                android:id="@+id/partText"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:background="#ffffffff"
                 android:gravity="center"
                 android:textColor="#000000"
-                android:text="\n"
-                android:textSize="@dimen/textMini" />
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/combi6"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="#ff00b5ff"
+                android:gravity="center"
+                android:text="Guitar + Bass"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+            <TextView
+                android:id="@+id/empty023"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5"
+                android:background="#ffffffff"
+                android:gravity="center"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
         </TableRow>
 
         <TableRow
@@ -340,7 +268,7 @@
                 android:background="#ffffffff"
                 android:gravity="right|center"
                 android:paddingRight="@dimen/paddingMini"
-                android:text="\nSelect a part to set its parameters.\n"
+                android:text="\n\nSelect an instrument combination you want to use in your song."
                 android:textColor="#000000"
                 android:textSize="@dimen/textMini" />
         </TableRow>

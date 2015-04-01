@@ -18,8 +18,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.cucomposer_android.entity.Note;
 import com.example.user.cucomposer_android.entity.Part;
@@ -45,8 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import jp.kshoji.javax.sound.midi.UsbMidiSystem;
-
 public class MainActivity extends Activity {
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private static final String LOG_TAG = "debugger";
@@ -59,21 +58,26 @@ public class MainActivity extends Activity {
     private int carryPlaybackOffset;
     private int bufferSize = 4096;
     private DataInputStream dataInputStream;
-    private int partSize = 4;
-    private LinearLayout[] partLayout = new LinearLayout[partSize];
-    private TextView[] partName = new TextView[partSize];
-    private Button[] recordButton = new Button[partSize];
-    private Button[] playButton = new Button[partSize];
-    private Button[] pitchButton = new Button[partSize];
-    private Button[] modifyButton = new Button[partSize];
+//    private int partSize = 4;
+//    private LinearLayout[] partLayout = new LinearLayout[partSize];
+//    private TextView[] partName = new TextView[partSize];
+//    private Button[] recordButton = new Button[partSize];
+//    private Button[] playButton = new Button[partSize];
+//    private Button[] pitchButton = new Button[partSize];
+//    private Button[] modifyButton = new Button[partSize];
+    private Button playButton;
+    private Button recordButton;
+    private TextView actionText;
+
+
     private boolean isFoundAudioRecord = false;
     public static int runningId = -1;
+    private int selectedSectionId = -1;
 
     public static int sampleRate;
     public static int audioFormat;
     public static int channelConfig;
 
-    public static Part[] partArray = new Part[4];
     private Handler timerHandler = new Handler();
 
     Button nextButton;
@@ -85,58 +89,44 @@ public class MainActivity extends Activity {
 
     Boolean recording;
     Boolean playing;
-    UsbMidiSystem usbMidiSystem;
+
+    private Part.PartType[] section = {
+            Part.PartType.VERSE,
+            Part.PartType.PRECRORUS,
+            Part.PartType.CHORUS,
+            Part.PartType.BRIDGE
+    };
+
+    private int[] sectionId = {
+            R.id.partVerse,
+            R.id.partPrechorus,
+            R.id.partChorus,
+            R.id.partBridge
+    };
+
+    private int findSectionId(int id){
+        for(int i=0;i<sectionId.length;i++){
+            if(id == sectionId[i])
+                return i;
+        }
+        return -1;
+    }
+
+
+
+
+
+
     /**
      * Called when the activity is first created.
      */
     @Override
 
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(LOG_TAG,"on create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         appContext = getApplicationContext();
-        LinearLayout outerLayout = (LinearLayout) findViewById(R.id.outerLayout);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-        for(int i=0;i<partSize;i++) {
-            partLayout[i] = new LinearLayout(this);
-            partLayout[i].setOrientation(LinearLayout.HORIZONTAL);
-            outerLayout.addView(partLayout[i],layoutParams);
-
-            partName[i] = new TextView(this);
-            partName[i].setText("part"+i);
-            partLayout[i].addView(partName[i],layoutParams);
-
-            recordButton[i] = new Button(this);
-            recordButton[i].setText("record");
-            recordButton[i].setId(i);
-            recordButton[i].setOnClickListener(startRecOnClickListener);
-            partLayout[i].addView(recordButton[i],layoutParams);
-
-            playButton[i] = new Button(this);
-            playButton[i].setText("play");
-            playButton[i].setId(i);
-            playButton[i].setOnClickListener(playBackOnClickListener);
-            partLayout[i].addView(playButton[i],layoutParams);
-
-            pitchButton[i] = new Button(this);
-            pitchButton[i].setText("pitch");
-            pitchButton[i].setId(i);
-            pitchButton[i].setOnClickListener(pitchOnClickListener);
-            partLayout[i].addView(pitchButton[i],layoutParams);
-
-            modifyButton[i] = new Button(this);
-            modifyButton[i].setText("modify");
-            modifyButton[i].setId(i);
-            modifyButton[i].setOnClickListener(modifyOnClickListener);
-            partLayout[i].addView(modifyButton[i],layoutParams);
-        }
-        timer = (TextView) findViewById(R.id.timer);
-        nextButton = (Button) findViewById(R.id.nextButton);
-        mergeButton = (Button) findViewById(R.id.mergeButton);
-
-
-        nextButton.setOnClickListener(nextOnClickListener);
-        mergeButton.setOnClickListener(mergeOnClickListener);
 
         File appFolder = new File(Config.appFolder);
         if (!appFolder.exists()) {
@@ -145,6 +135,60 @@ public class MainActivity extends Activity {
             }
 
         }
+        for(int id:sectionId){
+            findViewById(id).setOnClickListener(segmentOnClickListener);
+        }
+
+        recordButton = (Button) findViewById(R.id.recordButton);
+        playButton = (Button) findViewById(R.id.playButton);
+        actionText = (TextView) findViewById(R.id.actionText);
+
+        playButton.setOnClickListener(playBackOnClickListener);
+        recordButton.setOnClickListener(startRecOnClickListener);
+
+        timer = (TextView) findViewById(R.id.playTimer);
+
+        findViewById(R.id.nextButton).setOnClickListener(nextOnClickListener);
+
+        findViewById(R.id.direction).setOnClickListener(pitchOnClickListener);
+
+        findViewById(R.id.backButton).setOnClickListener(mergeOnClickListener);
+
+
+
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        runningId = -1;
+        setSelectedSectionId(0);
+        enableAllButton();
+        recording = false;
+        playing = false;
+
+    }
+
+    OnClickListener segmentOnClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(runningId>0)
+                return;
+            int id = findSectionId(v.getId());
+            if (id >= 0) {
+                setSelectedSectionId(id);
+            }
+        }
+    };
+
+    public void setSelectedSectionId(int id){
+        selectedSectionId = id;
+        TableRow emptyRow1 = (TableRow) findViewById(R.id.emptyRow1);
+        emptyRow1.setBackgroundColor(section[id].COLOR());
+        TextView partText = (TextView) findViewById(R.id.partText);
+        partText.setBackgroundColor(section[id].COLOR());
+        partText.setText(section[id].DESCRIPTION());
+        timer.setText("");
+        actionText.setText("");
     }
 
     OnClickListener startRecOnClickListener
@@ -154,17 +198,19 @@ public class MainActivity extends Activity {
         public void onClick(View v) {
             if(runningId>=0){
                 recording = false;
-                Button b = (Button) v;
-                b.setText("Record");
+                enableAllButton();
+                ((TextView)findViewById(sectionId[selectedSectionId])).setText("["+section[selectedSectionId].NAME()+"]");
             }
             else {
-                runningId = v.getId();
+                runningId = selectedSectionId;
 
                 Thread recordThread = new Thread(recordRunnable);
                 recordThread.start();
                 Button b = (Button) v;
                 b.setText("Stop");
-                disableOtherButton(runningId,true);
+                playButton.setEnabled(false);
+                actionText.setText("Recording..");
+                //disableOtherButton(runningId,true);
             }
         }
     };
@@ -174,37 +220,45 @@ public class MainActivity extends Activity {
         public void run() {
 
             recording = true;
-            if (!startRecord(Config.appFolder + "/test"+runningId+".pcm"))
+            if (!startRecord(Config.appFolder + "/test"+selectedSectionId+".pcm"))
                 Log.d(LOG_TAG, "cant find audioRecord");
         }
     };
 
-    private void disableOtherButton(int id,boolean isRecord){
-        for(int i=0;i<partSize;i++){
-            if(!isRecord||id!=i)
-                recordButton[i].setEnabled(false);
-            if(isRecord||id!=i)
-                playButton[i].setEnabled(false);
-            if(isRecord||id!=i)
-                pitchButton[i].setEnabled(false);
-            if(isRecord||id!=i)
-                modifyButton[i].setEnabled(false);
-        }
-    }
+//    private void disableOtherButton(int id,boolean isRecord){
+//        for(int i=0;i<partSize;i++){
+//            if(!isRecord||id!=i)
+//                recordButton[i].setEnabled(false);
+//            if(isRecord||id!=i)
+//                playButton[i].setEnabled(false);
+//            if(isRecord||id!=i)
+//                pitchButton[i].setEnabled(false);
+//            if(isRecord||id!=i)
+//                modifyButton[i].setEnabled(false);
+//        }
+//    }
+//
+//    private void enableAllButton(){
+//        for(int i=0;i<partSize;i++){
+//            recordButton[i].setEnabled(true);
+//            playButton[i].setEnabled(true);
+//            pitchButton[i].setEnabled(true);
+//            modifyButton[i].setEnabled(true);
+//        }
+//    }
 
     private void enableAllButton(){
-        for(int i=0;i<partSize;i++){
-            recordButton[i].setEnabled(true);
-            playButton[i].setEnabled(true);
-            pitchButton[i].setEnabled(true);
-            modifyButton[i].setEnabled(true);
-        }
+        recordButton.setText("Record");
+        recordButton.setEnabled(true);
+        playButton.setText("Play");
+        playButton.setEnabled(true);
+        actionText.setText(".");
     }
 
     private Runnable playRunnable = new Runnable() {
         @Override
         public void run() {
-            playRecord(Config.appFolder+"/test"+runningId+".pcm");
+            playRecord(Config.appFolder+"/test"+selectedSectionId+".pcm");
         }
     };
 
@@ -224,18 +278,18 @@ public class MainActivity extends Activity {
         @Override
         public void onClick(View v) {
             if(runningId<0) {
-                runningId = v.getId();
+                runningId = selectedSectionId;
                 Thread playThread = new Thread(playRunnable);
                 playThread.start();
-                disableOtherButton(runningId, false);
+                recordButton.setEnabled(false);
+                //disableOtherButton(runningId, false);
                 Button b = (Button) v;
                 b.setText("Stop");
+                actionText.setText("Playing..");
             }
             else{
                 playing = false;
-                Button b = (Button) v;
-                b.setText("Play");
-
+                enableAllButton();
             }
             //playRecord2(Config.appFolder + "/test" + v.getId() + ".pcm");
         }
@@ -245,6 +299,7 @@ public class MainActivity extends Activity {
     OnClickListener mergeOnClickListener =  new OnClickListener() {
         @Override
         public void onClick(View v) {
+
             runningId=5;
 //            int[] chordSequence = {0,4,5,2,3,0,0,4,5,2,3,0};
            int[] chordSequencez = { 0, 4, 1, 5, 3, 3, 4, 4, 0, 4, 1, 5, 3, 3, 4, 0};
@@ -425,14 +480,22 @@ public class MainActivity extends Activity {
     OnClickListener nextOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            callNextActivity();
+            if(runningId<0)
+                callNextActivity();
+            else{
+                if(playing) {
+                    Toast.makeText(appContext, "Playing...", Toast.LENGTH_LONG).show();
+                }
+                if(recording)
+                    Toast.makeText(appContext,"Recording...",Toast.LENGTH_LONG).show();
+            }
         }
     };
     OnClickListener pitchOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
 //pitchfucca
-            runningId = v.getId();
+            runningId = selectedSectionId;
             Part part = getPartFromRunningID(runningId);
             ChordGenerator cg = new ChordGenerator();
             NotesUtil.calculateOffset(part.getNoteList());
@@ -488,16 +551,9 @@ public class MainActivity extends Activity {
     OnClickListener modifyOnClickListener = new OnClickListener() {
         @Override
             public void onClick(View v) {
-                runningId = v.getId();
+                runningId = selectedSectionId;
                 Log.d("RUNNING ID","Running ID "+runningId);
-                partArray[runningId]=null;
-                partArray[runningId] = getPartFromRunningID(runningId);
-                runningId=v.getId();
-                if(partArray[runningId]==null) {
-                    Log.d("NULL","running ID = "+runningId+" is null");
-                    return;
-                }
-                else  Log.d("Part","get running ID = "+runningId+" part");
+                runningId= selectedSectionId;
 
             callNextActivity();
         }
@@ -689,8 +745,29 @@ public class MainActivity extends Activity {
         return floaters;
     }
     private void callNextActivity() {
-        Intent nextIntent = new Intent(this, NoteEditor.class);
+        Part[] parts = setParts();
+        Intent nextIntent = new Intent(this, SectionSetting.class);
+        nextIntent.putExtra("parts",parts);
         startActivity(nextIntent);
+    }
+
+    public Part[] setParts(){
+        Part[] parts = new Part[4];
+        for(int i=0;i<4;i++) {
+            Part part = getPartFromRunningID(i);
+            ChordGenerator cg = new ChordGenerator();
+            NotesUtil.calculateOffset(part.getNoteList());
+            boolean isMajor = part.getKey() <= 11 ? true : false;
+            int key = isMajor ? part.getKey() : part.getKey() % 12;
+            BarDetector bd = new BarDetector(part.getNoteList(), key, isMajor);
+            double barOffset = bd.barDetect();
+
+            part.getNoteList().add(0, new Note(-1, 4.0f - (float) barOffset));
+            NotesUtil.calculateOffset(part.getNoteList());
+            part.setPartType(section[i]);
+            parts[i] = part;
+        }
+        return parts;
     }
 
 

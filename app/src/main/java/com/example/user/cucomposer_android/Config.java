@@ -1,5 +1,6 @@
 package com.example.user.cucomposer_android;
 
+import android.graphics.Color;
 import android.os.Environment;
 
 /**
@@ -7,4 +8,8 @@ import android.os.Environment;
  */
 public class Config {
     public final static String appFolder = Environment.getExternalStorageDirectory()+"/PopTime";
+
+
+
+
 }
