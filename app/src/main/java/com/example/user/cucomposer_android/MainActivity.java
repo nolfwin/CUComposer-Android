@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import jp.kshoji.javax.sound.midi.UsbMidiSystem;
 
@@ -249,18 +250,31 @@ public class MainActivity extends Activity {
            int[] chordSequencez = { 0, 4, 1, 5, 3, 3, 4, 4, 0, 4, 1, 5, 3, 3, 4, 0};
             ChordGenerator cg = new ChordGenerator();
             List<Note> noteList = new ArrayList<Note>();
-            noteList.add(new Note(-1,32.0f));
+            noteList.add(new Note(-1,64.0f));
+            Random ran = new Random();
+            int keyFromRan = ran.nextInt(12) + 0;
+            int offset = keyFromRan;
+            int[] major = {offset,2+offset,4+offset,5+offset,7+offset,9+offset,11+offset};
+            int[] minor = {offset,2+offset,3+offset,5+offset,7+offset,8+offset,10+offset};
+            int[] scale;
+            if(Math.random()>0.5){
+                cg.setKey(keyFromRan,Key.MAJOR);
+                Log.d(LOG_TAG,"KEY IS "+keyFromRan+" Major");
+                 scale = major;
+            }
+            else{
+                cg.setKey(keyFromRan,Key.MINOR);
+                Log.d(LOG_TAG,"KEY IS "+keyFromRan+" Minor");
+                scale = minor;
+            }
 
-            cg.setKey(9,Key.MAJOR);
             cg.setNotes(noteList);
             cg.setFixedLastChord(5);
             int[] chordSequence = cg.generateChords();
             Log.d(LOG_TAG,"CHORD LOGD = "+Arrays.toString(chordSequence));
-            
-            int offset = 9;
-            int[] major = {offset,2+offset,4+offset,5+offset,7+offset,9+offset,11+offset};
-            int[] minor = {offset,2+offset,3+offset,5+offset,7+offset,8+offset,10+offset};
-            int[] scale = major;
+
+
+
             int octave = 5;
             int beforeChord = -1;
             int lastNote = -1;
@@ -358,8 +372,6 @@ public class MainActivity extends Activity {
                                     lastNote = noteToPlay;
                                 }
                             }
-
-
                         }
                     }
                 }
