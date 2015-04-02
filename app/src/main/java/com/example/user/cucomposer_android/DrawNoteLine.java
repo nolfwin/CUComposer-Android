@@ -112,7 +112,7 @@ public class DrawNoteLine extends View {
     private float triangleHeight = 20;
 
     private int touchNoteError = 25;
-    private long longPressTime = 5;
+    private long longPressTime = 15;
     private int touchTriangleErrorX =20;
     private int touchTriangleErrorYUpper =100;
     private int touchTriangleErrorYLower = 10;
