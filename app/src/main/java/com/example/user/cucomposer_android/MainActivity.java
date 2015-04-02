@@ -846,7 +846,10 @@ public class MainActivity extends Activity {
     public Part[] setParts(){
         Part[] parts = new Part[4];
         for(int i=0;i<4;i++) {
-            Part part = getPartFromRunningID(i);
+            Part part = getPartFromRunningID(i+1);
+            if(part == null){
+                continue;
+            }
             NotesUtil.calculateOffset(part.getNoteList());
             boolean isMajor = part.getKey() <= 11 ? true : false;
             int key = isMajor ? part.getKey() : part.getKey() % 12;
@@ -855,7 +858,7 @@ public class MainActivity extends Activity {
 
             part.getNoteList().add(0, new Note(-1, 4.0f - (float) barOffset));
             NotesUtil.calculateOffset(part.getNoteList());
-            part.setPartType(partTypes[i]);
+            part.setPartType(partTypes[i+1]);
             parts[i] = part;
         }
         return parts;

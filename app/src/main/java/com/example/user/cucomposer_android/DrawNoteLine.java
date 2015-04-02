@@ -530,5 +530,13 @@ public class DrawNoteLine extends View {
         }
     };
 
+    public void setNeedleBarColor(int color){
+        needleBarColor = color;
+    }
+
+    public void setNeedleColor(int color){
+        needleColor = color;
+    }
+
 
 }
