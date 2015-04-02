@@ -1,6 +1,7 @@
 package com.example.user.cucomposer_android;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioFormat;
@@ -14,8 +15,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TableRow;
@@ -58,6 +61,9 @@ public class MainActivity extends Activity {
     private int carryPlaybackOffset;
     private int bufferSize = 4096;
     private DataInputStream dataInputStream;
+    private boolean nowProcess = false;
+    private Part[] parts;
+    private AlertDialog waitDialog;
 //    private int partSize = 4;
 //    private LinearLayout[] partLayout = new LinearLayout[partSize];
 //    private TextView[] partName = new TextView[partSize];
@@ -90,7 +96,7 @@ public class MainActivity extends Activity {
     Boolean recording;
     Boolean playing;
 
-    private Part.PartType[] section = {
+    private Part.PartType[] partTypes = {
             Part.PartType.VERSE,
             Part.PartType.PRECRORUS,
             Part.PartType.CHORUS,
@@ -125,8 +131,11 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         Log.d(LOG_TAG,"on create");
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         setContentView(R.layout.activity_main);
         appContext = getApplicationContext();
+
 
         File appFolder = new File(Config.appFolder);
         if (!appFolder.exists()) {
@@ -135,8 +144,11 @@ public class MainActivity extends Activity {
             }
 
         }
-        for(int id:sectionId){
-            findViewById(id).setOnClickListener(segmentOnClickListener);
+        //for(int id:sectionId){
+        for(int i=0;i<sectionId.length;i++){
+            TextView section = (TextView)findViewById(sectionId[i]);
+            section.setOnClickListener(segmentOnClickListener);
+            section.setText(partTypes[i].NAME());
         }
 
         recordButton = (Button) findViewById(R.id.recordButton);
@@ -183,10 +195,10 @@ public class MainActivity extends Activity {
     public void setSelectedSectionId(int id){
         selectedSectionId = id;
         TableRow emptyRow1 = (TableRow) findViewById(R.id.emptyRow1);
-        emptyRow1.setBackgroundColor(section[id].COLOR());
+        emptyRow1.setBackgroundColor(partTypes[id].COLOR());
         TextView partText = (TextView) findViewById(R.id.partText);
-        partText.setBackgroundColor(section[id].COLOR());
-        partText.setText(section[id].DESCRIPTION());
+        partText.setBackgroundColor(partTypes[id].COLOR());
+        partText.setText(partTypes[id].DESCRIPTION());
         timer.setText("");
         actionText.setText("");
     }
@@ -199,7 +211,7 @@ public class MainActivity extends Activity {
             if(runningId>=0){
                 recording = false;
                 enableAllButton();
-                ((TextView)findViewById(sectionId[selectedSectionId])).setText("["+section[selectedSectionId].NAME()+"]");
+                ((TextView)findViewById(sectionId[selectedSectionId])).setText("["+ partTypes[selectedSectionId].NAME()+"]");
             }
             else {
                 runningId = selectedSectionId;
@@ -481,7 +493,7 @@ public class MainActivity extends Activity {
         @Override
         public void onClick(View v) {
             if(runningId<0)
-                callNextActivity();
+                processNextButton();
             else{
                 if(playing) {
                     Toast.makeText(appContext, "Playing...", Toast.LENGTH_LONG).show();
@@ -555,7 +567,7 @@ public class MainActivity extends Activity {
                 Log.d("RUNNING ID","Running ID "+runningId);
                 runningId= selectedSectionId;
 
-            callNextActivity();
+            processNextButton();
         }
     };
     public int calculateMeanBpm(Part[] partArray){
@@ -744,18 +756,57 @@ public class MainActivity extends Activity {
         }
         return floaters;
     }
-    private void callNextActivity() {
-        Part[] parts = setParts();
+    private void processNextButton() {
+
+        nowProcess = true;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                new ContextThemeWrapper(MainActivity.this, R.style.popup_theme));
+        builder.setMessage(R.string.wait_dialog);
+
+        waitDialog = builder.show();
+
+        Thread postProcessThread = new Thread(postProcess);
+        postProcessThread.start();
+
+        timerHandler.postDelayed(checkPostProcess,100);
+
+    }
+
+    private Runnable checkPostProcess = new Runnable() {
+        @Override
+        public void run() {
+            if(nowProcess){
+
+                timerHandler.postDelayed(checkPostProcess,100);
+            }
+            else{
+                waitDialog.dismiss();
+                timerHandler.removeCallbacks(checkPostProcess);
+                callNextActivity();
+            }
+        }
+    };
+
+    private void callNextActivity(){
         Intent nextIntent = new Intent(this, SectionSetting.class);
-        nextIntent.putExtra("parts",parts);
+        nextIntent.putExtra("parts", parts);
+
         startActivity(nextIntent);
     }
+
+    private Runnable postProcess = new Runnable() {
+        @Override
+        public void run() {
+            parts = setParts();
+            nowProcess = false;
+        }
+    };
 
     public Part[] setParts(){
         Part[] parts = new Part[4];
         for(int i=0;i<4;i++) {
             Part part = getPartFromRunningID(i);
-            ChordGenerator cg = new ChordGenerator();
             NotesUtil.calculateOffset(part.getNoteList());
             boolean isMajor = part.getKey() <= 11 ? true : false;
             int key = isMajor ? part.getKey() : part.getKey() % 12;
@@ -764,7 +815,7 @@ public class MainActivity extends Activity {
 
             part.getNoteList().add(0, new Note(-1, 4.0f - (float) barOffset));
             NotesUtil.calculateOffset(part.getNoteList());
-            part.setPartType(section[i]);
+            part.setPartType(partTypes[i]);
             parts[i] = part;
         }
         return parts;

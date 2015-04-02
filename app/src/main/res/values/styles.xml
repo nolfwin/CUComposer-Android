@@ -5,4 +5,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="popup_theme" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowBackground">@color/back_color</item>
+        <item name="android:colorBackground">@color/back_color</item>
+    </style>
+
+    <color name="back_color">#A0A0A0</color>
+
 </resources>

@@ -20,30 +20,32 @@ public class Part implements Parcelable {
 
     public enum PartType{
 
-        INTRO("Intro", Color.argb(255, 255, 152, 0),
+        INTRO("Intro","I", Color.argb(255, 255, 152, 0),
                 "The \"introduction\" is an instrumental section at the beginning of your song. \n" +"There is at most one intro in your song."),
-        VERSE("Verse", Color.argb(255, 255, 221, 0),
+        VERSE("Verse","V", Color.argb(255, 255, 221, 0),
                 "When two or more sections of the song have almost identical music and different lyrics, \neach section is considered one \"verse.\""),
-        PRECRORUS("PreChorus",Color.argb(255, 164, 255, 22),
+        PRECRORUS("Pre-chorus","P",Color.argb(255, 164, 255, 22),
                 "An optional section that may occur after the verse is the \"pre-chorus.\"  \nThe pre-chorus functions to connect the verse to the chorus."
         ),
-        CHORUS("Chorus",Color.argb(255, 0, 231, 133),
+        CHORUS("Chorus","C",Color.argb(255, 0, 231, 133),
                 "The \"chorus\" is the element of the song that repeats at least once both musically and lyrically. \nIt contains the main idea, or big picture, of what is being expressed lyrically and musically in your song."
         ),
-        BRIDGE("Bridge",Color.argb(255, 0, 226, 201),
+        BRIDGE("Bridge","B",Color.argb(255, 0, 226, 201),
                 "The \"bridge\" is used to break up the repetitive pattern of the song and keep the listeners attention. \nThere is at most one bridge in your song."
         ),
-        SOLO("Solo",Color.argb(255, 0, 181, 255),
+        SOLO("Solo","S",Color.argb(255, 0, 181, 255),
                 "A \"solo\" is a section designed to showcase an instrumentalist. \nThere is at most one solo in your song."
-        );
-
+        ),
+        BLANK("","",Color.argb(0,0,0,0),"");
         ;
 
         private int color;
         private String description;
         private String name;
+        private String nickname;
 
-        PartType(String name, int color,String description){
+        PartType(String name,String nickname, int color,String description){
+            this.nickname = nickname;
             this.name = name;
             this.color = color;
             this.description = description;
@@ -58,6 +60,8 @@ public class Part implements Parcelable {
         }
 
         public String NAME() {return name;}
+
+        public String NICKNAME() {return nickname;}
     }
 
 
@@ -67,6 +71,17 @@ public class Part implements Parcelable {
         this.key = key;
         this.partType=partType;
     }
+
+    public Part(Part part){
+        this.noteList = new ArrayList<Note>();
+        for(Note note:part.getNoteList()){
+            this.noteList.add(new Note(note));
+        }
+        this.bpm = part.getBpm();
+        this.key = part.getKey();
+        this.partType = part.getPartType();
+    }
+
     public String toString(){
         return "number of note = "+noteList.size() + "partType = "+partType +" bpm = "+bpm+" key = "+ Pitch.keyString[key];
     }
@@ -91,6 +106,18 @@ public class Part implements Parcelable {
 
     public int getKey() {
         return key;
+    }
+
+    public int getKeyPitch(){
+      return key%12;
+    };
+
+    public boolean getKeyMode(){
+        return key<12;
+    }
+
+    public void setKey(int keyPitch, boolean keyMode){
+        this.key = keyPitch + ((keyMode)?0:12);
     }
 
     public int getBpm() {

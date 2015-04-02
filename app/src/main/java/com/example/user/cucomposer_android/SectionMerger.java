@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
+import com.example.user.cucomposer_android.entity.Part;
+
 /**
  * Created by Wongse on 16/3/2558.
  */
@@ -31,6 +33,16 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
             R.id.part11,
             R.id.part12
     };
+    private final Part.PartType[] partTypes = {
+            Part.PartType.INTRO,
+            Part.PartType.VERSE,
+            Part.PartType.PRECRORUS,
+            Part.PartType.CHORUS,
+            Part.PartType.BRIDGE,
+            Part.PartType.SOLO,
+            Part.PartType.BLANK
+    };
+
     private final int id[] = {
             R.id.partIntro,
             R.id.partVerse,
@@ -39,23 +51,7 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
             R.id.partBridge,
             R.id.partSolo
     };
-    private final int color[] = {
-            Color.argb(255, 255, 152, 0),
-            Color.argb(255, 255, 221, 0),
-            Color.argb(255, 164, 255, 22),
-            Color.argb(255, 0, 231, 133),
-            Color.argb(255, 0, 226, 201),
-            Color.argb(255, 0, 181, 255),
-            Color.argb(0, 0, 0, 0)
-    };
-    private final String text[] = {"I", "V", "P", "C", "B", "S", ""};
-    private final String fullText[] = {
-            "The \"introduction\" is an instrumental section at the beginning of your song. \nThere is at most one intro in your song.",
-            "When two or more sections of the song have almost identical music and different lyrics, \neach section is considered one \"verse.\"",
-            "An optional section that may occur after the verse is the \"pre-chorus.\"  \nThe pre-chorus functions to connect the verse to the chorus.",
-            "The \"chorus\" is the element of the song that repeats at least once both musically and lyrically. \nIt contains the main idea, or big picture, of what is being expressed lyrically and musically in your song.",
-            "The \"bridge\" is used to break up the repetitive pattern of the song and keep the listeners attention. \nThere is at most one bridge in your song.",
-            "A \"solo\" is a section designed to showcase an instrumentalist. \nThere is at most one solo in your song."};
+
     private final int defaultPart[] = {0, 1, 2, 3, 1, 2, 3, 4, 3, 6, 6, 6};
 
     @Override
@@ -72,6 +68,7 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
 
         for (int i = 0; i < id.length; i++) {
             TextView part = (TextView) findViewById(id[i]);
+            part.setText(partTypes[i].NAME());
             part.setOnTouchListener(this);
         }
 
@@ -118,8 +115,8 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
                     // Show part description
                     if (view.getId() == id[i]) {
                         TextView partText = (TextView) findViewById(R.id.partText);
-                        partText.setBackgroundColor(color[i]);
-                        partText.setText(fullText[i]);
+                        partText.setBackgroundColor(partTypes[i].COLOR());
+                        partText.setText(partTypes[i].DESCRIPTION());
                         break;
                     }
                 }
@@ -138,8 +135,9 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
                 }
                 isDrag = false;
                 // Remove box
-                box.setBackgroundColor(color[6]);
-                box.setText(text[6]);
+
+
+                setBox(box,6);
                 Rect directionRect = new Rect();
                 TextView direction = (TextView) findViewById(R.id.direction);
                 direction.getGlobalVisibleRect(directionRect);
@@ -154,8 +152,7 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
                         TextView part = (TextView) view;
                         // Create box when swipe out of the section order
                         if (!isOnView(part, X, Y) && !isDrag) {
-                            box.setBackgroundColor(color[sectionList[i]]);
-                            box.setText(text[sectionList[i]]);
+                            setBox(box,sectionList[i]);
                             boxPart = sectionList[i];
                             for (int j = i; j < sectionList.length; j++) {
                                 if (j == sectionList.length - 1)
@@ -177,8 +174,7 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
                             if (i == 0 && hasIntro) break;
                             if (i == 4 && hasBridge) break;
                             if (i == 5 && hasSolo) break;
-                            box.setBackgroundColor(color[i]);
-                            box.setText(text[i]);
+                            setBox(box,i);
                             boxPart = i;
                         }
                     }
@@ -214,8 +210,7 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
         int introIndex = sectionList.length;
         for (int i = 0; i < sectionList.length; i++) {
             TextView section = (TextView) findViewById(sectionId[i]);
-            section.setBackgroundColor(color[sectionList[i]]);
-            section.setText(text[sectionList[i]]);
+            setBox(section,sectionList[i]);
             if (sectionList[i] == 0) {
                 hasIntro = true;
                 introIndex = i;
@@ -291,5 +286,10 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
             sectionList[j] = sectionList[j - 1];
         }
         sectionList[index] = 6;
+    }
+
+    private void setBox(TextView box, int partId){
+        box.setBackgroundColor(partTypes[partId].COLOR());
+        box.setText(partTypes[partId].NICKNAME());
     }
 }

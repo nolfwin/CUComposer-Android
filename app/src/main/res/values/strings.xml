@@ -11,4 +11,6 @@
     <string name="title_activity_instrument">Instrument</string>
     <string name="title_activity_section_setting">SectionSetting</string>
 
+    <string name="wait_dialog">Now Processing...</string>
+
 </resources>

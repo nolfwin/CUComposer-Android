@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.user.cucomposer_android.entity.Note;
 import com.example.user.cucomposer_android.entity.Part;
@@ -16,7 +15,6 @@ import com.example.user.cucomposer_android.utility.Key;
 import com.example.user.cucomposer_android.utility.NotesUtil;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,6 +25,7 @@ public class NoteEditor extends Activity {
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private TextView playTimer;
     private DrawNoteLine drawNoteLine;
+    private Part currentPart;
 
 
     @Override
@@ -34,8 +33,12 @@ public class NoteEditor extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_editor);
         drawNoteLine= (DrawNoteLine)findViewById(R.id.drawNoteLine);
-        List<Note> notes = new ArrayList<Note>();
-        final Part interestedPart = null;//MainActivity.partArray[MainActivity.runningId];
+        Bundle bundle = getIntent().getExtras();
+        currentPart = (Part) bundle.getParcelable("part");
+        List<Note> notes = currentPart.getNoteList();
+
+        //List<Note> notes = new ArrayList<Note>();
+        //final Part interestedPart = null;//MainActivity.partArray[MainActivity.runningId];
         //notes = interestedPart.getNoteList();
 
 //        if(notes.size()==0) {
@@ -89,7 +92,7 @@ public class NoteEditor extends Activity {
                     return;
                 }
                 MidiPlay midiPlay = new MidiPlay(drawNoteLine.getNotes());
-                midiPlay.setBpm(interestedPart.getBpm());
+                midiPlay.setBpm(currentPart.getBpm());
                 String filePath = midiPlay.generateMidi();
                 mediaPlayer.reset();
                 try {
@@ -110,18 +113,14 @@ public class NoteEditor extends Activity {
         chordGenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChordGenerator chordGen = new ChordGenerator();
-         //       chordGen.setNotes(drawNoteLine.getNotes());
-         //      chordGen.setKey(0,Key.MAJOR);
-         //       chordGen.generateChords();
-                Toast toast = Toast.makeText(getApplicationContext(),"print chord generator",Toast.LENGTH_SHORT);
-                toast.show();
+                applyNotesChange();
             }
         });
 
     }
 
-    public void generateMidi(){
+    public void applyNotesChange(){
+        currentPart.setNoteList(drawNoteLine.getNotes());
     }
 
     @Override

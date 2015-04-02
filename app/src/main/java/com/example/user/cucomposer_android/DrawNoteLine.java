@@ -68,16 +68,22 @@ public class DrawNoteLine extends View {
                 if(pitch<minPitch){
                     minPitch = pitch;
                 }
-                else if(pitch>maxPitch){
+                if(pitch>maxPitch){
                    maxPitch = pitch;
                 }
             }
             noteArray.add(aNoteAdd);
         }
+        Log.d(LOG_TAG,"min pitch "+minPitch);
+        Log.d(LOG_TAG,"max pitch "+maxPitch);
         startPitch = (maxPitch + minPitch)/2 - 10;
+        if(startPitch<0){
+            startPitch = 0;
+        }
         for(int i=0;i<noteArray.size();i++){
             Note aNote = noteArray.get(i);
             if(aNote.getPitch()>=0){
+                Log.d(LOG_TAG,"set note pitch "+(aNote.getPitch()-startPitch));
                 aNote.setPitch(aNote.getPitch()-startPitch);
             }
         }
@@ -523,5 +529,6 @@ public class DrawNoteLine extends View {
             }
         }
     };
+
 
 }

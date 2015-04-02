@@ -21,6 +21,12 @@ public class Note implements Parcelable {
         this.duration = duration;
     }
 
+    public Note(Note note){
+        this.pitch = note.getPitch();
+        this.duration = note.getDuration();
+        this.offset = note.getOffset();
+    }
+
     public int getPitch() {
         return pitch;
     }

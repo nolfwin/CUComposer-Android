@@ -1,6 +1,7 @@
 package com.example.user.cucomposer_android;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -48,6 +49,16 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
 
     private Part[] parts = new Part[6];
 
+    private final Part.PartType[] partTypes = {
+            Part.PartType.INTRO,
+            Part.PartType.VERSE,
+            Part.PartType.PRECRORUS,
+            Part.PartType.CHORUS,
+            Part.PartType.BRIDGE,
+            Part.PartType.SOLO,
+            Part.PartType.BLANK
+    };
+
 
 
     @Override
@@ -63,6 +74,8 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
             Log.i("", Arrays.toString((this.parts[i+1]).getNoteList().toArray()));
             Log.i("", parts[i+1].getPartType().NAME());
         }
+
+
 
 
         setContentView(R.layout.activity_section_setting);
@@ -92,6 +105,11 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
         variation2.setVisibility(View.GONE);
         variation3.setVisibility(View.GONE);
 
+        variationName1.setText("Originality");
+        variationName2.setText("Complexity");
+        variationName3.setText("Randomness");
+
+
         editButton.setOnTouchListener(this);
         generateButton.setOnTouchListener(this);
         playGenButton.setOnTouchListener(this);
@@ -100,6 +118,7 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
 
         for (int i = 0; i < id.length; i++) {
             TextView part = (TextView) findViewById(id[i]);
+            part.setText(partTypes[i].NAME());
             part.setOnTouchListener(this);
         }
 
@@ -188,10 +207,24 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
 
     private void edit(int part) {
         //insert code here
+        Intent noteEditIntent = new Intent(this, NoteEditor.class);
+        noteEditIntent.putExtra("part",parts[part]);
+        startActivity(noteEditIntent);
     }
 
     private void generate(int part) {
-        //insert code here
+        ChordGenerator cg = new ChordGenerator();
+        cg.setNotes(parts[part].getNoteList());
+        cg.setKey(parts[part].getKeyPitch(),parts[part].getKeyMode());
+        int[] chordPath = cg.generateChords();
+
+
+        SeekBar variation1 = (SeekBar) findViewById(R.id.variation1);
+        SeekBar variation2 = (SeekBar) findViewById(R.id.variation2);
+        SeekBar variation3 = (SeekBar) findViewById(R.id.variation3);
+
+
+        // insert accom code here
     }
 
     private void playGen(int part) {
@@ -207,7 +240,7 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
     }
 
     private void back() {
-        //insert code here
+        finish();
     }
 
     private void next() {
@@ -220,6 +253,9 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
         int var3 = (variation3 < 10) ? 0 : ((variation3 >= 85) ? 100 : (variation3 + 15));
         Toast toast = Toast.makeText(getApplicationContext(), String.valueOf(var1) + " " + String.valueOf(var2) + " " + String.valueOf(var3), Toast.LENGTH_SHORT);
         toast.show();
+        Intent nextIntent = new Intent(this,SectionMerger.class);
+        nextIntent.putExtra("parts",parts);
+        startActivity(nextIntent);
     }
 
     private void showPage() {
