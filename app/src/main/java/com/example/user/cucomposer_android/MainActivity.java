@@ -21,6 +21,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,6 +76,9 @@ public class MainActivity extends Activity {
     private Button recordButton;
     private TextView actionText;
 
+    private TableRow hiddenRow;
+    private TextView hiddenText;
+
 
     private boolean isFoundAudioRecord = false;
     public static int runningId = -1;
@@ -97,17 +101,21 @@ public class MainActivity extends Activity {
     Boolean playing;
 
     private Part.PartType[] partTypes = {
+            Part.PartType.INTRO,
             Part.PartType.VERSE,
             Part.PartType.PRECRORUS,
             Part.PartType.CHORUS,
-            Part.PartType.BRIDGE
+            Part.PartType.BRIDGE,
+            Part.PartType.SOLO
     };
 
     private int[] sectionId = {
+            R.id.partIntro,
             R.id.partVerse,
             R.id.partPrechorus,
             R.id.partChorus,
-            R.id.partBridge
+            R.id.partBridge,
+            R.id.partSolo
     };
 
     private int findSectionId(int id){
@@ -158,6 +166,9 @@ public class MainActivity extends Activity {
         playButton.setOnClickListener(playBackOnClickListener);
         recordButton.setOnClickListener(startRecOnClickListener);
 
+        hiddenRow = (TableRow) findViewById(R.id.hiddenMessageRow);
+        hiddenText = (TextView) findViewById(R.id.hiddenMessageBox);
+
         timer = (TextView) findViewById(R.id.playTimer);
 
         findViewById(R.id.nextButton).setOnClickListener(nextOnClickListener);
@@ -180,6 +191,8 @@ public class MainActivity extends Activity {
 
     }
 
+
+
     OnClickListener segmentOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -199,8 +212,19 @@ public class MainActivity extends Activity {
         TextView partText = (TextView) findViewById(R.id.partText);
         partText.setBackgroundColor(partTypes[id].COLOR());
         partText.setText(partTypes[id].DESCRIPTION());
-        timer.setText("");
-        actionText.setText("");
+        if(id == 0 || id == 5){
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 2f);
+            hiddenRow.setLayoutParams(layoutParams);
+            hiddenText.setText("This part is auto-generated, thus you cannot record your voice for it.");
+            hideAllButton();
+        }
+        else{
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 2f);
+            hiddenRow.setLayoutParams(layoutParams);
+            hiddenText.setText(" ");
+
+            showAllButton();
+        }
     }
 
     OnClickListener startRecOnClickListener
@@ -264,7 +288,23 @@ public class MainActivity extends Activity {
         recordButton.setEnabled(true);
         playButton.setText("Play");
         playButton.setEnabled(true);
-        actionText.setText(".");
+        actionText.setText(" ");
+    }
+
+    private void hideAllButton(){
+        recordButton.setVisibility(View.GONE);
+        playButton.setVisibility(View.GONE);
+        actionText.setVisibility(View.GONE);
+        timer.setVisibility(View.GONE);
+    }
+
+    private void showAllButton(){
+        recordButton.setVisibility(View.VISIBLE);
+        playButton.setVisibility(View.VISIBLE);
+        actionText.setVisibility(View.VISIBLE);
+        actionText.setText(" ");
+        timer.setVisibility(View.VISIBLE);
+        timer.setText(" ");
     }
 
     private Runnable playRunnable = new Runnable() {
@@ -789,7 +829,7 @@ public class MainActivity extends Activity {
     };
 
     private void callNextActivity(){
-        Intent nextIntent = new Intent(this, SectionSetting.class);
+        Intent nextIntent = new Intent(this, Instrument.class);
         nextIntent.putExtra("parts", parts);
 
         startActivity(nextIntent);

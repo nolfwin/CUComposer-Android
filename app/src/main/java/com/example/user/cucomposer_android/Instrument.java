@@ -1,10 +1,9 @@
 package com.example.user.cucomposer_android;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -38,6 +37,7 @@ public class Instrument extends Activity implements View.OnTouchListener {
             Color.argb(255, 164, 255, 22),
             Color.argb(255, 0, 181, 255)
     };
+
     private int selectedCombi = 99;
 
     @Override
@@ -67,6 +67,7 @@ public class Instrument extends Activity implements View.OnTouchListener {
                     if (view.getId() == combiId[i]) {
                         view.setBackground(getResources().getDrawable(bgId[i]));
                         selectedCombi = i;
+                        highlightButton(combiId[i]);
                         for (int j = 0; j < combiId.length; j++) {
                             if (j != i) {
                                 TextView combi = (TextView) findViewById(combiId[j]);
@@ -83,6 +84,9 @@ public class Instrument extends Activity implements View.OnTouchListener {
                         toast.show();
                     }
                 }
+                if(view.getId() == R.id.backButton){
+                    back();
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
@@ -91,6 +95,28 @@ public class Instrument extends Activity implements View.OnTouchListener {
     }
 
     private void next() {
+        Intent nextIntent = new Intent(this,SectionSetting.class);
+        nextIntent.putExtra("parts", getIntent().getExtras().getParcelableArray("parts"));
+        nextIntent.putExtra("instrument",selectedCombi);
+        startActivity(nextIntent);
         //insert code here
     }
+
+    private void back(){
+        finish();
+    }
+
+    private void highlightButton(int selectedCombiId){
+        for(int id:combiId){
+            if(id == selectedCombiId){
+                findViewById(id).setPressed(true);
+                
+            }
+            else{
+                findViewById(id).setPressed(false);
+            }
+        }
+    }
+
+
 }

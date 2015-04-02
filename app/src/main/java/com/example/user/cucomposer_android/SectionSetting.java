@@ -47,6 +47,7 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
     private int tmp1 = 0;
     private int tmp2 = 0;
 
+
     private Part[] parts = new Part[6];
 
     private final Part.PartType[] partTypes = {
@@ -100,6 +101,10 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
         variationName1.setVisibility(View.GONE);
         variationName2.setVisibility(View.GONE);
         variationName3.setVisibility(View.GONE);
+
+        variationName1.setBackgroundColor(color[6]);
+        variationName2.setBackgroundColor(color[6]);
+        variationName3.setBackgroundColor(color[6]);
 
         variation1.setVisibility(View.GONE);
         variation2.setVisibility(View.GONE);
@@ -158,14 +163,28 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
                         showPage();
                         if (i == 5) {
                             TextView editButton = (TextView) findViewById(R.id.editButton);
-                            editButton.setText("");
-                            editButton.setBackgroundColor(color[6]);
+                            editButton.setVisibility(View.INVISIBLE);
                             variation1.setProgress(0);
                             variation2.setProgress(0);
                             variation3.setProgress(0);
                             variation1.setEnabled(false);
                             variation2.setEnabled(false);
                             variation3.setEnabled(false);
+
+
+                            TextView variationName1 = (TextView) findViewById(R.id.variationName1);
+                            TextView variationName2 = (TextView) findViewById(R.id.variationName2);
+                            TextView variationName3 = (TextView) findViewById(R.id.variationName3);
+                            variationName1.setVisibility(View.INVISIBLE);
+                            variationName2.setVisibility(View.INVISIBLE);
+                            variationName3.setVisibility(View.INVISIBLE);
+
+                        }
+                        else{
+                            if(i==0){
+                                TextView editButton = (TextView) findViewById(R.id.editButton);
+                                editButton.setVisibility(View.INVISIBLE);
+                            }
                         }
                         break;
                     }
@@ -285,7 +304,5 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
         variation1.setEnabled(true);
         variation2.setEnabled(true);
         variation3.setEnabled(true);
-        editButton.setText("Edit Note");
-        editButton.setBackgroundColor(color[8]);
     }
 }
