@@ -1,7 +1,6 @@
 package com.example.user.cucomposer_android;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.user.cucomposer_android.entity.Part;
 
@@ -117,10 +116,10 @@ public class Pitch {
         Part part = Tempo.toPart(reallyPlayNote,reallyPlayduration,bpm,musicKeyToSend);
         part.setPartType(Part.PartType.values()[MainActivity.runningId]);
         Log.d(LOG_TAG,"noteList is"+part.getNoteList().size());
-        MidiPlay mid = new MidiPlay(part.getNoteList());
-        mid.setBpm(part.getBpm());
+        //MidiPlay mid = new MidiPlay(part.getNoteList());
+        //mid.setBpm(part.getBpm());
         Log.d(LOG_TAG,"PARTDOTGETBPM = "+part.getBpm());
-        mid.generateMidi();
+        //mid.generateMidi();
         Log.d(LOG_TAG,"Description "+part.toString());
         return part;
 
@@ -152,10 +151,10 @@ public class Pitch {
         Part part = Tempo.toPart(reallyPlayNote,reallyPlayduration,bpm,musicKeyToSend);
         Log.d(LOG_TAG,"noteList is"+part.getNoteList().size());
 
-        MidiPlay mid = new MidiPlay(part.getNoteList());
-        mid.setBpm(part.getBpm());
+        //MidiPlay mid = new MidiPlay(part.getNoteList());
+        //mid.setBpm(part.getBpm());
         Log.d(LOG_TAG,"PARTDOTGETBPM = "+part.getBpm());
-        mid.generateMidi();
+        //mid.generateMidi();
 
         return part;
 

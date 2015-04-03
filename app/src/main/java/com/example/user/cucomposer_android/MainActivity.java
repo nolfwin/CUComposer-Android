@@ -173,9 +173,9 @@ public class MainActivity extends Activity {
 
         findViewById(R.id.nextButton).setOnClickListener(nextOnClickListener);
 
-        findViewById(R.id.direction).setOnClickListener(pitchOnClickListener);
+        //findViewById(R.id.direction).setOnClickListener(pitchOnClickListener);
 
-        findViewById(R.id.backButton).setOnClickListener(mergeOnClickListener);
+        //findViewById(R.id.backButton).setOnClickListener(mergeOnClickListener);
 
 
 
@@ -490,7 +490,9 @@ public class MainActivity extends Activity {
             for(int i = 0 ; i < testNoteList.size();i++){
                 Log.d(LOG_TAG,(testNoteList.get(i)).getPitch()+"");
             }
-            MidiPlay midiPlay = new MidiPlay(testNoteList,chordSequence,offset,true);
+
+            MidiPlay midiPlay = new MidiPlay();
+            //MidiPlay midiPlay = new MidiPlay(testNoteList,chordSequence,offset,true);
 
             midiPlay.setBpm(bpm);
             if(mediaPlayer.isPlaying()){
@@ -577,7 +579,8 @@ public class MainActivity extends Activity {
             Log.d(LOG_TAG,"NOTES ARE"+Arrays.toString(part.getNoteList().toArray()));
             Log.d(LOG_TAG,"CHORDS ARE "+Arrays.toString(chordPath));
 
-            MidiPlay midiPlay = new MidiPlay(part.getNoteList(),chordPath,key,isMajor);
+            MidiPlay midiPlay = new MidiPlay();
+            //MidiPlay midiPlay = new MidiPlay(part.getNoteList(),chordPath,key,isMajor);
             midiPlay.setBpm(part.getBpm());
 
 

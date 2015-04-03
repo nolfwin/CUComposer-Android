@@ -74,8 +74,8 @@ public class DrawNoteLine extends View {
             }
             noteArray.add(aNoteAdd);
         }
-        Log.d(LOG_TAG,"min pitch "+minPitch);
-        Log.d(LOG_TAG,"max pitch "+maxPitch);
+        //Log.d(LOG_TAG,"min pitch "+minPitch);
+        //Log.d(LOG_TAG,"max pitch "+maxPitch);
         startPitch = (maxPitch + minPitch)/2 - 10;
         if(startPitch<0){
             startPitch = 0;
@@ -83,7 +83,7 @@ public class DrawNoteLine extends View {
         for(int i=0;i<noteArray.size();i++){
             Note aNote = noteArray.get(i);
             if(aNote.getPitch()>=0){
-                Log.d(LOG_TAG,"set note pitch "+(aNote.getPitch()-startPitch));
+                //Log.d(LOG_TAG,"set note pitch "+(aNote.getPitch()-startPitch));
                 aNote.setPitch(aNote.getPitch()-startPitch);
             }
         }
@@ -327,8 +327,6 @@ public class DrawNoteLine extends View {
             Note aNote = notes.get(i);
             offset[i] = aNote.getOffset();
             lastOffset += aNote.getDuration();
-            Log.d(LOG_TAG,"offset note "+aNote.getOffset());
-            Log.d(LOG_TAG,"offset "+offset[i]);
         }
         offset[i] = lastOffset;
         Log.d(LOG_TAG,"offset "+offset[i]);
@@ -352,7 +350,7 @@ public class DrawNoteLine extends View {
         if(state==STATE_PLAYING)
             return true;
         //selectNoteClick(event.getX(),event.getY());
-        Log.d(LOG_TAG,"event action: "+event.getAction()+" pos: "+event.getX()+","+event.getY()+" time: "+(SystemClock.currentThreadTimeMillis()-startTouchTime));
+        //Log.d(LOG_TAG,"event action: "+event.getAction()+" pos: "+event.getX()+","+event.getY()+" time: "+(SystemClock.currentThreadTimeMillis()-startTouchTime));
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 startTouchTime = SystemClock.currentThreadTimeMillis();

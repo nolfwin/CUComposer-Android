@@ -4,6 +4,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.example.user.cucomposer_android.entity.Note;
+import com.example.user.cucomposer_android.entity.Part;
 import com.leff.midi.MidiFile;
 import com.leff.midi.MidiTrack;
 import com.leff.midi.event.Controller;
@@ -25,7 +26,7 @@ import java.util.Random;
 public class MidiPlay {
 
     private int resolution = 96;
-    private List<Note> notes;
+    private Part part;
     private int bpm=120;
     private List<Integer> chords = new ArrayList<Integer>();
     private int key=0;
@@ -38,7 +39,7 @@ public class MidiPlay {
     private int guitarCh = 4;
     private int bassCh = 5;
 
-    private  MidiTrack tempoTrack = new MidiTrack();
+    private MidiTrack tempoTrack = new MidiTrack();
     private MidiTrack noteTrack = new MidiTrack();
     private MidiTrack pianoTrack = new MidiTrack();
     private MidiTrack bassTrack = new MidiTrack();
@@ -48,12 +49,12 @@ public class MidiPlay {
     public MidiPlay(){
     }
 
-    public MidiPlay(List<Note> notes){
-        this.notes = notes;
+    public MidiPlay(Part part){
+        this.part = part;
     }
 
-    public MidiPlay(List<Note> notes,int[] chordSequence, int key, boolean isMajor){
-        this.notes = notes;
+    public MidiPlay(Part part,int[] chordSequence, int key, boolean isMajor){
+        this.part = part;
         for (int index = 0; index < chordSequence.length; index++)
         {
             chords.add(chordSequence[index]);
@@ -64,8 +65,116 @@ public class MidiPlay {
         minorScale = new int[]{key, 2 + key, 3 + key, 5 + key, 7 + key, 8 + key, 10 + key};
     }
 
-    public void setNotes(List<Note> notes){
-        this.notes=notes;
+    public void setPart(Part part){
+        this.part = part;
+    }
+
+    public String generateMidiFromPart(){
+        ArrayList<MidiTrack> tracks = new ArrayList<MidiTrack>();
+        if(part == null)
+            return null;
+        addTempoTrack(tracks);
+        addMainMelodyTrack(tracks);
+        addPianoTrack(tracks);
+        addGuitarTrack(tracks);
+        addBassTrack(tracks);
+
+        MidiFile midiFile = new MidiFile(resolution,tracks);
+        File file = new File(Config.appFolder, "/generate_"+part.getPartType().NAME()+".mid");
+        try{
+            midiFile.writeToFile(file);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        Log.d(LOG_TAG,file.getAbsolutePath());
+        return file.getAbsolutePath();
+    }
+
+    public void addGuitarTrack(List<MidiTrack> tracks){
+        if(part.getGuitarNoteList() == null)
+            return;
+        MidiTrack guitarTrack = new MidiTrack();
+        guitarTrack.insertEvent(new Controller(0, 0, guitarCh,7,80));
+        guitarTrack.insertEvent(new ProgramChange(0,guitarCh, ProgramChange.MidiProgram.ACOUSTIC_GUITAR_NYLON.programNumber()));
+        setTrack(part.getGuitarNoteList(),guitarTrack,guitarCh);
+        tracks.add(guitarTrack);
+    }
+
+    public void addPianoTrack(List<MidiTrack> tracks){
+        if(part.getPianoNoteList() == null)
+            return;
+        MidiTrack pianoTrack = new MidiTrack();
+        pianoTrack.insertEvent(new Controller(0, 0, pianoCh,7,90));
+        pianoTrack.insertEvent(new ProgramChange(0,pianoCh, ProgramChange.MidiProgram.ACOUSTIC_GRAND_PIANO.programNumber()));
+        setTrack(part.getPianoNoteList(),pianoTrack,pianoCh);
+        tracks.add(pianoTrack);
+    }
+
+    public void addBassTrack(List<MidiTrack> tracks){
+        if(part.getBassNoteList() == null)
+            return;
+        MidiTrack bassTrack = new MidiTrack();
+        bassTrack.insertEvent(new Controller(0, 0, bassCh,7, 127));
+        bassTrack.insertEvent(new ProgramChange(0,bassCh, ProgramChange.MidiProgram.ELECTRIC_BASS_PICK.programNumber()));
+        setTrack(part.getBassNoteList(),bassTrack,bassCh);
+        tracks.add(bassTrack);
+    }
+
+    public void addMainMelodyTrack(List<MidiTrack> tracks){
+        if(part.getNoteList() == null)
+            return;
+        MidiTrack mainMelodyTrack = new MidiTrack();
+        mainMelodyTrack.insertEvent(new Controller(0, 0, noteCh, 7, 127));
+        mainMelodyTrack.insertEvent(new ProgramChange(0, noteCh, ProgramChange.MidiProgram.CLARINET.programNumber()));
+        mainMelodyTrack.insertEvent(new Controller(
+                0, 0, noteCh, 91, 100));
+        mainMelodyTrack.insertEvent(new Controller(
+                0, 0, noteCh, 93, 100));
+        setTrack(part.getNoteList(),mainMelodyTrack,noteCh);
+        tracks.add(mainMelodyTrack);
+    }
+
+    public void addTempoTrack(List<MidiTrack> tracks){
+        TimeSignature ts = new TimeSignature();
+        ts.setTimeSignature(4,4,TimeSignature.DEFAULT_METER,TimeSignature.DEFAULT_DIVISION);
+        Tempo tempo = new Tempo();
+        tempo.setBpm(part.getBpm());
+        MidiTrack tempoTrack = new MidiTrack();
+        tempoTrack.insertEvent(ts);
+        tempoTrack.insertEvent(tempo);
+        tracks.add(tempoTrack);
+    }
+
+    public String generateMidiFromNotes(List<Note> notes,int bpm){
+
+        MidiTrack midiTrack = new MidiTrack();
+        midiTrack.insertEvent(new ProgramChange(0,noteCh,ProgramChange.MidiProgram.CLARINET.programNumber()));
+        setTrack(notes,midiTrack,noteCh);
+
+        TimeSignature ts = new TimeSignature();
+        ts.setTimeSignature(4,4,TimeSignature.DEFAULT_METER,TimeSignature.DEFAULT_DIVISION);
+        Tempo tempo = new Tempo();
+        tempo.setBpm(bpm);
+        MidiTrack tempoTrack = new MidiTrack();
+        tempoTrack.insertEvent(ts);
+        tempoTrack.insertEvent(tempo);
+
+        ArrayList<MidiTrack> tracks = new ArrayList<MidiTrack>();
+        tracks.add(tempoTrack);
+        tracks.add(midiTrack);
+
+        MidiFile midiFile = new MidiFile(resolution,tracks);
+        File file = new File(Config.appFolder, "/generate.mid");
+
+        try{
+            midiFile.writeToFile(file);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        Log.d(LOG_TAG,file.getAbsolutePath());
+        return file.getAbsolutePath();
     }
 
     public String generateMidi(){
@@ -98,7 +207,7 @@ public class MidiPlay {
         tempoTrack.insertEvent(ts);
         tempoTrack.insertEvent(tempo);
 
-        setTrackForMainMelody(notes);
+        setTrack(part.getNoteList(),noteTrack,noteCh);
         setTrackForPiano(6);
         setTrackForGuitar(0);
         setTrackForBass(2);
@@ -128,14 +237,12 @@ public class MidiPlay {
         this.bpm = bpm;
     }
     public void setTrackForMainMelody(List<Note> notes){
-        float offset = 0;
-
         for(int i=0;i<notes.size();i++){
             Note aNote = notes.get(i);
             if(aNote.getPitch()>=0) {
                 int pitch = aNote.getPitch()+12;
                 int velocity = 100;
-                long tick = (long)(offset*resolution);
+                long tick = (long)(aNote.getOffset()*resolution);
                 long duration = (long)(aNote.getDuration()*resolution);
 
                 NoteOn on = new NoteOn(tick, noteCh, pitch, velocity);
@@ -148,9 +255,30 @@ public class MidiPlay {
                 //long duration = (long)calculateTime(bpm, aNote.getDuration());
                 noteTrack.insertNote(noteCh, pitch, velocity, tick, duration);
             }
-            offset += aNote.getDuration();
         }
     }
+
+    public void setTrack(List<Note> notes, MidiTrack midiTrack, int ch){
+        for(int i=0;i<notes.size();i++){
+            Note aNote = notes.get(i);
+            if(aNote.getPitch()>=0) {
+                int pitch = aNote.getPitch()+12;
+                int velocity = 100;
+                long tick = (long)(aNote.getOffset()*resolution);
+                long duration = (long)(aNote.getDuration()*resolution);
+
+                NoteOn on = new NoteOn(tick, ch, pitch, velocity);
+                NoteOff off = new NoteOff(tick + duration, ch, pitch, 0);
+
+                midiTrack.insertEvent(on);
+                midiTrack.insertEvent(off);
+
+                midiTrack.insertNote(ch, pitch, velocity, tick, duration);
+            }
+        }
+
+    }
+
     public void setTrackForBass(int accomStyle){
         int[] scale = isMajor ? majorScale : minorScale;
         float offset = 0;
@@ -239,6 +367,7 @@ public void runstep(int[] scale, int[] step, float offset,int k,int octave,int s
         offset += 4.0f/step.length;
     }
 }
+
     public void setTrackForPiano(int accomStyle){
         int[] scale = isMajor ? majorScale : minorScale;
         float offset = 0;

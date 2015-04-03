@@ -15,7 +15,12 @@ import java.util.List;
 public class Part implements Parcelable {
     private int key;
     private int bpm;
+
     private List<Note> noteList;
+    private List<Note> pianoNoteList;
+    private List<Note> guitarNoteList;
+    private List<Note> bassNoteList;
+
     private PartType partType;
 
     public enum PartType{
@@ -70,16 +75,30 @@ public class Part implements Parcelable {
         this.bpm = bpm;
         this.key = key;
         this.partType=partType;
+        pianoNoteList = null;
+        guitarNoteList = null;
+        bassNoteList = null;
     }
 
     public Part(Part part){
-        this.noteList = new ArrayList<Note>();
-        for(Note note:part.getNoteList()){
-            this.noteList.add(new Note(note));
-        }
         this.bpm = part.getBpm();
         this.key = part.getKey();
         this.partType = part.getPartType();
+
+        this.noteList = copyNoteList(part.getNoteList());
+        this.pianoNoteList = copyNoteList(part.getPianoNoteList());
+        this.guitarNoteList = copyNoteList(part.getGuitarNoteList());
+        this.bassNoteList = copyNoteList(part.getBassNoteList());
+    }
+
+    public List<Note> copyNoteList(List<Note> list){
+        if(list == null)
+            return null;
+        ArrayList<Note> retList = new ArrayList<Note>();
+        for(Note note:list){
+            retList.add(new Note(note));
+        }
+        return retList;
     }
 
     public String toString(){
@@ -109,7 +128,7 @@ public class Part implements Parcelable {
     }
 
     public int getKeyPitch(){
-      return key%12;
+        return key%12;
     };
 
     public boolean getKeyMode(){
@@ -129,6 +148,31 @@ public class Part implements Parcelable {
     }
 
 
+    public List<Note> getPianoNoteList() {
+        return pianoNoteList;
+    }
+
+    public void setPianoNoteList(List<Note> pianoNoteList) {
+        this.pianoNoteList = pianoNoteList;
+    }
+
+    public List<Note> getGuitarNoteList() {
+        return guitarNoteList;
+    }
+
+    public void setGuitarNoteList(List<Note> guitarNoteList) {
+        this.guitarNoteList = guitarNoteList;
+    }
+
+    public List<Note> getBassNoteList() {
+        return bassNoteList;
+    }
+
+    public void setBassNoteList(List<Note> bassNoteList) {
+        this.bassNoteList = bassNoteList;
+    }
+
+
     protected Part(Parcel in) {
         key = in.readInt();
         bpm = in.readInt();
@@ -137,6 +181,24 @@ public class Part implements Parcelable {
             in.readList(noteList, Note.class.getClassLoader());
         } else {
             noteList = null;
+        }
+        if (in.readByte() == 0x01) {
+            pianoNoteList = new ArrayList<Note>();
+            in.readList(pianoNoteList, Note.class.getClassLoader());
+        } else {
+            pianoNoteList = null;
+        }
+        if (in.readByte() == 0x01) {
+            guitarNoteList = new ArrayList<Note>();
+            in.readList(guitarNoteList, Note.class.getClassLoader());
+        } else {
+            guitarNoteList = null;
+        }
+        if (in.readByte() == 0x01) {
+            bassNoteList = new ArrayList<Note>();
+            in.readList(bassNoteList, Note.class.getClassLoader());
+        } else {
+            bassNoteList = null;
         }
         partType = (PartType) in.readSerializable();
     }
@@ -156,6 +218,24 @@ public class Part implements Parcelable {
             dest.writeByte((byte) (0x01));
             dest.writeList(noteList);
         }
+        if (pianoNoteList == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(pianoNoteList);
+        }
+        if (guitarNoteList == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(guitarNoteList);
+        }
+        if (bassNoteList == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(bassNoteList);
+        }
         dest.writeSerializable(partType);
     }
 
@@ -171,4 +251,6 @@ public class Part implements Parcelable {
             return new Part[size];
         }
     };
+
+
 }

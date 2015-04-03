@@ -1,15 +1,12 @@
 package com.example.user.cucomposer_android;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.user.cucomposer_android.entity.Note;
@@ -74,7 +71,7 @@ public class NoteEditor extends Activity {
         TextView prevButton = (TextView)findViewById(R.id.prevButton);
         TextView nextButton = (TextView)findViewById(R.id.nextButton);
         playTimer = (TextView)findViewById(R.id.playTimer);
-        TextView midiButton = (TextView) findViewById(R.id.midiButton);
+        final TextView midiButton = (TextView) findViewById(R.id.midiButton);
         TextView saveButton = (TextView) findViewById(R.id.saveButton);
         TextView loadButton = (TextView) findViewById(R.id.loadButton);
         prevButton.setOnClickListener(new View.OnClickListener() {
@@ -96,9 +93,9 @@ public class NoteEditor extends Activity {
                     mediaPlayer.stop();
                     return;
                 }
-                MidiPlay midiPlay = new MidiPlay(drawNoteLine.getNotes());
-                midiPlay.setBpm(currentPart.getBpm());
-                String filePath = midiPlay.generateMidi();
+                //MidiPlay midiPlay = new MidiPlay(drawNoteLine.getNotes());
+                MidiPlay midiPlay = new MidiPlay();
+                String filePath = midiPlay.generateMidiFromNotes(drawNoteLine.getNotes(),currentPart.getBpm());
                 mediaPlayer.reset();
                 try {
 
