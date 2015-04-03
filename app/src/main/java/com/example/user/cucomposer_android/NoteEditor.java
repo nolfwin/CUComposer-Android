@@ -1,17 +1,19 @@
 package com.example.user.cucomposer_android;
 
 import android.app.Activity;
-import android.app.DialogFragment;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.cucomposer_android.entity.Note;
 import com.example.user.cucomposer_android.entity.Part;
-import com.example.user.cucomposer_android.utility.Key;
 import com.example.user.cucomposer_android.utility.NotesUtil;
 
 import java.io.IOException;
@@ -66,7 +68,7 @@ public class NoteEditor extends Activity {
 
         NotesUtil.calculateOffset(notes);
 
-        drawNoteLine.setNotes(notes,0, Key.MAJOR);
+        drawNoteLine.setNotes(notes,currentPart.getKeyPitch(), currentPart.getKeyMode());
 
         TextView prevButton = (TextView)findViewById(R.id.prevButton);
         TextView nextButton = (TextView)findViewById(R.id.nextButton);
@@ -115,13 +117,15 @@ public class NoteEditor extends Activity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //save as default
+                drawNoteLine.setDefaultNotes();
+                Toast.makeText(getApplicationContext(),"Save as default complete",Toast.LENGTH_SHORT).show();
             }
         });
         loadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //load default
+                drawNoteLine.loadDefaultNotes();
+                Toast.makeText(getApplicationContext(),"Load default complete",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -130,8 +134,7 @@ public class NoteEditor extends Activity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment dialog = new BackFromEditDialog();
-                dialog.show(getFragmentManager(), "tag");
+                applyNotesChange();
             }
         });
 
@@ -142,7 +145,31 @@ public class NoteEditor extends Activity {
     }
 
     public void applyNotesChange(){
-        currentPart.setNoteList(drawNoteLine.getNotes());
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Save Note");
+        alert.setMessage("Which version of note do you want to save?");
+        alert.setPositiveButton("Latest version", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                currentPart.setNoteList(drawNoteLine.getNotes());
+                sendDataBack();
+            }
+        });
+
+        alert.setNegativeButton("Current default version", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                drawNoteLine.loadDefaultNotes();
+                currentPart.setNoteList(drawNoteLine.getNotes());
+                sendDataBack();
+            }
+        });
+        alert.show();
+    }
+
+    private void sendDataBack(){
+        Intent output= new Intent();
+        output.putExtra("part",currentPart);
+        setResult(RESULT_OK,output);
+        finish();
     }
 
     @Override
@@ -166,14 +193,14 @@ public class NoteEditor extends Activity {
         public void run() {
             int nowPlayTime = mediaPlayer.getCurrentPosition();
             int duration = mediaPlayer.getDuration();
-            playTimer.setText(" " + nowPlayTime + " / " + duration);
+            //playTimer.setText(" " + nowPlayTime + " / " + duration);
             if(mediaPlayer.isPlaying()){
                 playTimeHandler.postDelayed(updatePlayTime,100);
                 drawNoteLine.updatePlayingNote(1.0f*mediaPlayer.getCurrentPosition()/mediaPlayer.getDuration());
             }
             else{
                 playTimeHandler.removeCallbacks(updatePlayTime);
-                playTimer.setText("End");
+                //playTimer.setText("End");
                 drawNoteLine.setPlaying(false);
             }
 

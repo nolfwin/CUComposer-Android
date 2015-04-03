@@ -80,7 +80,7 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
     MediaPlayer mediaPlayer = new MediaPlayer();
 
 
-
+    private int activityRequestCode = 123;
 
 
     @Override
@@ -283,7 +283,15 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
         //insert code here
         Intent noteEditIntent = new Intent(this, NoteEditor.class);
         noteEditIntent.putExtra("part", parts[part]);
-        startActivity(noteEditIntent);
+        startActivityForResult(noteEditIntent,activityRequestCode);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == activityRequestCode && resultCode == RESULT_OK && data != null) {
+            Part part = data.getParcelableExtra("part");
+            parts[currentPart] = part;
+        }
     }
 
     private double calculateScale(double min, double max , double variation){

@@ -16,6 +16,7 @@ import android.view.View;
 
 import com.example.user.cucomposer_android.entity.Note;
 import com.example.user.cucomposer_android.utility.Key;
+import com.example.user.cucomposer_android.utility.NotesUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +92,7 @@ public class DrawNoteLine extends View {
         this.keyPitch = keyPitch;
         this.keyMode = keyMode;
         calculateOffset();
+        setDefaultNotes();
     }
 
     private int startPitch;
@@ -99,7 +101,7 @@ public class DrawNoteLine extends View {
 
     private List<Note> notes = new ArrayList<Note>();
 
-
+    private List<Note> defaultNotes;
 
     private int roomLength = 3;
     private int lineLength = 11;
@@ -536,5 +538,13 @@ public class DrawNoteLine extends View {
         needleColor = color;
     }
 
+    public void setDefaultNotes(){
+        defaultNotes = NotesUtil.copyNotes(notes);
+    }
+
+    public void loadDefaultNotes(){
+        this.notes = NotesUtil.copyNotes(defaultNotes);
+        postInvalidate();
+    }
 
 }

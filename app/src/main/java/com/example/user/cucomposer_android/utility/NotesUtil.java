@@ -2,6 +2,7 @@ package com.example.user.cucomposer_android.utility;
 
 import com.example.user.cucomposer_android.entity.Note;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,5 +31,13 @@ public class NotesUtil {
         for(Note note:notes2){
             notes1.add(new Note(note));
         }
+    }
+
+    public static List<Note> copyNotes(List<Note> notes2){
+        ArrayList<Note> retNotes = new ArrayList<Note>();
+        for(Note note:notes2){
+            retNotes.add(new Note(note));
+        }
+        return retNotes;
     }
 }
