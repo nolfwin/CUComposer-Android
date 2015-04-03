@@ -126,7 +126,9 @@ public class MidiPlay {
             return;
         MidiTrack mainMelodyTrack = new MidiTrack();
         mainMelodyTrack.insertEvent(new Controller(0, 0, noteCh, 7, 127));
-        mainMelodyTrack.insertEvent(new ProgramChange(0, noteCh, ProgramChange.MidiProgram.CLARINET.programNumber()));
+        int programInstru = part.getPartType()== Part.PartType.SOLO? ProgramChange.MidiProgram.ELECTRIC_GUITAR_JAZZ.programNumber() :ProgramChange.MidiProgram.CLARINET.programNumber();
+
+        mainMelodyTrack.insertEvent(new ProgramChange(0, noteCh,programInstru ));
         mainMelodyTrack.insertEvent(new Controller(
                 0, 0, noteCh, 91, 100));
         mainMelodyTrack.insertEvent(new Controller(
