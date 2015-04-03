@@ -805,7 +805,7 @@ public class MainActivity extends Activity {
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 new ContextThemeWrapper(MainActivity.this, R.style.popup_theme));
         builder.setMessage(R.string.wait_dialog);
-
+        builder.setCancelable(false);
         waitDialog = builder.show();
 
         Thread postProcessThread = new Thread(postProcess);
