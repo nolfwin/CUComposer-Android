@@ -175,7 +175,12 @@ public class MainActivity extends Activity {
 
         //findViewById(R.id.direction).setOnClickListener(pitchOnClickListener);
 
-        //findViewById(R.id.backButton).setOnClickListener(mergeOnClickListener);
+        findViewById(R.id.backButton).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
 
 

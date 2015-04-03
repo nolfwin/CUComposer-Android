@@ -90,13 +90,22 @@
             android:layout_weight="0.5"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_weight="1"
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"></LinearLayout>
+
+            <TextView
+                android:id="@+id/songText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="test"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:gravity="center" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
