@@ -114,12 +114,11 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
 
 
         ArrayList<Note> introNotes = new ArrayList<Note>();
-        introNotes.add(new Note(-1,introMeasure*4.0f));
-        //introNotes.add(new Note(-1,16.0f));
+        introNotes.add(new Note(-1,introMeasure*4-1));
         parts[0] = new Part(introNotes,bpm,key,partTypes[0]);
 
         ArrayList<Note> soloNotes = new ArrayList<Note>();
-        soloNotes.add(new Note(-1,soloMeasure*4.0f));
+        soloNotes.add(new Note(-1,soloMeasure*4-1));
         parts[5] = new Part(soloNotes,bpm,key,partTypes[5]);
 
         instCombination = bundle.getInt("instrument");

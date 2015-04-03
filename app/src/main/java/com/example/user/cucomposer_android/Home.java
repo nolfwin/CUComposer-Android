@@ -2,11 +2,23 @@ package com.example.user.cucomposer_android;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import java.io.File;
+import com.example.user.cucomposer_android.entity.Note;
+import com.example.user.cucomposer_android.entity.Part;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Wongse on 16/3/2558.
@@ -33,14 +45,8 @@ public class Home extends Activity {
             @Override
             public void onClick(View v) {
                 Intent nextIntent = new Intent(getApplicationContext(), Listen.class);
-
                 startActivity(nextIntent);
             }
         });
-
-        File songFolder = new File(Config.fullSongFolder);
-        if(!songFolder.exists()){
-            boolean success = songFolder.mkdir();
-        }
     }
 }

@@ -8,7 +8,6 @@ import android.os.Environment;
  */
 public class Config {
     public final static String appFolder = Environment.getExternalStorageDirectory()+"/PopTime";
-    public final static String fullSongFolder = appFolder + "/Songs";
 
     public final static int inactiveColor = Color.argb(255,200,200,200);
 
