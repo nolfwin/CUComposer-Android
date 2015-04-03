@@ -46,7 +46,7 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
             Color.argb(255, 187, 187, 187),
             Color.argb(255, 221, 221, 221)
     };
-    private int[][] var = new int[5][3];
+    private int[][] var = new int[6][3];
     private int currentPart = 99;
     private int tmp0 = 0;
     private int tmp1 = 0;
@@ -200,13 +200,13 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
                         TableRow emptyRow6 = (TableRow) findViewById(R.id.emptyRow6);
                         emptyRow1.setBackgroundColor(color[i]);
                         emptyRow6.setBackgroundColor(color[i]);
-                        if (currentPart < 5) {
+                        if (currentPart < 6) {
                             var[currentPart][0] = variation1.getProgress();
                             var[currentPart][1] = variation2.getProgress();
                             var[currentPart][2] = variation3.getProgress();
                         }
                         currentPart = i;
-                        if (currentPart < 5) {
+                        if (currentPart < 6) {
                             variation1.setProgress(var[currentPart][0]);
                             variation2.setProgress(var[currentPart][1]);
                             variation3.setProgress(var[currentPart][2]);
@@ -215,20 +215,23 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
                         if (i == 5) {
                             TextView editButton = (TextView) findViewById(R.id.editButton);
                             editButton.setVisibility(View.INVISIBLE);
-                            variation1.setProgress(0);
-                            variation2.setProgress(0);
-                            variation3.setProgress(0);
-                            variation1.setEnabled(false);
-                            variation2.setEnabled(false);
-                            variation3.setEnabled(false);
 
-
-                            TextView variationName1 = (TextView) findViewById(R.id.variationName1);
-                            TextView variationName2 = (TextView) findViewById(R.id.variationName2);
-                            TextView variationName3 = (TextView) findViewById(R.id.variationName3);
-                            variationName1.setVisibility(View.INVISIBLE);
-                            variationName2.setVisibility(View.INVISIBLE);
-                            variationName3.setVisibility(View.INVISIBLE);
+//                            TextView editButton = (TextView) findViewById(R.id.editButton);
+//                            editButton.setVisibility(View.INVISIBLE);
+//                            variation1.setProgress(0);
+//                            variation2.setProgress(0);
+//                            variation3.setProgress(0);
+//                            variation1.setEnabled(false);
+//                            variation2.setEnabled(false);
+//                            variation3.setEnabled(false);
+//
+//
+//                            TextView variationName1 = (TextView) findViewById(R.id.variationName1);
+//                            TextView variationName2 = (TextView) findViewById(R.id.variationName2);
+//                            TextView variationName3 = (TextView) findViewById(R.id.variationName3);
+//                            variationName1.setVisibility(View.INVISIBLE);
+//                            variationName2.setVisibility(View.INVISIBLE);
+//                            variationName3.setVisibility(View.INVISIBLE);
 
                         }
                         else{
