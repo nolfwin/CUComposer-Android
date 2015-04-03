@@ -55,8 +55,8 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
     private int bpm;
     private int key;
 
-    private int soloMeasure = 16;
-    private int introMeasure = 8;
+    private int soloMeasure = 8;
+    private int introMeasure = 4;
 
 
     private Part[] parts = new Part[6];
@@ -78,6 +78,8 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
     private int instCombination;
 
     MediaPlayer mediaPlayer = new MediaPlayer();
+
+
 
 
 
@@ -427,13 +429,26 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
         cg.setKey(parts[part].getKeyPitch(),parts[part].getKeyMode());
         int[] chordPath = cg.generateChords();
 
+
         if(part == 5){
             setSoloNotes(5, chordPath);
         }
 
+        generateAccompaniment(parts[part],chordPath);
 
-        AccompanimentGenerator ag = new AccompanimentGenerator(parts[currentPart],chordPath);
 
+        Toast.makeText(getApplicationContext(),"Your generated part is finished",Toast.LENGTH_SHORT).show();
+
+//        SeekBar variation1 = (SeekBar) findViewById(R.id.variation1);
+//        SeekBar variation2 = (SeekBar) findViewById(R.id.variation2);
+//        SeekBar variation3 = (SeekBar) findViewById(R.id.variation3);
+
+
+        // insert accom code here
+    }
+
+    private void generateAccompaniment(Part part, int[] chordPath){
+        AccompanimentGenerator ag = new AccompanimentGenerator(part,chordPath);
         switch (instCombination){
             case 0:
                 ag.generateNotesForGuitar(1);
@@ -459,15 +474,6 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
                 ag.generateNotesForBass(1);
                 break;
         }
-
-        Toast.makeText(getApplicationContext(),"Your generated part is finished",Toast.LENGTH_SHORT).show();
-
-//        SeekBar variation1 = (SeekBar) findViewById(R.id.variation1);
-//        SeekBar variation2 = (SeekBar) findViewById(R.id.variation2);
-//        SeekBar variation3 = (SeekBar) findViewById(R.id.variation3);
-
-
-        // insert accom code here
     }
 
     private void playGen(int part) {
@@ -524,8 +530,8 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
 
     private void next() {
 
-        Part[] sendParts = new Part[6];
-        for(int i=0;i<sendParts.length;i++){
+        Part[] sendParts = new Part[7];
+        for(int i=0;i<sendParts.length-1;i++){
             if(isGenerated[i]){
                 if(savedParts[i] != null){
                     sendParts[i] = savedParts[i];
@@ -538,10 +544,16 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
                 sendParts[i] = null;
             }
         }
+        ArrayList<Note> outerNotes = new ArrayList<Note>();
+        outerNotes.add(new Note(-1,3));
+        sendParts[sendParts.length-1] = new Part(outerNotes,bpm,key, Part.PartType.BLANK);
+        generateAccompaniment(sendParts[sendParts.length-1], new int[]{0});
 
         Intent nextIntent = new Intent(this,SectionMerger.class);
         nextIntent.putExtra("parts",sendParts);
         startActivity(nextIntent);
+
+
     }
 
     private void showPage() {

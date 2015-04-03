@@ -15,4 +15,20 @@ public class NotesUtil {
             lastOffset += notes.get(i).getDuration();
         }
     }
+
+    public static void offsetTransition(List<Note> notes, float transOffset){
+        if(notes == null)
+            return;
+        for(Note note:notes){
+            note.setOffset(note.getOffset() + transOffset);
+        }
+    }
+
+    public static void addNotes(List<Note> notes1 ,List<Note> notes2){
+        if(notes1==null || notes2 == null)
+            return;
+        for(Note note:notes2){
+            notes1.add(new Note(note));
+        }
+    }
 }
