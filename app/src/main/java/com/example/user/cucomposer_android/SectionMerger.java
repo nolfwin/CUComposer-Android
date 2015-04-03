@@ -1,13 +1,23 @@
 package com.example.user.cucomposer_android;
 
-import android.app.*;
-import android.graphics.*;
-import android.os.*;
+import android.app.Activity;
+import android.graphics.Rect;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
-import android.view.*;
-import android.widget.*;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.user.cucomposer_android.entity.Note;
 import com.example.user.cucomposer_android.entity.Part;
+import com.example.user.cucomposer_android.utility.NotesUtil;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Wongse on 16/3/2558.
@@ -19,6 +29,10 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
     private boolean hasIntro = false;
     private boolean hasBridge = false;
     private boolean hasSolo = false;
+
+    private int bpm;
+    private int key;
+
     private final int sectionId[] = {
             R.id.part01,
             R.id.part02,
@@ -52,7 +66,11 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
             R.id.partSolo
     };
 
-    private Part[] parts = new Part[6];
+    private Part[] parts;
+
+    private Part fullSong;
+
+    private MediaPlayer mediaPlayer = new MediaPlayer();
 
     private final int defaultPart[] = {0, 1, 2, 3, 1, 2, 3, 4, 3, 6, 6, 6};
 
@@ -70,6 +88,8 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
 
         Bundle bundle = getIntent().getExtras();
         Parcelable[] partsParcel = bundle.getParcelableArray("parts");
+
+        parts = new Part[partsParcel.length];
         for(int i=0;i<partsParcel.length;i++){
             this.parts[i] = (Part)(partsParcel[i]);
         }
@@ -80,6 +100,10 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
             part.setOnTouchListener(this);
             if(parts[i] == null){
                 part.setBackgroundColor(Config.inactiveColor);
+            }
+            else{
+                bpm = parts[i].getBpm();
+                key = parts[i].getKey();
             }
         }
 
@@ -121,6 +145,10 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
                     break;
                 }
 
+                if(view.getId() == R.id.nextButton){
+                    play();
+                    break;
+                }
 
                 if (view.getId() == R.id.defaultButton) {
                     for (int i = 0; i < defaultPart.length; i++)
@@ -130,6 +158,7 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
                     break;
                 }
                 if (view.getId() == R.id.mergeButton) {
+                    generateFullSong();
                     message.setText("All sections of your song are being merged together.");
                     break;
                 }
@@ -323,6 +352,48 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
         }
     }
 
+    private void generateFullSong(){
+
+        float appendOffset = 0;
+
+        fullSong = new Part(null,bpm,key, Part.PartType.BLANK);
+
+        fullSong.setNoteList(new ArrayList<Note>());
+        fullSong.setGuitarNoteList(new ArrayList<Note>());
+        fullSong.setPianoNoteList(new ArrayList<Note>());
+        fullSong.setBassNoteList(new ArrayList<Note>());
+
+        for(int i=0;i<sectionList.length;i++){
+            if(sectionList[i] == 6)
+                break;
+            Part partCpy = parts[sectionList[i]];
+            List<Note> noteList = partCpy.getNoteList();
+            Note lastNote = noteList.get(noteList.size()-1);
+            float endOffset = lastNote.getOffset() + lastNote.getDuration();
+
+            addToFullSong(partCpy,appendOffset);
+
+            appendOffset += Math.ceil(endOffset/4)*4;
+        }
+
+        addToFullSong(parts[6],appendOffset);
+    }
+
+    private void addToFullSong(Part part, float appendOffset){
+        Part partCpy = new Part(part);
+        NotesUtil.offsetTransition(partCpy.getNoteList(), appendOffset);
+        NotesUtil.offsetTransition(partCpy.getGuitarNoteList(),appendOffset);
+        NotesUtil.offsetTransition(partCpy.getBassNoteList(),appendOffset);
+        NotesUtil.offsetTransition(partCpy.getPianoNoteList(),appendOffset);
+
+        NotesUtil.addNotes(fullSong.getNoteList(),partCpy.getNoteList());
+        NotesUtil.addNotes(fullSong.getBassNoteList(),partCpy.getBassNoteList());
+        NotesUtil.addNotes(fullSong.getGuitarNoteList(),partCpy.getGuitarNoteList());
+        NotesUtil.addNotes(fullSong.getPianoNoteList(),partCpy.getPianoNoteList());
+    }
+
+
+
     private void removeWhiteBox() {
         int targetIndex = getTargetIndex();
         int firstTailIndex = getFirstTailIndex();
@@ -345,5 +416,27 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
 
     private void back(){
         finish();
+    }
+
+    private void play() {
+        if(fullSong == null){
+            return;
+        }
+        MidiPlay midiPlay = new MidiPlay(fullSong);
+        String filePath = midiPlay.generateMidiFromPart();
+
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.stop();
+            return;
+        }
+        mediaPlayer.reset();
+
+        try {
+            mediaPlayer.setDataSource(filePath);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
