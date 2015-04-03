@@ -102,7 +102,7 @@
                 android:id="@+id/songText"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="test"
+                android:text=""
                 android:textAlignment="center"
                 android:textSize="30sp"
                 android:gravity="center" />
