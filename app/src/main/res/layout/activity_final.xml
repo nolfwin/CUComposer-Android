@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/backButton"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#ffffc080"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="Back"
+            android:textAlignment="center"
+            android:textColor="#000"
+            android:textSize="@dimen/textMini" />
+
+        <TextView
+            android:id="@+id/topFinal"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="10"
+            android:background="#ffffedb8"
+            android:clickable="true"
+            android:gravity="center"
+            android:padding="@dimen/paddingMini"
+            android:text="Save"
+            android:textAlignment="center"
+            android:textColor="#000"
+            android:textSize="@dimen/textMini" />
+
+        <TextView
+            android:id="@+id/nextButton"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#ffffc080"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="Finish"
+            android:textAlignment="center"
+            android:textColor="#000"
+            android:textSize="@dimen/textMini" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.2" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:text="Which type of song do you want to save?"
+        android:gravity="center"
+        android:textSize="@dimen/text"
+        android:textColor="#000"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:layout_weight="0.2">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.15"
+            android:text=""
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/withoutVocalButton"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.25"
+            android:background="#ffffdd00"
+            android:text="Song \nwithout vocal"
+            android:textSize="@dimen/text"
+            android:gravity="center"
+            android:textColor="#000" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.2"
+            android:text=""
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/withVocalButton"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.25"
+            android:background="#ffa4ff16"
+            android:text="Song \nwith vocal"
+            android:textSize="@dimen/text"
+            android:gravity="center"
+            android:textColor="#000" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.15"
+            android:text=""
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.4" />
+
+</LinearLayout>

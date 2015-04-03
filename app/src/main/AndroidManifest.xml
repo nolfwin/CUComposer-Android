@@ -69,7 +69,7 @@
         </activity>
         <activity
             android:name=".Home"
-            android:label="@string/title_activity_home"
+            android:label="@string/app_name"
             android:launchMode="singleTask"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="landscape">
@@ -81,6 +81,15 @@
         <activity
             android:name=".Listen"
             android:label="@string/title_activity_listen"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.user.cucomposer_android.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Final"
+            android:label="@string/title_activity_final"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="landscape">
             <meta-data
