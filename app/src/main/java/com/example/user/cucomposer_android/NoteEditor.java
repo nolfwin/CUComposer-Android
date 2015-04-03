@@ -131,10 +131,6 @@ public class NoteEditor extends Activity {
             @Override
             public void onClick(View v) {
                 DialogFragment dialog = new BackFromEditDialog();
-                Bundle args = new Bundle();
-                args.putString("title", "Save");
-                args.putString("message", "Which version of note do you want to save?");
-                dialog.setArguments(args);
                 dialog.show(getFragmentManager(), "tag");
             }
         });

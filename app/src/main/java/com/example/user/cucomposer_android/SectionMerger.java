@@ -1,6 +1,7 @@
 package com.example.user.cucomposer_android;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -160,7 +161,9 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
                 }
 
                 if(view.getId() == R.id.nextButton){
-                    play();
+                    Intent nextIntent = new Intent(this, Final.class);
+                    startActivity(nextIntent);
+                    //play();
                     break;
                 }
 
