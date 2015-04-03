@@ -12,12 +12,56 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
+        <TableRow
+            android:id="@+id/topRow"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/backButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffc080"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="Save"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+            <TextView
+                android:id="@+id/topEdit"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="10"
+                android:background="#ffffedb8"
+                android:clickable="true"
+                android:padding="@dimen/paddingMini"
+                android:gravity="center"
+                android:text="Note Editor"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+            <TextView
+                android:id="@+id/blankButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffffc080"
+                android:clickable="true"
+                android:gravity="center"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="@dimen/textMini" />
+        </TableRow>
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Note Editor"
-            android:id="@+id/textView"
-            android:layout_weight="0.1"/>
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.05"/>
 
         <com.example.user.cucomposer_android.DrawNoteLine
             android:id="@+id/drawNoteLine"
@@ -27,39 +71,72 @@
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.2">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Previous"
-                android:id="@+id/prevButton" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Next"
-                android:id="@+id/nextButton" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Generate Midi"
-                android:id="@+id/midiButton" />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ChordGenerator"
-                android:id="@+id/chordGenButton"/>
+            android:layout_weight="0.1">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/prevButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.5"
+                android:gravity="center"
                 android:text=""
-                android:id="@+id/playTimer"/>
+                android:background="#bbb"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/nextButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text=""
+                android:background="#aaa"
+                android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/midiButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="Play"
+                android:background="#bbb"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:id="@+id/loadButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Load Default"
+                android:background="#aaa"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:id="@+id/saveButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Save as Default"
+                android:background="#bbb"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:id="@+id/playTimer"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:text=""/>
         </LinearLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.05"/>
 
     </LinearLayout>
 

@@ -83,6 +83,14 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
         TextView nextButton = (TextView) findViewById(R.id.nextButton);
         nextButton.setOnTouchListener(this);
 
+        TextView backButton = (TextView) findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                back();
+            }
+        });
+
         setSectionBySectionList();
     }
 
@@ -291,5 +299,9 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
     private void setBox(TextView box, int partId){
         box.setBackgroundColor(partTypes[partId].COLOR());
         box.setText(partTypes[partId].NICKNAME());
+    }
+
+    private void back(){
+        finish();
     }
 }

@@ -80,6 +80,17 @@
             android:background="#00000000">
 
             <TextView
+                android:id="@+id/partIntro"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ffff9800"
+                android:gravity="center"
+                android:text="Intro"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
+            <TextView
                 android:id="@+id/partVerse"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
@@ -123,7 +134,19 @@
                 android:textColor="#000000"
                 android:textSize="@dimen/text" />
 
+            <TextView
+                android:id="@+id/partSolo"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#ff00b5ff"
+                android:gravity="center"
+                android:text="Solo"
+                android:textColor="#000000"
+                android:textSize="@dimen/text" />
+
         </TableRow>
+
 
         <TableRow
             android:id="@+id/emptyRow1"
@@ -187,7 +210,7 @@
                 android:text="Record"
                 android:textSize="@dimen/textSmall" />
 
-            <TextView
+            <Button
                 android:id="@+id/emptyButton"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
@@ -216,22 +239,23 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/emptyRow3"
+            android:id="@+id/hiddenMessageRow"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.1"
+            android:layout_weight="2"
             android:background="#00000000">
 
             <TextView
+                android:id="@+id/hiddenMessageBox"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:background="#00000000"
                 android:gravity="center"
-                android:text=""
+                android:text=" "
                 android:textColor="#000000"
-                android:textSize="@dimen/textSuperMini" />
+                android:textSize="@dimen/textSmall" />
         </TableRow>
 
         <TableRow
@@ -340,7 +364,7 @@
                 android:background="#ffffffff"
                 android:gravity="right|center"
                 android:paddingRight="@dimen/paddingMini"
-                android:text="\nSelect a part to set its parameters.\n"
+                android:text="\nSing and Record your vocal for each part of your song.\n"
                 android:textColor="#000000"
                 android:textSize="@dimen/textMini" />
         </TableRow>

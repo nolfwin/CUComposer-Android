@@ -225,7 +225,7 @@
                 android:id="@+id/emptyCenter1"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:gravity="center"
                 android:text=" "
                 android:textColor="#000000"
@@ -236,7 +236,7 @@
                 android:id="@+id/variationName1"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="3"
+                android:layout_weight="2"
                 android:gravity="center"
                 android:text="Variation1"
                 android:textColor="#000000"
@@ -306,12 +306,12 @@
                 android:textSize="@dimen/textSmall" />
 
             <TextView
-                android:id="@+id/playGenButton"
+                android:id="@+id/saveButton"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:text="Play Generated"
+                android:text="Save"
                 android:textColor="#000000"
                 android:background="#ccc"
                 android:textSize="@dimen/textSmall" />
@@ -320,7 +320,7 @@
                 android:id="@+id/emptyCenter2"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:gravity="center"
                 android:text=" "
                 android:textColor="#000000"
@@ -331,7 +331,7 @@
                 android:id="@+id/variationName2"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="3"
+                android:layout_weight="2"
                 android:gravity="center"
                 android:text="Variation2"
                 android:textColor="#000000"
@@ -391,13 +391,15 @@
                 android:layout_weight="1"
                 android:background="#00000000"/>
 
+
+
             <TextView
-                android:id="@+id/saveButton"
+                android:id="@+id/playGenButton"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:text="Save"
+                android:text="Play Generated"
                 android:textColor="#000000"
                 android:background="#bbb"
                 android:textSize="@dimen/textSmall" />
@@ -417,7 +419,7 @@
                 android:id="@+id/emptyCenter3"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:gravity="center"
                 android:text=" "
                 android:textColor="#000000"
@@ -428,7 +430,7 @@
                 android:id="@+id/variationName3"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="3"
+                android:layout_weight="2"
                 android:gravity="center"
                 android:text="Variation3"
                 android:textColor="#000000"

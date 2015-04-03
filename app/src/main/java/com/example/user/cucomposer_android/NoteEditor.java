@@ -1,6 +1,9 @@
 package com.example.user.cucomposer_android;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,6 +38,7 @@ public class NoteEditor extends Activity {
         drawNoteLine= (DrawNoteLine)findViewById(R.id.drawNoteLine);
         Bundle bundle = getIntent().getExtras();
         currentPart = (Part) bundle.getParcelable("part");
+
         List<Note> notes = currentPart.getNoteList();
 
         //List<Note> notes = new ArrayList<Note>();
@@ -67,11 +71,12 @@ public class NoteEditor extends Activity {
 
         drawNoteLine.setNotes(notes,0, Key.MAJOR);
 
-        Button prevButton = (Button)findViewById(R.id.prevButton);
-        Button nextButton = (Button)findViewById(R.id.nextButton);
+        TextView prevButton = (TextView)findViewById(R.id.prevButton);
+        TextView nextButton = (TextView)findViewById(R.id.nextButton);
         playTimer = (TextView)findViewById(R.id.playTimer);
-        Button midiButton = (Button) findViewById(R.id.midiButton);
-        Button chordGenButton = (Button) findViewById(R.id.chordGenButton);
+        TextView midiButton = (TextView) findViewById(R.id.midiButton);
+        TextView saveButton = (TextView) findViewById(R.id.saveButton);
+        TextView loadButton = (TextView) findViewById(R.id.loadButton);
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,13 +115,37 @@ public class NoteEditor extends Activity {
 
             }
         });
-        chordGenButton.setOnClickListener(new View.OnClickListener() {
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                applyNotesChange();
+                //save as default
+            }
+        });
+        loadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //load default
             }
         });
 
+
+        TextView backButton = (TextView) findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment dialog = new BackFromEditDialog();
+                Bundle args = new Bundle();
+                args.putString("title", "Save");
+                args.putString("message", "Which version of note do you want to save?");
+                dialog.setArguments(args);
+                dialog.show(getFragmentManager(), "tag");
+            }
+        });
+
+        TextView top = (TextView) findViewById(R.id.topEdit);
+        top.setText("Note Editor - " + currentPart.getPartType().NAME());
+        prevButton.setText("<<<");
+        nextButton.setText(">>>");
     }
 
     public void applyNotesChange(){
