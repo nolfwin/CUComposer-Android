@@ -1,5 +1,7 @@
 package com.example.user.cucomposer_android;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +72,7 @@ public class Segment {
 					+ " zcr%: " + zcr/max2*100
 					+ " e*zcr%: " + e*zcr/max3*100
 					+ " e/zcr%: " + e/zcr/max4*100);*/
-            if(voiced && (e/max1*100 < 9)){
+            if(voiced && (e/max1*100 <9)){
                 start.add(startIndex);
                 voiced = false;
             }
@@ -80,6 +82,24 @@ public class Segment {
             }
             startIndex += inc;
         }
+        tuneSegment(start,MainActivity.sampleRate);
+
         return start;
+    }
+    public static void tuneSegment(List<Integer> start,int fs){
+        int minSegLength = (int)(0.125*fs);
+        Log.d("Segment", "Length " + start.size());
+        Log.d("Segment","minSegLength = "+minSegLength);
+        for(int i = 0 ; i<start.size();i+=2){
+            if(start.get(i+1)-start.get(i)<minSegLength){
+                Log.d("Segment","HEY TOO SHORT "+start.get(i)+" "+start.get(i+1));
+                if(i+3<=start.size()-1){
+                    start.set(i+1,start.get(i+3));
+                    start.remove(i+3);
+                    start.remove(i+2);
+                }
+            }
+        }
+        System.out.println("Length "+start.size());
     }
 }

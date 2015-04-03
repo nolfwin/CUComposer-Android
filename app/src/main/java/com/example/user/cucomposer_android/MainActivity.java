@@ -729,8 +729,8 @@ public class MainActivity extends Activity {
         Part partWithoutSegment=null;
         try {
        //  List<Integer> segmentOutput = Segment.segment(audioFloats);
-           partWithoutSegment= Pitch.pitchEstWithoutSegment(audioFloats,-1);
-     //    partWithSegment =  Pitch.pitchEst(audioFloats,segmentOutput,-1);
+          partWithoutSegment= Pitch.pitchEstWithoutSegment(audioFloats,-1);
+        // partWithSegment =  Pitch.pitchEst(audioFloats,segmentOutput,-1);
 
 //         Log.d(LOG_TAG,Arrays.toString(segmentOutput.toArray()));
 //         Log.d(LOG_TAG,audioFloats.length+"");

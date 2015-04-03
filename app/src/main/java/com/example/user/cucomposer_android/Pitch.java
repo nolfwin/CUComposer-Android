@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 import be.tarsos.dsp.pitch.FastYin;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
 /**
@@ -131,6 +132,57 @@ public class Pitch {
         frequencyArray.add((float) -1.0);
         pitchAnalysis(audioFloats,sampFreq,bufferSize,0);
     }
+    public static  void segmentNote(List<Integer> segmentOutput){
+        for(int i = 0 ; i < segmentOutput.size();i++){
+            segmentOutput.set(i,convertToMillisecond(segmentOutput.get(i)));
+        }
+        Log.d("Segment",Arrays.toString(segmentOutput.toArray()));
+        int allDir=0;
+        int lastAllDir = 0;
+        int segmentIndex = 0;
+        Log.d("Segment","BEFORE DUR"+Arrays.toString(playDuration.toArray()));
+        int checksum = 0;
+        for(int i = 0 ; i < playDuration.size();i++){
+            checksum+=playDuration.get(i);
+        }
+        for(int i = 0 ; i < playDuration.size();i++){
+              lastAllDir = allDir;
+              allDir+=playDuration.get(i);
+            if(segmentIndex<segmentOutput.size()) {
+                if (allDir > segmentOutput.get(segmentIndex)) {
+                    Log.d("Segment", "SHIMATTA i = " + i);
+                    Log.d("Segment", "Last seg =" + segmentOutput.get(segmentIndex));
+                    Log.d("Segment", "AllDir = " + allDir);
+                    Log.d("Segment", "lastAllDir = " + lastAllDir);
+                    int resetDir = segmentOutput.get(segmentIndex) - lastAllDir;
+                    Log.d("Segment", "reset i dur to =" + resetDir);
+                    playDuration.add(i + 1, playDuration.get(i) -resetDir);
+                    playDuration.set(i, resetDir);
+
+                    playNote.add(i + 1, playNote.get(i));
+
+                    playNote.add(i + 1, -2);
+
+                    playDuration.add(i + 1, 0);
+
+                    segmentIndex++;
+                    i +=2;
+                    if(i+2<playDuration.size())allDir-=playDuration.get(i+2);
+                    Log.d("Segment", "ACTDUR" + Arrays.toString(playDuration.toArray()));
+                }
+            }
+        }
+        int fsum=0;
+        for(int i = 0 ; i < playDuration.size();i++){
+            fsum+=playDuration.get(i);
+        }
+        Log.d("Segment","fsum = "+fsum+" checksum = "+checksum);
+        Log.d("Segment","FINDUR"+Arrays.toString(playDuration.toArray()));
+        Log.d("Segment","NOTE"+Arrays.toString(playNote.toArray()));
+    }
+    public static int convertToMillisecond(int samp){
+        return (int)((samp/(double)MainActivity.sampleRate)*1000);
+    }
     public static Part pitchEstWithoutSegment(float[] audioFloats,int preprocessKey){
         initKey();
         playNote.clear();
@@ -143,6 +195,8 @@ public class Pitch {
         int duration = (int) (Double.parseDouble(time) * 1000)
                 - lastDuration;
         playDuration.add(duration);
+        List<Integer> segmentOutput = Segment.segment(audioFloats);
+        segmentNote(segmentOutput);
         Log.d(LOG_TAG,"TUNE WITHOUT SEGMENT");
         tuneMelody(preprocessKey);
 
@@ -360,6 +414,8 @@ public class Pitch {
         boolean printAnalysisData =false;
         // TODO Auto-generated method stub
         FastYin fyin = new FastYin(sampfreq,bufferSize);
+
+        Log.d("heyYin",""+sampfreq);
         int tracker = 0;
         int count = 0;
         lastDuration = 0;
