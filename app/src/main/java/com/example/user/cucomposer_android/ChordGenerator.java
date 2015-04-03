@@ -265,8 +265,19 @@ public class ChordGenerator {
         return name;
     }
 
-    public void setVariation(double variation){
+    public void setRandomness(double variation){
         this.variation = variation;
+        System.out.println("randomness "+variation);
+    }
+
+    public void setOriginality(double variation){
+        this.notesContribute = variation;
+        System.out.println("originality "+notesContribute);
+    }
+
+    public void setComplexity(double variation){
+        this.expertParameter = variation;
+        System.out.println("complexity "+expertParameter);
     }
 
     public void setFixedLastChord(int chord){

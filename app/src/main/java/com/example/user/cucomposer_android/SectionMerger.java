@@ -52,6 +52,8 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
             R.id.partSolo
     };
 
+    private Part[] parts = new Part[6];
+
     private final int defaultPart[] = {0, 1, 2, 3, 1, 2, 3, 4, 3, 6, 6, 6};
 
     @Override
@@ -66,10 +68,19 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
         defaultButton.setOnTouchListener(this);
         mergeButton.setOnTouchListener(this);
 
+        Bundle bundle = getIntent().getExtras();
+        Parcelable[] partsParcel = bundle.getParcelableArray("parts");
+        for(int i=0;i<partsParcel.length;i++){
+            this.parts[i] = (Part)(partsParcel[i]);
+        }
+
         for (int i = 0; i < id.length; i++) {
             TextView part = (TextView) findViewById(id[i]);
             part.setText(partTypes[i].NAME());
             part.setOnTouchListener(this);
+            if(parts[i] == null){
+                part.setBackgroundColor(Config.inactiveColor);
+            }
         }
 
         for (int i = 0; i < sectionId.length; i++) {
@@ -109,9 +120,12 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
                     setSectionBySectionList();
                     break;
                 }
+
+
                 if (view.getId() == R.id.defaultButton) {
                     for (int i = 0; i < defaultPart.length; i++)
                         sectionList[i] = defaultPart[i];
+                    checkSectionDefault();
                     setSectionBySectionList();
                     break;
                 }
@@ -122,9 +136,14 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
                 for (int i = 0; i < 6; i++) {
                     // Show part description
                     if (view.getId() == id[i]) {
-                        TextView partText = (TextView) findViewById(R.id.partText);
-                        partText.setBackgroundColor(partTypes[i].COLOR());
-                        partText.setText(partTypes[i].DESCRIPTION());
+                        if(parts[i] == null){
+                            Toast.makeText(getApplicationContext(),"Please Record your vocal and Generate this part",Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            TextView partText = (TextView) findViewById(R.id.partText);
+                            partText.setBackgroundColor(partTypes[i].COLOR());
+                            partText.setText(partTypes[i].DESCRIPTION());
+                        }
                         break;
                     }
                 }
@@ -176,6 +195,9 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
                 }
                 for (int i = 0; i < 6; i++) {
                     if (view.getId() == id[i]) {
+                        if(parts[i] == null){
+                            break;
+                        }
                         TextView part = (TextView) view;
                         // Create box when swipe out of the part name
                         if (!isOnView(part, X, Y)) {
@@ -216,6 +238,10 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
         hasBridge = false;
         hasSolo = false;
         int introIndex = sectionList.length;
+
+        int lastSectionIdx = 0;
+
+
         for (int i = 0; i < sectionList.length; i++) {
             TextView section = (TextView) findViewById(sectionId[i]);
             setBox(section,sectionList[i]);
@@ -254,6 +280,22 @@ public class SectionMerger extends Activity implements View.OnTouchListener {
             if (sectionList[i] == 6) firstTailIndex = i;
             else return firstTailIndex;
         return firstTailIndex;
+    }
+
+    private void checkSectionDefault(){
+        int lastSectionIdx = 0;
+        for(int i=0;i<sectionList.length;i++) {
+            if (sectionList[i] ==6 || parts[sectionList[i]] == null) {
+                continue;
+            }
+            else{
+                sectionList[lastSectionIdx] = sectionList[i];
+            }
+            lastSectionIdx += 1;
+        }
+        for(int i=lastSectionIdx;i<sectionList.length;i++){
+            sectionList[i] = 6;
+        }
     }
 
     private boolean isOnView(View view, int X, int Y) {

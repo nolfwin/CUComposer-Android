@@ -60,6 +60,8 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
 
     private Part[] savedParts = new Part[6];
 
+    private boolean[] isGenerated = new boolean[6];
+
     private final Part.PartType[] partTypes = {
             Part.PartType.INTRO,
             Part.PartType.VERSE,
@@ -86,19 +88,10 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
         Parcelable[] partsParcel = bundle.getParcelableArray("parts");
         for(int i=0;i<partsParcel.length;i++){
             this.parts[i+1] = (Part)(partsParcel[i]);
+
             //Log.i("", Arrays.toString((this.parts[i+1]).getNoteList().toArray()));
             //Log.i("", parts[i+1].getPartType().NAME());
         }
-
-        ArrayList<Note> introNotes = new ArrayList<Note>();
-        introNotes.add(new Note(-1,introMeasure*4-1));
-        parts[0] = new Part(introNotes,bpm,key,partTypes[0]);
-
-        ArrayList<Note> soloNotes = new ArrayList<Note>();
-        soloNotes.add(new Note(-1,soloMeasure*4-1));
-        parts[5] = new Part(soloNotes,bpm,key,partTypes[5]);
-
-        instCombination = bundle.getInt("instrument");
 
 
 
@@ -113,6 +106,20 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
                 findViewById(id[i]).setBackgroundColor(Config.inactiveColor);
             }
         }
+
+
+        ArrayList<Note> introNotes = new ArrayList<Note>();
+        introNotes.add(new Note(-1,introMeasure*4-1));
+        parts[0] = new Part(introNotes,bpm,key,partTypes[0]);
+
+        ArrayList<Note> soloNotes = new ArrayList<Note>();
+        soloNotes.add(new Note(-1,soloMeasure*4-1));
+        parts[5] = new Part(soloNotes,bpm,key,partTypes[5]);
+
+        instCombination = bundle.getInt("instrument");
+
+        System.out.println("intro solo bpm "+bpm);
+
 
 
         TextView editButton = (TextView) findViewById(R.id.editButton);
@@ -233,6 +240,7 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
                 }
                 if (view.getId() == R.id.generateButton) {
                     generate(currentPart);
+                    isGenerated[currentPart] = true;
                     break;
                 }
                 if (view.getId() == R.id.playGenButton) {
@@ -269,21 +277,37 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
         startActivity(noteEditIntent);
     }
 
+    private double calculateScale(double min, double max , double variation){
+        return min + (max-min) * variation;
+    }
+
     private void generate(int part) {
 
 
+        int variation1 = ((SeekBar) findViewById(R.id.variation1)).getProgress();
+        int variation2 = ((SeekBar) findViewById(R.id.variation2)).getProgress();
+        int variation3 = ((SeekBar) findViewById(R.id.variation3)).getProgress();
+        double var1 = (variation1 < 10) ? 0 : ((variation1 >= 85) ? 1 : (variation1/100.0 ));
+        double var2 = (variation2 < 10) ? 0 : ((variation2 >= 85) ? 1 : (variation2/100.0 ));
+        double var3 = (variation3 < 10) ? 0 : ((variation3 >= 85) ? 1 : (variation3/100.0 ));
 
         ChordGenerator cg = new ChordGenerator();
 
-        if(part == 0){
-            cg.setFixedLastChord(5);
-        }
-        else{
-            cg.setFixedLastChord(-1);
-        }
+        cg.setOriginality(calculateScale(0.1, 0.5, var1));
+        cg.setComplexity(calculateScale(1,0.6,var2));
+        cg.setRandomness(calculateScale(0,1,var3));
+        cg.setFixedLastChord(5);
+//        if(part == 0){
+//            cg.setFixedLastChord(5);
+//        }
+//        else{
+//            cg.setFixedLastChord(-1);
+//        }
         cg.setNotes(parts[part].getNoteList());
         cg.setKey(parts[part].getKeyPitch(),parts[part].getKeyMode());
         int[] chordPath = cg.generateChords();
+
+
 
         AccompanimentGenerator ag = new AccompanimentGenerator(parts[currentPart],chordPath);
 
@@ -376,17 +400,24 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
     }
 
     private void next() {
-        //insert code here
-        int variation1 = ((SeekBar) findViewById(R.id.variation1)).getProgress();
-        int variation2 = ((SeekBar) findViewById(R.id.variation2)).getProgress();
-        int variation3 = ((SeekBar) findViewById(R.id.variation3)).getProgress();
-        int var1 = (variation1 < 10) ? 0 : ((variation1 >= 85) ? 100 : (variation1 + 15));
-        int var2 = (variation2 < 10) ? 0 : ((variation2 >= 85) ? 100 : (variation2 + 15));
-        int var3 = (variation3 < 10) ? 0 : ((variation3 >= 85) ? 100 : (variation3 + 15));
-        Toast toast = Toast.makeText(getApplicationContext(), String.valueOf(var1) + " " + String.valueOf(var2) + " " + String.valueOf(var3), Toast.LENGTH_SHORT);
-        toast.show();
+
+        Part[] sendParts = new Part[6];
+        for(int i=0;i<sendParts.length;i++){
+            if(isGenerated[i]){
+                if(savedParts[i] != null){
+                    sendParts[i] = savedParts[i];
+                }
+                else{
+                    sendParts[i] = parts[i];
+                }
+            }
+            else{
+                sendParts[i] = null;
+            }
+        }
+
         Intent nextIntent = new Intent(this,SectionMerger.class);
-        nextIntent.putExtra("parts",parts);
+        nextIntent.putExtra("parts",sendParts);
         startActivity(nextIntent);
     }
 
