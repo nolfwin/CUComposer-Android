@@ -7,6 +7,7 @@
     <dimen name="padding">36dp</dimen>
     <dimen name="paddingSmall">32dp</dimen>
     <dimen name="paddingMini">8dp</dimen>
+    <dimen name="textBig">48sp</dimen>
     <dimen name="text">26sp</dimen>
     <dimen name="textSmall">22sp</dimen>
     <dimen name="textMini">18sp</dimen>

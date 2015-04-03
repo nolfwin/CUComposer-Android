@@ -69,6 +69,12 @@
             android:layout_height="0dp"
             android:layout_weight="0.7"/>
 
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.025"
+            android:background="#00000000"/>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
@@ -76,14 +82,23 @@
             android:layout_weight="0.1">
 
             <TextView
-                android:id="@+id/prevButton"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="0.5"
                 android:gravity="center"
                 android:text=""
-                android:background="#bbb"
+                android:background="#00000000"
                 android:textSize="@dimen/text" />
+
+            <TextView
+                android:id="@+id/prevButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:background="#ffff9800"
+                android:textSize="@dimen/text"
+                android:textColor="#000" />
 
             <TextView
                 android:id="@+id/nextButton"
@@ -92,7 +107,17 @@
                 android:layout_weight="0.5"
                 android:gravity="center"
                 android:text=""
-                android:background="#aaa"
+                android:background="#ffffdd00"
+                android:textSize="@dimen/text"
+                android:textColor="#000" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.25"
+                android:gravity="center"
+                android:text=""
+                android:background="#00000000"
                 android:textSize="@dimen/text" />
 
             <TextView
@@ -102,8 +127,9 @@
                 android:layout_weight="0.5"
                 android:gravity="center"
                 android:text="Play"
-                android:background="#bbb"
-                android:textSize="@dimen/textSmall" />
+                android:background="#ffa4ff16"
+                android:textSize="@dimen/textSmall"
+                android:textColor="#000" />
 
             <TextView
                 android:id="@+id/loadButton"
@@ -112,8 +138,9 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Load Default"
-                android:background="#aaa"
-                android:textSize="@dimen/textSmall" />
+                android:textSize="@dimen/textSmall"
+                android:textColor="#000"
+                android:background="#ff00e785" />
 
             <TextView
                 android:id="@+id/saveButton"
@@ -122,21 +149,26 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Save as Default"
-                android:background="#bbb"
-                android:textSize="@dimen/textSmall" />
+                android:background="#ff00e2c9"
+                android:textSize="@dimen/textSmall"
+                android:clickable="true"
+                android:textColor="#000"
+                android:autoText="false" />
 
             <TextView
                 android:id="@+id/playTimer"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:text=""/>
+                android:layout_weight="0.5"
+                android:text=""
+                android:background="#00000000" />
         </LinearLayout>
 
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.05"/>
+            android:layout_weight="0.025"
+            android:background="#00000000"/>
 
     </LinearLayout>
 
