@@ -623,7 +623,7 @@ public class MainActivity extends Activity {
         }
         return ans/count;
     }
-    public int calculateMediumKey(Part[] partArray){
+    public int calculateMediumKeyAndTranspose(Part[] partArray){
         boolean[] isMajor = new boolean[partArray.length];
         int baseKey = -1;
         for(int i = 0 ; i< partArray.length;i++){
@@ -661,7 +661,7 @@ public class MainActivity extends Activity {
             float[] mergeAudio = new float[0];
 
             for(int i = 0; i < partArray.length;i++){
-                float[] audioFloats = getAudioFloatFromRunningID(i);
+                float[] audioFloats = getAudioFloatFromRunningID(i+1);
                 if(audioFloats==null)continue;
                 else mergeAudio = concat(mergeAudio,audioFloats);
             }
@@ -673,8 +673,7 @@ public class MainActivity extends Activity {
                 e.printStackTrace();
             }
             for(int i = 0; i < partArray.length;i++){
-                float[] audioFloats = getAudioFloatFromRunningID(i);
-                segmentOutput = Segment.segment(audioFloats);
+                float[] audioFloats = getAudioFloatFromRunningID(i+1);
                 if(audioFloats==null)continue;
                 try {
                     partArray[i] = Pitch.pitchEstWithoutSegment(audioFloats,baseKey);
@@ -841,15 +840,48 @@ public class MainActivity extends Activity {
     private Runnable postProcess = new Runnable() {
         @Override
         public void run() {
-            parts = setParts();
+
+            //            for(int i = 0; i < partSize ; i++){
+//                runningId = i;
+//                partArray[i]=null;
+//                partArray[i] = getPartFromRunningID(runningId);
+//                if(partArray[i]==null) Log.d("NULL","running ID = "+i+" is null");
+//                else  Log.d("Part","get running ID = "+i+" part");
+//                Log.d("Key",partArray[i].toString());
+//            }
+//            int baseKey = calculateMediumKey(partArray);
+//            int meanBpm = calculateMeanBpm(partArray);
+//            for(int i = 0 ; i < partArray.length;i++){
+//                if(partArray[i]==null) continue;
+//                partArray[i].setKey(baseKey);
+//                partArray[i].setBpm(meanBpm);
+//                Log.d("Key",partArray[i].toString());
+//            }
+//            Toast toast = Toast.makeText(getApplicationContext(),"Let's Merge",Toast.LENGTH_SHORT);
+//            toast.show();
+            parts = standardizeParts();
+            setParts(parts);
             nowProcess = false;
         }
     };
-
-    public Part[] setParts(){
+    public Part[] standardizeParts(){
         Part[] parts = new Part[4];
         for(int i=0;i<4;i++) {
-            Part part = getPartFromRunningID(i+1);
+            parts[i]= getPartFromRunningID(i+1);
+        }
+        int baseKey = calculateMediumKeyAndTranspose(parts);
+        int meanBpm = calculateMeanBpm(parts);
+        for(int i = 0 ; i < parts.length;i++){
+                if(parts[i]==null) continue;
+            parts[i].setKey(baseKey);
+            parts[i].setBpm(meanBpm);
+
+            }
+        return parts;
+    }
+    public Part[] setParts(Part[] parts){
+        for(int i=0;i<4;i++) {
+            Part part = parts[i];
             if(part == null){
                 continue;
             }
