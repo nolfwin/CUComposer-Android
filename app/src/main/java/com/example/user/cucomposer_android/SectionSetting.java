@@ -287,121 +287,182 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
     }
     private void setSoloNotes(int part, int[] chordSequence){
 
-        int offset = parts[part].getKeyPitch();
-        int[] major = {offset,2+offset,4+offset,5+offset,7+offset,9+offset,11+offset};
-        int[] minor = {offset,2+offset,3+offset,5+offset,7+offset,8+offset,10+offset};
-        int[] scale;
-        if(parts[part].getKeyMode()){
-            scale = major;
-        }
-        else{
-            scale = minor;
-        }
-
-        int octave = 5;
-        int beforeChord = -1;
-        int lastNote = -1;
-        int round = 0;
-        int bpm = 100;
-        ArrayList<Note> testNoteList = new ArrayList<Note>();
-        for(int i = 0 ; i < chordSequence.length ; i++){
-            int k = chordSequence[i];
-            for(int j = 0 ; j<4;j++ ) {
-                if(j==3 && i==chordSequence.length-1&&k==0){
-                    int noteToPlay;
-                    noteToPlay = scale[0]+octave*12;
-                    testNoteList.add(new Note(noteToPlay,4.0f));
-                    break;
-                }
-                if (Math.random() > 0.5) {
-                    int noteToPlay;
-                    double rand = Math.random();
-                    if(rand>0.66){
-                        noteToPlay = scale[((k)%7)]+octave*12;
-                    }
-                    else if(rand>0.33){
-                        noteToPlay = scale[((k+2)%7)]+octave*12;
-                    }
-                    else{
-                        noteToPlay = scale[((k+4)%7)]+octave*12;
-                    }
-                    boolean isPlus = lastNote>noteToPlay;
-                    double randThres =0.75;
-                    if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
-                    if(Math.random()>randThres){
-                        if(isPlus&&octave<6){
-                            noteToPlay+=12;
-                            octave++;
-                        }
-                        else if(octave>4) {
-                            noteToPlay-=12;
-                            octave--;
-                        }
-                    }
-                    testNoteList.add(new Note(noteToPlay,1.0f));
-                    lastNote = noteToPlay;
-                } else {
-                    for(int times = 0 ; times < 2 ;times++) {
-                        int noteToPlay;
-                        if(Math.random()>0.3){
-                            double rand = Math.random();
-                            if (rand > 0.66) {
-                                noteToPlay = scale[((k)%7)]+octave*12;
-                            } else if (rand > 0.33) {
-                                noteToPlay = scale[((k+2)%7)]+octave*12;
-                            } else {
-                                noteToPlay = scale[((k+4)%7)]+octave*12;
-                            }
-                            boolean isPlus = lastNote>noteToPlay;
-                            double randThres =0.75;
-                            if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
-                            if(Math.random()>randThres){
-                                if(isPlus&&octave<6){
-                                    noteToPlay+=12;
-                                    octave++;
-                                }
-                                else if(octave>4) {
-                                    noteToPlay-=12;
-                                    octave--;
-                                }
-                            }
-                            testNoteList.add(new Note(noteToPlay, 0.5f));
-                            lastNote = noteToPlay;
-                        }
-                        else{
-                            for(int sixteenthTimes = 0 ; sixteenthTimes < 2 ; sixteenthTimes++){
-                                double rand = Math.random();
-                                if (rand > 0.66) {
-                                    noteToPlay = scale[((k)%7)]+octave*12;
-                                } else if (rand > 0.33) {
-                                    noteToPlay = scale[((k+2)%7)]+octave*12;
-                                } else {
-                                    noteToPlay = scale[((k+4)%7)]+octave*12;
-                                }
-                                boolean isPlus = lastNote>noteToPlay;
-                                double randThres =0.75;
-                                if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
-                                if(Math.random()>randThres){
-                                    if(isPlus&&octave<6){
-                                        noteToPlay+=12;
-                                        octave++;
-                                    }
-                                    else if(octave>4) {
-                                        noteToPlay-=12;
-                                        octave--;
-                                    }
-                                }
-                                testNoteList.add(new Note(noteToPlay, 0.25f));
-                                lastNote = noteToPlay;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        Log.d("FUCKING NOTE LIST", Arrays.toString(testNoteList.toArray()));
-        NotesUtil.calculateOffset(testNoteList);
-        parts[part].setNoteList(testNoteList);
+//        int offset = parts[part].getKeyPitch();
+//        int[] major = {offset,2+offset,4+offset,5+offset,7+offset,9+offset,11+offset};
+//        int[] minor = {offset,2+offset,3+offset,5+offset,7+offset,8+offset,10+offset};
+//        int[] scale;
+//        if(parts[part].getKeyMode()){
+//            scale = major;
+//        }
+//        else{
+//            scale = minor;
+//        }
+//
+//        int octave = 5;
+//        int beforeChord = -1;
+//        int lastNote = -1;
+//        int round = 0;
+//        int bpm = 100;
+//        ArrayList<Note> testNoteList = new ArrayList<Note>();
+//        for(int i = 0 ; i < chordSequence.length ; i++){
+//            int k = chordSequence[i];
+//            for(int j = 0 ; j<4;j++ ) {
+//                if(j==3 && i==chordSequence.length-1&&k==0){
+//                    int noteToPlay;
+//                    noteToPlay = scale[0]+octave*12;
+//                    testNoteList.add(new Note(noteToPlay,4.0f));
+//                    break;
+//                }
+//                if (Math.random() > 0.5) {
+//                    int noteToPlay;
+//                    double rand = Math.random();
+//                    if(rand>0.66){
+//                        noteToPlay = scale[((k)%7)]+octave*12;
+//                    }
+//                    else if(rand>0.33){
+//                        noteToPlay = scale[((k+2)%7)]+octave*12;
+//                    }
+//                    else{
+//                        noteToPlay = scale[((k+4)%7)]+octave*12;
+//                    }
+//                    boolean isPlus = lastNote>noteToPlay;
+//                    double randThres =0.75;
+//                    if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
+//                    if(Math.random()>randThres){
+//                        if(isPlus&&octave<6){
+//                            noteToPlay+=12;
+//                            octave++;
+//                        }
+//                        else if(octave>4) {
+//                            noteToPlay-=12;
+//                            octave--;
+//                        }
+//                    }
+//                    testNoteList.add(new Note(noteToPlay,1.0f));
+//                    lastNote = noteToPlay;
+//                } else {
+//                    for(int times = 0 ; times < 2 ;times++) {
+//                        int noteToPlay;
+//                        if(Math.random()>0.3){
+//                            double rand = Math.random();
+//                            if (rand > 0.66) {
+//                                noteToPlay = scale[((k)%7)]+octave*12;
+//                            } else if (rand > 0.33) {
+//                                noteToPlay = scale[((k+2)%7)]+octave*12;
+//                            } else {
+//                                noteToPlay = scale[((k+4)%7)]+octave*12;
+//                            }
+//                            boolean isPlus = lastNote>noteToPlay;
+//                            double randThres =0.75;
+//                            if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
+//                            if(Math.random()>randThres){
+//                                if(isPlus&&octave<6){
+//                                    noteToPlay+=12;
+//                                    octave++;
+//                                }
+//                                else if(octave>4) {
+//                                    noteToPlay-=12;
+//                                    octave--;
+//                                }
+//                            }
+//                            testNoteList.add(new Note(noteToPlay, 0.5f));
+//                            lastNote = noteToPlay;
+//                        }
+//                        else{
+//                            for(int sixteenthTimes = 0 ; sixteenthTimes < 2 ; sixteenthTimes++){
+//                                double rand = Math.random();
+//                                if (rand > 0.66) {
+//                                    noteToPlay = scale[((k)%7)]+octave*12;
+//                                } else if (rand > 0.33) {
+//                                    noteToPlay = scale[((k+2)%7)]+octave*12;
+//                                } else {
+//                                    noteToPlay = scale[((k+4)%7)]+octave*12;
+//                                }
+//                                boolean isPlus = lastNote>noteToPlay;
+//                                double randThres =0.75;
+//                                if(Math.abs(noteToPlay-lastNote)>6)randThres = 0.25;
+//                                if(Math.random()>randThres){
+//                                    if(isPlus&&octave<6){
+//                                        noteToPlay+=12;
+//                                        octave++;
+//                                    }
+//                                    else if(octave>4) {
+//                                        noteToPlay-=12;
+//                                        octave--;
+//                                    }
+//                                }
+//                                testNoteList.add(new Note(noteToPlay, 0.25f));
+//                                lastNote = noteToPlay;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        Log.d("FUCKING NOTE LIST", Arrays.toString(testNoteList.toArray()));
+        ArrayList<Note> soloNoteList = new ArrayList<Note>();
+        soloNoteList.add(new Note(53,0.5f));
+        soloNoteList.add(new Note(55,0.5f));
+        soloNoteList.add(new Note(56,0.5f));
+        soloNoteList.add(new Note(58,0.5f));
+        soloNoteList.add(new Note(60,1.0f));
+        soloNoteList.add(new Note(58,0.5f));
+        soloNoteList.add(new Note(56,0.5f));
+        soloNoteList.add(new Note(58,0.5f));
+        soloNoteList.add(new Note(56,0.5f));
+        soloNoteList.add(new Note(56,0.5f));
+        soloNoteList.add(new Note(58,0.25f));
+        soloNoteList.add(new Note(56,0.25f));
+        soloNoteList.add(new Note(56,0.5f));
+        soloNoteList.add(new Note(55,0.5f));
+        soloNoteList.add(new Note(53,0.5f));
+        soloNoteList.add(new Note(51,0.5f));
+        soloNoteList.add(new Note(53,0.5f));
+        soloNoteList.add(new Note(55,0.5f));
+        soloNoteList.add(new Note(56,0.5f));
+        soloNoteList.add(new Note(58,0.5f));
+        soloNoteList.add(new Note(60,1.0f));
+        soloNoteList.add(new Note(58,0.5f));
+        soloNoteList.add(new Note(56,0.5f));
+        soloNoteList.add(new Note(58,0.5f));
+        soloNoteList.add(new Note(56,0.5f));
+        soloNoteList.add(new Note(58,0.5f));
+        soloNoteList.add(new Note(60,0.5f));
+        soloNoteList.add(new Note(60,2.0f));
+        soloNoteList.add(new Note(67,0.25f));
+        soloNoteList.add(new Note(68,0.25f));
+        soloNoteList.add(new Note(67,0.25f));
+        soloNoteList.add(new Note(65,0.25f));
+        soloNoteList.add(new Note(60,1.0f));
+        soloNoteList.add(new Note(67,0.25f));
+        soloNoteList.add(new Note(68,0.25f));
+        soloNoteList.add(new Note(67,0.25f));
+        soloNoteList.add(new Note(65,0.25f));
+        soloNoteList.add(new Note(60,1.0f));
+        soloNoteList.add(new Note(67,0.25f));
+        soloNoteList.add(new Note(68,0.25f));
+        soloNoteList.add(new Note(67,0.25f));
+        soloNoteList.add(new Note(65,0.25f));
+        soloNoteList.add(new Note(60,0.5f));
+        soloNoteList.add(new Note(58,0.5f));
+        soloNoteList.add(new Note(56,0.5f));
+        soloNoteList.add(new Note(58,0.5f));
+        soloNoteList.add(new Note(60,0.5f));
+        soloNoteList.add(new Note(63,0.5f));
+        soloNoteList.add(new Note(60,1.0f));
+        soloNoteList.add(new Note(58,1.0f));
+        soloNoteList.add(new Note(56,0.5f));
+        soloNoteList.add(new Note(58,0.5f));
+        soloNoteList.add(new Note(60,0.5f));
+        soloNoteList.add(new Note(63,0.5f));
+        soloNoteList.add(new Note(60,1.0f));
+        soloNoteList.add(new Note(58,1.0f));
+        soloNoteList.add(new Note(56,0.5f));
+        soloNoteList.add(new Note(55,0.5f));
+        soloNoteList.add(new Note(53,0.5f));
+        soloNoteList.add(new Note(51,0.5f));
+        NotesUtil.calculateOffset(soloNoteList);
+        parts[part].setNoteList(soloNoteList);
     }
     private void generate(int part) {
 
@@ -428,8 +489,10 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
         cg.setNotes(parts[part].getNoteList());
         cg.setKey(parts[part].getKeyPitch(),parts[part].getKeyMode());
         int[] chordPath = cg.generateChords();
-
-
+//
+//        if(part ==0){
+//            setIntroNotes(0);
+//        }
         if(part == 5){
             setSoloNotes(5, chordPath);
         }
@@ -446,18 +509,57 @@ public class SectionSetting extends Activity implements View.OnTouchListener {
 
         // insert accom code here
     }
+    private void setIntroNotes(int part){
+        ArrayList<Note> introNoteList = new ArrayList<Note>();
+        introNoteList.add(new Note(53,3.0f));
+        introNoteList.add(new Note(53,0.5f));
+        introNoteList.add(new Note(55,0.5f));
+        introNoteList.add(new Note(56,3.0f));
+        introNoteList.add(new Note(56,0.5f));
+        introNoteList.add(new Note(60,0.5f));
+        introNoteList.add(new Note(58,3.0f));
+        introNoteList.add(new Note(56,0.5f));
+        introNoteList.add(new Note(55,0.5f));
+        introNoteList.add(new Note(63,4.0f));
 
+        NotesUtil.calculateOffset(introNoteList);
+        parts[part].setNoteList(introNoteList);
+    }
     private void generateAccompaniment(Part part, int[] chordPath){
         AccompanimentGenerator ag = new AccompanimentGenerator(part,chordPath);
+        Part.PartType a = part.getPartType();
+        int partStyle=-1;
+        if(a== Part.PartType.INTRO){
+            partStyle=0;
+        }
+        else if(a== Part.PartType.VERSE){
+            partStyle=1;
+        }
+        else if(a== Part.PartType.PRECRORUS){
+            partStyle=2;
+        }
+        else if(a== Part.PartType.CHORUS){
+            partStyle=3;
+        }
+        else if (a==Part.PartType.SOLO){
+            partStyle=4;
+        }
         switch (instCombination){
             case 0:
                 ag.generateNotesForGuitar(1);
                 ag.generateNotesForPiano(1);
                 break;
             case 1:
-                ag.generateNotesForGuitar(1);
-                ag.generateNotesForPiano(1);
-                ag.generateNotesForBass(1);
+                if(partStyle>-1){
+                    ag.generateNotesForGuitar(-1,partStyle);
+                    ag.generateNotesForPiano(-1,partStyle);
+                    ag.generateNotesForBass(-1,partStyle);
+                }
+                else{
+                    ag.generateNotesForGuitar(1,partStyle);
+                    ag.generateNotesForPiano(1,partStyle);
+                    ag.generateNotesForBass(1,partStyle);
+                }
                 break;
             case 2:
                 ag.generateNotesForPiano(1);

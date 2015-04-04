@@ -95,7 +95,7 @@ public class MidiPlay {
         if(part.getGuitarNoteList() == null)
             return;
         MidiTrack guitarTrack = new MidiTrack();
-        guitarTrack.insertEvent(new Controller(0, 0, guitarCh,7,80));
+        guitarTrack.insertEvent(new Controller(0, 0, guitarCh,7,110));
         guitarTrack.insertEvent(new ProgramChange(0,guitarCh, ProgramChange.MidiProgram.ACOUSTIC_GUITAR_NYLON.programNumber()));
         setTrack(part.getGuitarNoteList(),guitarTrack,guitarCh);
         tracks.add(guitarTrack);
@@ -105,7 +105,7 @@ public class MidiPlay {
         if(part.getPianoNoteList() == null)
             return;
         MidiTrack pianoTrack = new MidiTrack();
-        pianoTrack.insertEvent(new Controller(0, 0, pianoCh,7,90));
+        pianoTrack.insertEvent(new Controller(0, 0, pianoCh,7,120));
         pianoTrack.insertEvent(new ProgramChange(0,pianoCh, ProgramChange.MidiProgram.ACOUSTIC_GRAND_PIANO.programNumber()));
         setTrack(part.getPianoNoteList(),pianoTrack,pianoCh);
         tracks.add(pianoTrack);
